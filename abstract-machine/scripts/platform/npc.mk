@@ -1,3 +1,5 @@
+VERSION=V4
+
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
            riscv/npc/ioe/ioe.c \
@@ -27,5 +29,5 @@ image: $(IMAGE).elf
 
 
 run: image
-	$(MAKE) -C $(NPC_V3_HOME) wave BIN=$(IMAGE).bin
+	$(MAKE) -C $(NPC_$(VERSION)_HOME) wave BIN=$(IMAGE).bin
 
