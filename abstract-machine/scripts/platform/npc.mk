@@ -1,4 +1,4 @@
-VERSION=V4
+VERSION=V3
 
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
