@@ -1,7 +1,7 @@
 .PHONY: wavesim
 
 #TOP_MODULE = ysyx_23060229_top
-VERSION = V4
+VERSION = V5
 
 CONSTR = $(NPC_$(VERSION)_HOME)/constr
 
@@ -11,8 +11,6 @@ TOP_MODULE_FILE = $(SOC_HOME)/build/ysyxSoCFull.v
 
 VFILE += $(shell find $(SOC_HOME)/perip -type f -name "*.v") \
 		$(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
-#VFILE = $(NPC_$(VERSION)_HOME)/vfile
-#VSRC = $(SOC_HOME)/perip
 
 SEARCH_PATH = $(SOC_HOME)/perip/uart16550/rtl \
 			  $(SOC_HOME)/perip/spi/rtl \
@@ -53,7 +51,7 @@ TIMING = --timescale "1ns/1ns" --no-timing
 
 # to convert .v/.sv files into .c files
 convert:
-	verilator --top-module $(TOP_MODULE)  \
+	@verilator --top-module $(TOP_MODULE)  \
 	-cc $(TOP_MODULE_FILE) \
 	$(VFILE) \
 	$(INCLUDES) \
@@ -86,8 +84,9 @@ boardclean:
 
 wavesim:
 	$(call git_commit, "wavesim in npc")
-	@verilator -Wall --trace -cc $(VFILE)/$(TOP_MODULE).v --exe $(SRCS)\
-		-CFLAGS $(CFLAGS)	-D $(LIBS)  -I$(VFILE) $(TIMING)
+	@verilator -Wall --trace --top-module $(TOP_MODULE) \
+		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
+		--exe $(SRCS) -CFLAGS $(CFLAGS)	-D $(LIBS)
 	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
 	@cp obj_dir/V$(TOP_MODULE) $(WAVESIM_FILE)/$(TOP_MODULE)_wave
 
