@@ -84,7 +84,7 @@ boardclean:
 
 wavesim:
 	$(call git_commit, "wavesim in npc")
-	@verilator -Wall --trace --top-module $(TOP_MODULE) \
+	@verilator --trace --top-module $(TOP_MODULE) \
 		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
 		--exe $(SRCS) -CFLAGS $(CFLAGS)	-D $(LIBS)
 	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
