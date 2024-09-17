@@ -37,6 +37,7 @@ LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 #		$(WAVESIM_FILE)/wavesim.cpp
 
 SRCS += $(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp") \
+		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp") \
 		$(WAVESIM_FILE)/wavesim.cpp
 
 
