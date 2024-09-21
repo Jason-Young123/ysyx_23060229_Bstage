@@ -22,7 +22,7 @@ CFLAGS += -I$(AM_HOME)/am/src/riscv/npc/include
 
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
-$(info #include out2--------------------, $(IMAGE), $(NAME))
+#$(info #include out2--------------------, $(IMAGE), $(NAME))
 
 
 image: $(IMAGE).elf

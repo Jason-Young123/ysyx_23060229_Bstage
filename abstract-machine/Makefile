@@ -74,11 +74,11 @@ LINKAGE   = $(OBJS) \
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
     $(LIBS) ))
 
-$(info #the image is: $(IMAGE))
-$(info #the archive is: $(ARCHIVE))
-$(info #the objs is: $(OBJS))
-$(info #the libs is: $(LIBS))
-$(info #the linkage is: $(LINKAGE))
+#$(info #the image is: $(IMAGE))
+#$(info #the archive is: $(ARCHIVE))
+#$(info #the objs is: $(OBJS))
+#$(info #the libs is: $(LIBS))
+#$(info #the linkage is: $(LINKAGE))
 
 
 ## 3. General Compilation Flags
@@ -97,7 +97,7 @@ READELF   = $(CROSS_COMPILE)readelf
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
-$(info #the inc_path is: $(INC_PATH))
+#$(info #the inc_path is: $(INC_PATH))
 
 ARCH_H := arch/$(ARCH).h
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
@@ -115,7 +115,7 @@ LDFLAGS  += -z noexecstack
 
 ### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
 
-$(info #include in------------------)
+#$(info #include in------------------)
 -include $(AM_HOME)/scripts/$(ARCH).mk
 
 
@@ -137,10 +137,10 @@ endif
 
 
 $(DST_DIR)/%.o: %.c
-	echo mkdir -p $(dir $@) && echo + CC $<
-	echo $(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
+	@mkdir -p $(dir $@) && echo + CC $<
+	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
-$(info #include out3-----------------, $(DST_DIR))
+#$(info #include out3-----------------, $(DST_DIR))
 
 
 ### Rule (compile): a single `.cc` -> `.o` (g++)
@@ -165,7 +165,7 @@ $(LIBS): %:
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
 $(IMAGE).elf: $(OBJS) $(LIBS)
 	@echo + LD "->" $(IMAGE_REL).elf
-	echo $(LD) $(LDFLAGS) -o $(IMAGE).elf --start-group $(LINKAGE) --end-group
+	@$(LD) $(LDFLAGS) -o $(IMAGE).elf --start-group $(LINKAGE) --end-group
 
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
 $(ARCHIVE): $(OBJS)

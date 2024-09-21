@@ -6,5 +6,3 @@
 #define FB_ADDR			(DEVICE_BASE + 0x1000000)
 #define AUDIO_ADDR      (DEVICE_BASE + 0x0000200)
 #define DISK_ADDR       (DEVICE_BASE + 0x0000300)
-
-
