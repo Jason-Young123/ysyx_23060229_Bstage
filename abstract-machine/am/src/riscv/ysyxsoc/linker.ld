@@ -15,13 +15,21 @@ SECTIONS {
 		. = ALIGN(4);
 		_etext = . ;
 	} > mrom AT> mrom
-
-	_sdata_mrom = LOADADDR(.data);
 	
+	.rodata : {
+		*(.rodata*)
+		*(.srodata*)
+		. = ALIGN(4);
+	} > mrom AT> mrom
+
+	/*. = ALIGN(4);*/
+	_sdata_mrom = LOADADDR(.data);
+
 	.data : {  
         _sdata_sram = .;
-        *(.data)
-	  	. = ALIGN(4);	
+        *(.data*)
+		*(.sdata*)
+	  	. = ALIGN(4);
         _edata_sram = .;  
     } > sram AT> mrom
 

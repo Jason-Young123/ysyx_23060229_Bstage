@@ -31,9 +31,19 @@ void halt(int code){
 }
 
 void _trm_init(){
-	int length = _edata_mrom - _sdata_mrom;
+	size_t length = (size_t)&_edata_mrom - (size_t)&_sdata_mrom;
+	size_t dest = (size_t)&_sdata_sram;
+	size_t src = (size_t)&_sdata_mrom;
 	//之后将从_data_mrom_start开始长度为length的数据memcpy到_data_sram_start处，用于模拟bootloader
-	memcpy((void *)&_sdata_sram, (void *)&_sdata_mrom, length);
-    int ret = main(mainargs);
+	//memcpy((void *)dest, (void *)src, length);
+    size_t i;
+	for(i = 0; i < length; i++){
+		//*(&_sdata_sram + i) = *(&_sdata_mrom + i);
+		//*(&_sdata_sram + i) = 0;
+		//*((char *)(dest + i)) = length;
+		*((char *)(dest + i)) = *((char *)(src + i));
+	}
+	
+	int ret = main(mainargs);
     halt(ret);
 }
