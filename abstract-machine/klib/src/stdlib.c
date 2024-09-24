@@ -47,11 +47,13 @@ void *malloc(size_t size) {
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   //panic("Not implemented");
   	static size_t addr = (size_t)&_heap_start;
-  	addr += size;
+  	//static size_t addr = (size_t)heap.start;
+	//static size_t addr = (size_t)0x0f000000;
+	addr += size;
   	if(addr >= (size_t)heap.start && addr <= (size_t)heap.end)
   		return (void *)(addr - size);
 	else{
-		printf("malloc failure\n");
+		//printf("malloc failure\n");
 		return NULL;
 	}
   //return addr;

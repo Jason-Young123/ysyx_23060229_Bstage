@@ -5,11 +5,12 @@
 
 #define ysyxsoc_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
 
+extern char _sdata_mrom;
+extern char _edata_mrom;
+extern char _sdata_sram;
 
 extern char _heap_start;
 extern char _heap_end;
-//extern char _stack_start;
-//extern char _stack_end;
 
 Area heap = RANGE((uintptr_t)&_heap_start, (uintptr_t)&_heap_end);
 
@@ -30,6 +31,9 @@ void halt(int code){
 }
 
 void _trm_init(){
+	int length = _edata_mrom - _sdata_mrom;
+	//之后将从_data_mrom_start开始长度为length的数据memcpy到_data_sram_start处，用于模拟bootloader
+	memcpy((void *)&_sdata_sram, (void *)&_sdata_mrom, length);
     int ret = main(mainargs);
     halt(ret);
 }
