@@ -32,6 +32,7 @@ LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/sdb -type f -name "*.cpp")\
+		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp")\
 		$(WAVESIM_FILE)/wavesim.cpp
 		#$(shell find $(WAVESIM_FILE)/difftest -type f -name "*.cpp")\
 		#$(shell find $(WAVESIM_FILE)/memory -type f -name "*.cpp")\
