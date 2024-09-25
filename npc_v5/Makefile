@@ -42,7 +42,7 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 #		$(WAVESIM_FILE)/wavesim.cpp
 
 
-BIN ?= ./bin/dummy-riscv32e-npc.bin
+BIN ?= ./bin/dummy-riscv32e-ysyxsoc.bin
 ISWAVE = 0
 
 
