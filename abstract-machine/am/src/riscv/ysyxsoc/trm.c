@@ -40,7 +40,7 @@ void _trm_init(){
 	for(i = 0; i < length; i++){
 		//*(&_sdata_sram + i) = *(&_sdata_mrom + i);
 		//*(&_sdata_sram + i) = 0;
-		//*((char *)(dest + i)) = length;
+		//*((char *)(dest + i)) = 0x34;
 		*((char *)(dest + i)) = *((char *)(src + i));
 	}
 	

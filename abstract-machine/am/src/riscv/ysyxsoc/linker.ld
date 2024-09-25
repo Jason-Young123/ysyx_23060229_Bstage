@@ -46,7 +46,7 @@ SECTIONS {
 
 	_heap_start = _ebss;
 	
-	. = ORIGIN(sram) + 0x1fff;
+	. = ORIGIN(sram) + 0x1fff + 1;
 	_stack_pointer = . ;
 	_heap_end = . ;
 }
