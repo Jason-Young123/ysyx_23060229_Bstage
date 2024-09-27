@@ -23,6 +23,7 @@ SECTIONS {
 	} > mrom AT> mrom
 
 	/*. = ALIGN(4);*/
+	/*由于一开始没考虑srodata,因为_sdata_mrom地址会多1*/
 	_sdata_mrom = LOADADDR(.data);
 
 	.data : {  
