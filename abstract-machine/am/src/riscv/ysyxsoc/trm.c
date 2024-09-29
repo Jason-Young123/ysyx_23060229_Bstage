@@ -52,7 +52,7 @@ void _trm_init(){
 	}
 	
 	//初始化串口
-	init_uart();
+	//init_uart();
 
 	int ret = main(mainargs);
     halt(ret);
