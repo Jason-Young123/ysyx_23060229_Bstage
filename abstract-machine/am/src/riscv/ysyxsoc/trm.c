@@ -26,13 +26,13 @@ void putch(char ch){
 }
 
 void init_uart(){
-	*(volatile char *)(0x10000001) = (char)0x83;//1000_0011
+	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x83;//1000_0011
 	//*(volatile short *)(UART_BASE + UART_DLB1) = 0x0200;
 	//*(volatile char *)(UART_BASE + UART_DLB1) = (char)'A';//0000_0000
-	//*(volatile char *)(UART_BASE + UART_DLB2) = (char)0xff;//0000_0100
-	//*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x00;//0000_0000
+	*(volatile char *)(UART_BASE + UART_DLB2) = (char)0xff;//0000_0100
+	*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x00;//0000_0000
 	//设置为16'b0000_0100_0000_0000,即1024
-	//*(volatile char *)(UART_BASE + UART_LCR) = (char)0x03;//0000_0011,恢复默认值
+	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x03;//0000_0011,恢复默认值
 }
 
 void halt(int code){
