@@ -22,6 +22,8 @@ int main(const char *args);
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch){
+	//注意LSR第五位指示FIFO是否还有空位
+	while(!(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x20));
     *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
@@ -52,7 +54,7 @@ void _trm_init(){
 	}
 	
 	//初始化串口
-	//init_uart();
+	init_uart();
 
 	int ret = main(mainargs);
     halt(ret);
