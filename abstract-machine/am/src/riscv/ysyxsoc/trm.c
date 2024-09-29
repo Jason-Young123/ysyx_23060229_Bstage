@@ -30,7 +30,7 @@ void init_uart(){
 	//*(volatile short *)(UART_BASE + UART_DLB1) = 0x0200;
 	//*(volatile char *)(UART_BASE + UART_DLB1) = (char)'A';//0000_0000
 	*(volatile char *)(UART_BASE + UART_DLB2) = (char)0x00;//0000_0100
-	*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x0c;//0000_0000
+	*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x01;//0000_0000
 	//设置为16'b0000_0100_0000_0000,即1024
 	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x03;//0000_0011,恢复默认值
 }
@@ -52,7 +52,7 @@ void _trm_init(){
 	}
 	
 	//初始化串口
-	//init_uart();
+	init_uart();
 
 	int ret = main(mainargs);
     halt(ret);
