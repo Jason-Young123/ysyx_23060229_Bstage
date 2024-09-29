@@ -26,7 +26,7 @@ void putch(char ch){
 }
 
 void init_uart(){
-	*(volatile char *)(0x10000003) = (char)0x83;//1000_0011
+	*(volatile char *)(0x10000001) = (char)0x83;//1000_0011
 	//*(volatile short *)(UART_BASE + UART_DLB1) = 0x0200;
 	//*(volatile char *)(UART_BASE + UART_DLB1) = (char)'A';//0000_0000
 	//*(volatile char *)(UART_BASE + UART_DLB2) = (char)0xff;//0000_0100
