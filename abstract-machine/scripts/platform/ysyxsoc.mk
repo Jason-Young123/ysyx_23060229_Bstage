@@ -1,7 +1,16 @@
 VERSION=V5
 
 AM_SRCS := riscv/ysyxsoc/start.S \
-           riscv/ysyxsoc/trm.c
+           riscv/ysyxsoc/trm.c \
+		   riscv/ysyxsoc/ioe/ioe.c \
+           riscv/ysyxsoc/ioe/timer.c \
+           riscv/ysyxsoc/ioe/input.c \
+           riscv/ysyxsoc/ioe/audio.c \
+           riscv/ysyxsoc/ioe/gpu.c \
+		   riscv/ysyxsoc/cte.c \
+		   riscv/ysyxsoc/trap.S \
+		   riscv/ysyxsoc/vme.c \
+		   riscv/ysyxsoc/mpe.c
 
 CFLAGS    += -fdata-sections -ffunction-sections
 

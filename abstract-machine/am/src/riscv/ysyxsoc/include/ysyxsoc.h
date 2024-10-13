@@ -13,3 +13,23 @@
 #define UART_LSR 5
 //状态寄存器
 
+
+#define CLINT_BASE 	0x02000000
+#define CLINT_END	0x0200ffff
+
+
+#define KBD_BASE	0x10011000
+#define KBD_END		0x10011007
+
+
+//暂未使用
+#define VGACTL_BASE	0x00000000
+#define FB_BASE		0x21000000
+#define FB_END		0x211fffff
+
+
+//暂未使用
+#define AUDIO_BASE	0x00000000
+
+
+
