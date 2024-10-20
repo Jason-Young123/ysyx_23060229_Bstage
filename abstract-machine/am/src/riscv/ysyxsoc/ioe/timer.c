@@ -2,6 +2,9 @@
 #include <riscv/riscv.h>
 #include <ysyxsoc.h>
 
+#define RATIO_PARAM	 * 1000
+//用于将从模拟CLINT寄存器中读到的值转化为真实时间
+
 void __am_timer_init() {
 }
 
@@ -10,7 +13,7 @@ void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
     uint32_t us_low = inl(CLINT_BASE);
 
     //uptime->us = ((uint64_t)us_high) << 32 | us_low;
-    uptime->us = (((uint64_t)us_high) << 32 | us_low) * 4000;
+    uptime->us = (((uint64_t)us_high) << 32 | us_low) RATIO_PARAM;
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
