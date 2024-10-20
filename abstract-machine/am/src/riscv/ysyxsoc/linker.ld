@@ -2,39 +2,41 @@ ENTRY(_start)
 /*PHDRS { text PT_LOAD; data PT_LOAD; }*/
 
 MEMORY {
-  mrom : ORIGIN = 0x30000000, LENGTH = 16M
-  sram : ORIGIN = 0x0f000000, LENGTH = 8K
+ 	/*rom : ORIGIN = 0x20000000, LENGTH = 4K*/
+ 	/*ram : ORIGIN = 0x0f000000, LENGTH = 8K*/
+	rom : ORIGIN = 0x30000000, LENGTH = 16M
+ 	ram : ORIGIN = 0x80000000, LENGTH = 512M
 }
 
 SECTIONS {
-	. = ORIGIN(mrom);
+	. = ORIGIN(rom);
 	.text :{
 		_stext = .;
 		*(entry)
 		*(.text*)
 		. = ALIGN(4);
 		_etext = . ;
-	} > mrom AT> mrom
+	} > rom AT> rom
 	
 	.rodata : {
 		*(.rodata*)
 		*(.srodata*)
 		. = ALIGN(4);
-	} > mrom AT> mrom
+	} > rom AT> rom
 
 	/*. = ALIGN(4);*/
 	/*由于一开始没考虑srodata,因为_sdata_mrom地址会多1*/
-	_sdata_mrom = LOADADDR(.data);
+	_sdata_rom = LOADADDR(.data);
 
 	.data : {  
-        _sdata_sram = .;
+        _sdata_ram = .;
         *(.data*)
 		*(.sdata*)
 	  	. = ALIGN(4);
-        _edata_sram = .;  
-    } > sram AT> mrom
+        _edata_ram = .;  
+    } > ram AT > rom
 
-	_edata_mrom = _sdata_mrom + SIZEOF(.data);
+	_edata_rom = _sdata_rom + SIZEOF(.data);
 	
 	.bss : {
     	_sbss = .;
@@ -43,11 +45,12 @@ SECTIONS {
     	*(.scommon)
 		. = ALIGN(4);
 		_ebss = .;
-  	} > sram AT> sram
+  	} > ram AT> ram
 
 	_heap_start = _ebss;
 	
-	. = ORIGIN(sram) + 0x1fff + 1;
+	/*. = ORIGIN(ram) + 0x1fff + 1;*/
+	. = ORIGIN(ram) + 0x1fffffff + 1;
 	_stack_pointer = . ;
 	_heap_end = . ;
 }
