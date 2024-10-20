@@ -13,8 +13,9 @@ void int2str(char *out, int in){
 		in = -in;
 		out[j++] = '-';
 	}
-	if(in == 0)
+	if(in == 0){
 		tmp[i++] = '0';
+	}
 	else{
 		while(in){
 			tmp[i++] = in % 10 + '0';
