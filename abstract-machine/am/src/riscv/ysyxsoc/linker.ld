@@ -5,7 +5,7 @@ MEMORY {
  	/*rom : ORIGIN = 0x20000000, LENGTH = 4K*/
  	/*ram : ORIGIN = 0x0f000000, LENGTH = 8K*/
 	rom : ORIGIN = 0x30000000, LENGTH = 16M
- 	ram : ORIGIN = 0x80000000, LENGTH = 512M
+ 	ram : ORIGIN = 0x80000000, LENGTH = 4M
 }
 
 SECTIONS {
@@ -50,7 +50,7 @@ SECTIONS {
 	_heap_start = _ebss;
 	
 	/*. = ORIGIN(ram) + 0x1fff + 1;*/
-	. = ORIGIN(ram) + 0x1fffffff + 1;
+	. = ORIGIN(ram) + 0x3fffff + 1;
 	_stack_pointer = . ;
 	_heap_end = . ;
 }
