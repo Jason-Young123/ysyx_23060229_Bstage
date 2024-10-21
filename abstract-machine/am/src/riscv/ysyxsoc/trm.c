@@ -36,7 +36,7 @@ void init_uart(){
 	*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x01;//0000_0000
 	//设置为16'b0000_0100_0000_0000,即1024
 	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x03;//0000_0011,恢复默认值
-	//printf("init_uart in trm.c\n");//注意只能在初始化完毕后才能输出信息
+	printf("init_uart in trm.c\n");//注意只能在初始化完毕后才能输出信息
 }
 
 void csrr_id(){
@@ -74,7 +74,7 @@ void _trm_init(){
 	init_uart();
 
 	//读出ysyx和学号
-	//csrr_id();
+	csrr_id();
 
 	int ret = main(mainargs);
     halt(ret);
