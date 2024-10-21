@@ -2,8 +2,11 @@
 #include <riscv/riscv.h>
 #include <ysyxsoc.h>
 
-#define RATIO_PARAM	 * 1000
-//用于将从模拟CLINT寄存器中读到的值转化为真实时间
+//#define RATIO_PARAM	 *4/5
+//用于将从模拟CLINT寄存器中读到的值转化为真实时间,适用于FAST_FLASH
+
+#define RATIO_PARAM	 *10
+//适用于XIP(非FAST_FLASH)
 
 void __am_timer_init() {
 }
