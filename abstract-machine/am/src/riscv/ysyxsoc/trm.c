@@ -36,7 +36,7 @@ void init_uart(){
 	*(volatile char *)(UART_BASE + UART_DLB1) = (char)0x01;//0000_0000
 	//设置为16'b0000_0100_0000_0000,即1024
 	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x03;//0000_0011,恢复默认值
-	//printf("init_uart in trm.c\n");//注意只能在初始化完毕后才能输出信息
+	printf("init_uart in trm.c\n");//注意只能在初始化完毕后才能输出信息
 }
 
 void csrr_id(){
@@ -49,8 +49,8 @@ void csrr_id(){
     char c1 = (char)((mvendorid & 0x0000ff00) >> 8);
     char c2 = (char)((mvendorid & 0x00ff0000) >> 16);
     char c3 = (char)((mvendorid & 0xff000000) >> 24);
-    char vendor[5] = {c3, c2, c1, c0, '\0'};
-	//putch(c3); putch(c2); putch(c1); putch(c0); putch('\n');
+    const char vendor[5] = {c3, c2, c1, c0, '\0'};
+	putch(c3); putch(c2); putch(c1); putch(c0); putch('\n');
     printf("vendorid: %s, archid: %d\n", vendor, marchid);
 }
 
@@ -74,7 +74,7 @@ void _trm_init(){
 	init_uart();
 
 	//读出ysyx和学号
-	//csrr_id();
+	csrr_id();
 
 	int ret = main(mainargs);
     halt(ret);
