@@ -10,24 +10,32 @@ MEMORY {
 
 SECTIONS {
 	. = ORIGIN(rom);
+	/*有关text的分配*/
+	_stext_rom = LOADADDR(.text);
 	.text :{
-		_stext = .;
+		_stext_ram = .;
 		*(entry)
 		*(.text*)
 		. = ALIGN(4);
-		_etext = . ;
-	} > rom AT> rom
-	
+		_etext_ram = . ;
+	} > ram AT> rom
+	_etext_rom = _stext_rom + SIZEOF(.text);
+
+	/*有关rodata的分配*/
+	_srodata_rom = LOADADDR(.rodata);
 	.rodata : {
+		_srodata_ram = .;
 		*(.rodata*)
 		*(.srodata*)
 		. = ALIGN(4);
-	} > rom AT> rom
+		_erodata_ram = .;
+	} > ram AT> rom
+	_erodata_rom = _srodata_rom + SIZEOF(.rodata);
 
 	/*. = ALIGN(4);*/
 	/*由于一开始没考虑srodata,因为_sdata_mrom地址会多1*/
+	/*有关data的分配*/
 	_sdata_rom = LOADADDR(.data);
-
 	.data : {  
         _sdata_ram = .;
         *(.data*)
@@ -35,20 +43,19 @@ SECTIONS {
 	  	. = ALIGN(4);
         _edata_ram = .;  
     } > ram AT > rom
-
 	_edata_rom = _sdata_rom + SIZEOF(.data);
 	
+
 	.bss : {
-    	_sbss = .;
+    	_sbss_ram = .;
     	*(.bss*)
     	*(.sbss*)
     	*(.scommon)
 		. = ALIGN(4);
-		_ebss = .;
+		_ebss_ram = .;
   	} > ram AT> ram
-
-	_heap_start = _ebss;
 	
+	_heap_start = _ebss_ram;
 	/*. = ORIGIN(ram) + 0x1fff + 1;*/
 	. = ORIGIN(ram) + 0x3fffff + 1;
 	_stack_pointer = . ;

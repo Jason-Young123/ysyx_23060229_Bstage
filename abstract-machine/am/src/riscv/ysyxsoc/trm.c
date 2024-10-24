@@ -6,9 +6,12 @@
 
 #define ysyxsoc_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
 
-extern char _sdata_rom;
-extern char _edata_rom;
-extern char _sdata_ram;
+extern char _stext_rom, _etext_rom;
+extern char _srodata_rom, _erodata_rom;
+extern char _sdata_rom, _edata_rom;
+extern char _stext_ram, _etext_ram;
+extern char _srodata_ram, _erodata_ram;
+extern char _sdata_ram, _edata_ram;
 
 extern char _heap_start;
 extern char _heap_end;
@@ -27,6 +30,36 @@ void putch(char ch){
 	while(!(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x20));
     *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
+
+
+void bootloader(){
+	size_t i;
+	//从rom向ram拷贝数据,模拟bootloader
+    //拷贝text段
+	size_t length_text = (size_t)&_etext_rom - (size_t)&_stext_rom;
+	size_t dest_text = (size_t)&_stext_ram;
+	size_t src_text = (size_t)&_stext_rom;
+	for(i = 0; i < length_text; i++){
+		*((char *)(dest_text + i)) = *((char *)(src_text + i));
+	}
+
+	//拷贝rodata段
+	size_t length_rodata = (size_t)&_erodata_rom - (size_t)&_srodata_rom;
+    size_t dest_rodata = (size_t)&_srodata_ram;
+    size_t src_rodata = (size_t)&_srodata_rom;
+    for(i = 0; i < length_rodata; i++){
+      *((char *)(dest_rodata + i)) = *((char *)(src_rodata + i));
+    }
+
+	//拷贝data段
+	size_t length_data = (size_t)&_edata_rom - (size_t)&_sdata_rom;
+    size_t dest_data = (size_t)&_sdata_ram;
+    size_t src_data = (size_t)&_sdata_rom;
+    for(i = 0; i < length_data; i++){
+      *((char *)(dest_data + i)) = *((char *)(src_data + i));
+    }
+}
+
 
 void init_uart(){
 	*(volatile char *)(UART_BASE + UART_LCR) = (char)0x83;//1000_0011
@@ -62,19 +95,21 @@ void halt(int code){
 void _trm_init(){
 	
 	//从rom向ram拷贝数据,模拟bootloader
-	size_t length = (size_t)&_edata_rom - (size_t)&_sdata_rom;
-	size_t dest = (size_t)&_sdata_ram;
-	size_t src = (size_t)&_sdata_rom;
-    size_t i;
-	for(i = 0; i < length; i++){
-		*((char *)(dest + i)) = *((char *)(src + i));
-	}
+	//size_t length = (size_t)&_edata_rom - (size_t)&_sdata_rom;
+	//size_t dest = (size_t)&_sdata_ram;
+	//size_t src = (size_t)&_sdata_rom;
+    //size_t i;
+	//for(i = 0; i < length; i++){
+	//	*((char *)(dest + i)) = *((char *)(src + i));
+	//}
+	
+	//bootloader();
 	
 	//初始化串口
-	init_uart();
+	//init_uart();
 
 	//读出ysyx和学号
-	csrr_id();
+	//csrr_id();
 
 	int ret = main(mainargs);
     halt(ret);
