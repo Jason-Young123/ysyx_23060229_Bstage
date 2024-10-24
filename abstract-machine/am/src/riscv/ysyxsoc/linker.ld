@@ -18,7 +18,7 @@ SECTIONS {
 		*(.text*)
 		. = ALIGN(4);
 		_etext_ram = . ;
-	} > ram AT> rom
+	} > ram AT > rom
 	_etext_rom = _stext_rom + SIZEOF(.text);
 
 	/*有关rodata的分配*/
@@ -29,16 +29,15 @@ SECTIONS {
 		*(.srodata*)
 		. = ALIGN(4);
 		_erodata_ram = .;
-	} > ram AT> rom
+	} > ram AT > rom
 	_erodata_rom = _srodata_rom + SIZEOF(.rodata);
 
-	/*. = ALIGN(4);*/
-	/*由于一开始没考虑srodata,因为_sdata_mrom地址会多1*/
+
 	/*有关data的分配*/
 	_sdata_rom = LOADADDR(.data);
 	.data : {  
         _sdata_ram = .;
-        *(.data*)
+		*(.data*)
 		*(.sdata*)
 	  	. = ALIGN(4);
         _edata_ram = .;  
@@ -53,7 +52,7 @@ SECTIONS {
     	*(.scommon)
 		. = ALIGN(4);
 		_ebss_ram = .;
-  	} > ram AT> ram
+  	}
 	
 	_heap_start = _ebss_ram;
 	/*. = ORIGIN(ram) + 0x1fff + 1;*/
