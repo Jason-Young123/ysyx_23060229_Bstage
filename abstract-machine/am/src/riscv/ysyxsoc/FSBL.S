@@ -1,8 +1,7 @@
 #用作First Stage Bootloader,位于flash基地址
 .section FSBL, "ax"
-.global _FSBL
+.globl _FSBL
 .type _FSBL, @function
-
 
 _FSBL:
 		#模拟first stage bootloader从rom加载SSBL段至SRAM

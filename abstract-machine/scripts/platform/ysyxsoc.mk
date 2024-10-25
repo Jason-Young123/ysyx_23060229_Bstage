@@ -1,9 +1,7 @@
 VERSION=V5
 
 AM_SRCS := riscv/ysyxsoc/start.S \
-		   riscv/ysyxsoc/FSBL.S \
-		   riscv/ysyxsoc/SSBL.S \
-           riscv/ysyxsoc/trm.c \
+		   riscv/ysyxsoc/trm.c \
 		   riscv/ysyxsoc/ioe/ioe.c \
            riscv/ysyxsoc/ioe/timer.c \
            riscv/ysyxsoc/ioe/input.c \
@@ -17,7 +15,7 @@ AM_SRCS := riscv/ysyxsoc/start.S \
 CFLAGS    += -fdata-sections -ffunction-sections
 
 LDFLAGS   += -T $(AM_HOME)/am/src/riscv/ysyxsoc/linker.ld
-LDFLAGS   += --gc-sections -e _start
+LDFLAGS   += --gc-sections
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/riscv/ysyxsoc/include

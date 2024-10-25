@@ -109,7 +109,7 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
-LDFLAGS  += -z noexecstack
+LDFLAGS  += -z noexecstack -M > /home/jason/map.log
 
 ## 4. Arch-Specific Configurations
 

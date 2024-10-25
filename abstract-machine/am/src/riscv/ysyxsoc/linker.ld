@@ -5,13 +5,12 @@ ENTRY(_FSBL)
 MEMORY {
  	/*rom : ORIGIN = 0x20000000, LENGTH = 4K*/
  	sram : ORIGIN = 0x0f000000, LENGTH = 8K
-	rom : ORIGIN = 0x30000000, LENGTH = 16M
- 	ram : ORIGIN = 0x80000000, LENGTH = 4M
+	rom  : ORIGIN = 0x30000000, LENGTH = 16M
+ 	ram  : ORIGIN = 0x80000000, LENGTH = 4M
 }
 
 SECTIONS {
 	. = ORIGIN(rom);
-	
 	/*有关FSBL的分配*/
 	_sFSBL_rom = LOADADDR(.FSBL);
 	.FSBL : {
@@ -20,6 +19,7 @@ SECTIONS {
 	} > rom AT > rom
 	_eFSBL_rom = _sFSBL_rom + SIZEOF(.FSBL);
 	
+
 	/*有关SSBL的分配*/
 	_sSSBL_rom = LOADADDR(.SSBL);
 	.SSBL : {
@@ -27,8 +27,9 @@ SECTIONS {
 		*(SSBL)
 		. = ALIGN(4);
 		_eSSBL_sram = .;
-	} > rom AT > sram
+	} > sram AT > rom
 	_eSSBL_rom = _sSSBL_rom + SIZEOF(.SSBL);
+
 
 	/*有关text的分配*/
 	_stext_rom = LOADADDR(.text);
@@ -41,6 +42,7 @@ SECTIONS {
 	} > ram AT > rom
 	_etext_rom = _stext_rom + SIZEOF(.text);
 
+	
 	/*有关rodata的分配*/
 	_srodata_rom = LOADADDR(.rodata);
 	.rodata : {
@@ -81,7 +83,8 @@ SECTIONS {
 	_heap_end = . ;
 }
 
-SECTIONS {
+
+/*SECTIONS {
   .bss.extra : {
     . = ALIGN(8);
     __am_apps_bss_start = .;
@@ -92,14 +95,13 @@ SECTIONS {
     . = ALIGN(8);
   }
 }
-INSERT BEFORE .bss;
+INSERT BEFORE .bss;*/
 
-
+/*
 SECTIONS {
 	_sdata_extra_rom = LOADADDR(.data.extra);
   .data.extra : {
 	_sdata_extra_ram = .;
-    /* section information for finsh shell*/
     __fsymtab_start = .;
     KEEP(*(FSymTab))
     __fsymtab_end = .;
@@ -109,7 +111,6 @@ SECTIONS {
     __vsymtab_end = .;
     . = ALIGN(8);
 
-    /* section information for initial.*/
     . = ALIGN(8);
     __rt_init_start = .;
     KEEP(*(SORT(.rti_fn*)))
@@ -132,4 +133,4 @@ SECTIONS {
   _edata_extra_rom = _sdata_extra_rom + SIZEOF(.data.extra);
 
 }
-INSERT BEFORE .data;
+INSERT BEFORE .data;*/
