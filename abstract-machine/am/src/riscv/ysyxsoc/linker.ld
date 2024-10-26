@@ -15,7 +15,7 @@ SECTIONS {
 	_sFSBL_rom = LOADADDR(.FSBL);
 	.FSBL : {
 		*(FSBL)
-		. = ALIGN(4);
+		. = ALIGN(8);
 	} > rom AT > rom
 	_eFSBL_rom = _sFSBL_rom + SIZEOF(.FSBL);
 	
@@ -25,7 +25,7 @@ SECTIONS {
 	.SSBL : {
 		_sSSBL_sram = .;
 		*(SSBL)
-		. = ALIGN(4);
+		. = ALIGN(8);
 		_eSSBL_sram = .;
 	} > sram AT > rom
 	_eSSBL_rom = _sSSBL_rom + SIZEOF(.SSBL);
@@ -49,10 +49,44 @@ SECTIONS {
 		_srodata_ram = .;
 		*(.rodata*)
 		*(.srodata*)
-		. = ALIGN(4);
+		. = ALIGN(8);
 		_erodata_ram = .;
 	} > ram AT > rom
 	_erodata_rom = _srodata_rom + SIZEOF(.rodata);
+
+	
+	_sdata_extra_rom = LOADADDR(.data.extra);
+  .data.extra : {
+    _sdata_extra_ram = .;
+    __fsymtab_start = .;
+    KEEP(*(FSymTab))
+    __fsymtab_end = .;
+    . = ALIGN(8);
+    __vsymtab_start = .;
+    KEEP(*(VSymTab))
+    __vsymtab_end = .;
+    . = ALIGN(8);
+
+    . = ALIGN(8);
+    __rt_init_start = .;
+    KEEP(*(SORT(.rti_fn*)))
+    __rt_init_end = .;
+    . = ALIGN(8);
+
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
+
+    . = ALIGN(8);
+    __am_apps_data_start = .;
+    *(__am_apps.data*)
+    *(__am_apps.sdata*)
+    __am_apps_data_end = .;
+    . = ALIGN(8);
+    _edata_extra_ram = .;
+  } > ram AT > rom
+
+  _edata_extra_rom = _sdata_extra_rom + SIZEOF(.data.extra);
 
 
 	/*有关data的分配*/
@@ -61,20 +95,31 @@ SECTIONS {
         _sdata_ram = .;
 		*(.data*)
 		*(.sdata*)
-	  	. = ALIGN(4);
+	  	. = ALIGN(8);
         _edata_ram = .;  
     } > ram AT > rom
 	_edata_rom = _sdata_rom + SIZEOF(.data);
+
 	
+	.bss.extra : {
+    . = ALIGN(8);
+    __am_apps_bss_start = .;
+    *(__am_apps.bss*)
+    *(__am_apps.sbss*)
+    *(__am_apps.scommon*)
+    __am_apps_bss_end = .;
+    . = ALIGN(8);
+  } > ram AT > ram
+		
 
 	.bss : {
     	_sbss_ram = .;
     	*(.bss*)
     	*(.sbss*)
     	*(.scommon)
-		. = ALIGN(4);
+		. = ALIGN(8);
 		_ebss_ram = .;
-  	}
+  	} > ram AT > ram
 	
 	_heap_start = _ebss_ram;
 	/*. = ORIGIN(ram) + 0x1fff + 1;*/
@@ -84,7 +129,8 @@ SECTIONS {
 }
 
 
-/*SECTIONS {
+/*
+SECTIONS {
   .bss.extra : {
     . = ALIGN(8);
     __am_apps_bss_start = .;
@@ -93,11 +139,11 @@ SECTIONS {
     *(__am_apps.scommon*)
     __am_apps_bss_end = .;
     . = ALIGN(8);
-  }
+  } > ram AT > ram
 }
-INSERT BEFORE .bss;*/
+INSERT BEFORE .bss;
 
-/*
+
 SECTIONS {
 	_sdata_extra_rom = LOADADDR(.data.extra);
   .data.extra : {
@@ -133,4 +179,5 @@ SECTIONS {
   _edata_extra_rom = _sdata_extra_rom + SIZEOF(.data.extra);
 
 }
-INSERT BEFORE .data;*/
+INSERT BEFORE .data;
+*/
