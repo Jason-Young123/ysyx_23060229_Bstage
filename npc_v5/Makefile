@@ -26,6 +26,7 @@ VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
 
 
 CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file
+CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 	   /lib/x86_64-linux-gnu/libSDL2.so
 
@@ -40,6 +41,9 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		#$(shell find $(WAVESIM_FILE)/difftest -type f -name "*.cpp")\
 		#$(shell find $(WAVESIM_FILE)/memory -type f -name "*.cpp")\
 
+SRCS_BD += $(CONSTR)/auto_bind.cpp\
+		   $(BOARDSIM_FILE)/boardsim.cpp\
+		   $(NVBOARD_HOME)/build/nvboard.a
 #SRCS += $(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp") \
 #		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp") \
 #		$(WAVESIM_FILE)/wavesim.cpp
@@ -69,19 +73,27 @@ convert:
 
 
 constrgen:
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py  $(CONSTR)/$(TOP_MODULE).nxdc  $(CONSTR)/auto_bind.cpp
+	@python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py  $(CONSTR)/$(TOP_MODULE).nxdc  $(CONSTR)/auto_bind.cpp
 
 constrclean:
 	rm $(CONSTR)/auto_bind.cpp
 
 
+#boardsim:
+#	$(call git_commit, "boardsim in npc")
+#	verilator $(VERILATOR_CFLAGS) \
+#	-CFLAGS -MMD -CFLAGS -O3 -CFLAGS -I/usr/include/SDL2 -CFLAGS -D_REENTRANT -CFLAGS  -CFLAGS -DTOP_NAME="\"V$(TOP_MODULE)\"" -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf \
+#	--Mdir obj_dir --exe -o $(TOP_MODULE) -I$(VFILE)
+#	cp obj_dir/$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
+
 boardsim:
 	$(call git_commit, "boardsim in npc")
-	verilator $(VERILATOR_CFLAGS) \
-	--top-module $(TOP_MODULE) $(VFILE)/$(TOP_MODULE).v  $(CONSTR)/auto_bind.cpp  $(BOARDSIM_FILE)/boardsim.cpp  $(NVBOARD_HOME)/build/nvboard.a \
-    -CFLAGS -MMD -CFLAGS -O3 -CFLAGS -I/usr/include/SDL2 -CFLAGS -D_REENTRANT -CFLAGS -I/home/jason/nvboard-master/usr/include -CFLAGS -DTOP_NAME="\"V$(TOP_MODULE)\"" -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf \
-	--Mdir obj_dir --exe -o $(TOP_MODULE) -I$(VFILE)
-	cp obj_dir/$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
+	@verilator --autoflush --trace \
+		--top-module $(TOP_MODULE) \
+		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
+		--exe $(SRCS) $(SRCS_BD) -CFLAGS $(CFLAGS) $(CFLAGS_BD) -D $(LIBS)
+	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)_board
+	@cp obj_dir/V$(TOP_MODULE)_board $(BOARDSIM_FILE)/$(TOP_MODULE)_board
 
 board:
 	$(BOARDSIM_FILE)/$(TOP_MODULE)_board
