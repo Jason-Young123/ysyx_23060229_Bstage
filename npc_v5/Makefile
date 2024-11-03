@@ -29,6 +29,8 @@ CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file
 CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 	   /lib/x86_64-linux-gnu/libSDL2.so\
+	   /lib/x86_64-linux-gnu/libSDL2_image.so\
+	   /lib/x86_64-linux-gnu/libSDL2_ttf.so\
 	   $(NVBOARD_HOME)/build/nvboard.a
 
 SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
