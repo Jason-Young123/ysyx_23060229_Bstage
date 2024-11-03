@@ -28,7 +28,8 @@ VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
 CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file
 CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
-	   /lib/x86_64-linux-gnu/libSDL2.so
+	   /lib/x86_64-linux-gnu/libSDL2.so\
+	   $(NVBOARD_HOME)/build/nvboard.a
 
 SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp")\
@@ -37,9 +38,9 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/flash -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/psram -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/sdram -type f -name "*.cpp")\
-		$(WAVESIM_FILE)/wavesim.cpp\
 		$(CONSTR)/auto_bind.cpp\
 		$(BOARDSIM_FILE)/boardsim.cpp
+		#$(WAVESIM_FILE)/wavesim.cpp\
 		#$(NVBOARD_HOME)/build/nvboard.a
 #SRCS += $(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp") \
 #		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp") \
