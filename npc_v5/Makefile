@@ -91,6 +91,7 @@ boardsim:
 	@verilator --autoflush --trace \
 		--top-module $(TOP_MODULE) \
 		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
+		-I$(NVBOARD_HOME)/usr/include\
 		--exe $(SRCS) $(SRCS_BD) -CFLAGS $(CFLAGS) $(CFLAGS_BD) -D $(LIBS)
 	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
 	@cp obj_dir/V$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
