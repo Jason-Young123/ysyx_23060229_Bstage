@@ -26,7 +26,7 @@ VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
 
 
 CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file\
-			-I$(NVBOARD_HOME)/usr/include
+CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 	   /lib/x86_64-linux-gnu/libSDL2.so
 
@@ -88,7 +88,7 @@ boardsim:
 	@verilator --autoflush --trace \
 		--top-module $(TOP_MODULE) \
 		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
-		--exe $(SRCS) -CFLAGS $(CFLAGS) -D $(LIBS)
+		--exe $(SRCS) -CFLAGS $(CFLAGS) -CFLAGS $(CFLAGS_BD) -D $(LIBS)
 	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
 	@cp obj_dir/V$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
 
