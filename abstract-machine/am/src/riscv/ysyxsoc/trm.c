@@ -73,10 +73,10 @@ void init_uart(){
 }
 
 
-unsigned int mvendorid,marchid;
+//unsigned int mvendorid,marchid;
 void csrr_id(){
 	printf("csrr_id in trm.c\n");
-	//unsigned int mvendorid, marchid;
+	unsigned int mvendorid, marchid;
     asm volatile("csrr %0, mvendorid" : "=r"(mvendorid));
     asm volatile("csrr %0, marchid" : "=r"(marchid));
 
