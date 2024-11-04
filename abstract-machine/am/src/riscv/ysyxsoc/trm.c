@@ -72,9 +72,11 @@ void init_uart(){
 	printf("init_uart in trm.c\n");//注意只能在初始化完毕后才能输出信息
 }
 
+
+unsigned int mvendorid,marchid;
 void csrr_id(){
 	printf("csrr_id in trm.c\n");
-	unsigned int mvendorid, marchid;
+	//unsigned int mvendorid, marchid;
     asm volatile("csrr %0, mvendorid" : "=r"(mvendorid));
     asm volatile("csrr %0, marchid" : "=r"(marchid));
 
@@ -92,8 +94,8 @@ void halt(int code){
     while(1);
 }
 
+
 void _trm_init(){
-	
 	//从rom向ram拷贝数据,模拟bootloader
 	//size_t length = (size_t)&_edata_rom - (size_t)&_sdata_rom;
 	//size_t dest = (size_t)&_sdata_ram;
