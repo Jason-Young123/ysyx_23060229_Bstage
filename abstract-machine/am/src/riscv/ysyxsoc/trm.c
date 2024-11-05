@@ -31,6 +31,12 @@ void putch(char ch){
     *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
+char getch(){
+	if(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x01)//接收到数据
+		return *(volatile char*)(UART_BASE + UART_RX);
+	else
+		return (char)0xff;
+}
 
 void bootloader(){
 	size_t i;

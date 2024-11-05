@@ -1,5 +1,6 @@
 #define UART_BASE 0x10000000
 #define UART_TX 0
+#define UART_RX	0
 #define UART_LCR 3
 //Line Control Register
 #define UART_DLB1 0
