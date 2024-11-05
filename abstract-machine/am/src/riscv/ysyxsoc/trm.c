@@ -25,15 +25,22 @@ int main(const char *args);
 #endif
 static const char mainargs[] = MAINARGS;
 
+//outb和inb定义于riscv.h
 void putch(char ch){
 	//注意LSR第五位指示FIFO是否还有空位
-	while(!(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x20));
-    *(volatile char *)(UART_BASE + UART_TX) = ch;
+	//while(!(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x20));
+    //*(volatile char *)(UART_BASE + UART_TX) = ch;
+	while(!(inb(UART_BASE + UART_LSR) & (char)0x20));
+	outb(UART_BASE + UART_TX, ch);
 }
 
 char getch(){
-	if(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x01)//接收到数据
-		return *(volatile char*)(UART_BASE + UART_RX);
+	//if(*(volatile char *)(UART_BASE + UART_LSR) & (char)0x01)//接收到数据
+	//	return *(volatile char*)(UART_BASE + UART_RX);
+	//else
+	//	return (char)0xff;
+	/if(inb(UART_BASE + UART_LSR) & (char)0x01)
+		return inb(UART_BASE + UART_RX);
 	else
 		return (char)0xff;
 }
