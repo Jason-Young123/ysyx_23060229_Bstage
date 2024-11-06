@@ -39,7 +39,7 @@ char getch(){
 	//	return *(volatile char*)(UART_BASE + UART_RX);
 	//else
 	//	return (char)0xff;
-	/if(inb(UART_BASE + UART_LSR) & (char)0x01)
+	if(inb(UART_BASE + UART_LSR) & (char)0x01)
 		return inb(UART_BASE + UART_RX);
 	else
 		return (char)0xff;

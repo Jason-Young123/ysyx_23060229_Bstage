@@ -32,6 +32,15 @@ AM_DEVREG(22, NET_STATUS,   RD, int rx_len, tx_len);
 AM_DEVREG(23, NET_TX,       WR, Area buf);
 AM_DEVREG(24, NET_RX,       WR, Area buf);
 
+
+//新增
+AM_DEVREG(25, GPIO_LED_RD,	RD, uint16_t data);
+AM_DEVREG(26, GPIO_LED_WR,  WR, uint16_t data);
+AM_DEVREG(27, GPIO_SWITCH,  RD, uint16_t data);
+AM_DEVREG(28, GPIO_SEG_RD,  RD, uint32_t data);
+AM_DEVREG(29, GPIO_SEG_WR,  WR, uint32_t data);
+
+
 // Input
 
 #define AM_KEYS(_) \

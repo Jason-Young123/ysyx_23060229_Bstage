@@ -10,9 +10,15 @@
 //的值应该等于2G/115200/16 ~ 1024,即DL内数据应该为:
 //0000_0100_0000_0000
 //亦即应该向DLB1写入0000_0000,向DLB2写入0000_0100
-
 #define UART_LSR 5
 //状态寄存器
+
+
+#define GPIO_BASE	0x10002000
+#define GPIO_LED	GPIO_BASE + 0x0
+#define GPIO_SWITCH	GPIO_BASE + 0x4
+#define GPIO_SEG	GPIO_BASE + 0x8
+
 
 
 #define CLINT_BASE 	0x02000000
