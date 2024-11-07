@@ -52,6 +52,13 @@ AM_DEVREG(29, GPIO_SEG_WR,  WR, uint32_t data);
   _(LCTRL) _(APPLICATION) _(LALT) _(SPACE) _(RALT) _(RCTRL) \
   _(UP) _(DOWN) _(LEFT) _(RIGHT) _(INSERT) _(DELETE) _(HOME) _(END) _(PAGEUP) _(PAGEDOWN)
 
+
+	
+
+
+
+
+
 #define AM_KEY_NAMES(key) AM_KEY_##key,
 enum {
   AM_KEY_NONE = 0,
