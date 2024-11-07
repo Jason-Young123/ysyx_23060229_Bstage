@@ -7,6 +7,6 @@
 
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 	uint32_t scancode = inl(KBD_BASE);
-    kbd -> keycode = (uint8_t)inb(KBD_BASE);
-	kbd -> keydown = (bool)(scancode >> 8);
+    kbd -> keycode = scancode;
+	kbd -> keydown = (bool)(scancode & 0xffff0000);
 }
