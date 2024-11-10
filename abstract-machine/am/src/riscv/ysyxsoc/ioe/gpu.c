@@ -2,7 +2,7 @@
 #include <riscv/riscv.h>
 #include <ysyxsoc.h>
 
-#define SYNC_ADDR (VGACTL_BASE + 4)
+//#define SYNC_ADDR (VGACTL_BASE + 4)
 
 #define SCREEN_W 400
 #define SCREEN_H 300
@@ -42,8 +42,8 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     //for(int i = 0; i < 400*50; ++i)
     //  outl(FB_BASE + 4*i, 0x00ffffff);
 
-    if (ctl->sync)
-        outl(SYNC_ADDR, 1);
+    //if (ctl->sync)
+    //    outl(SYNC_ADDR, 1);
     //else
     //  outl(SYNC_ADDR, 0);
 
@@ -51,7 +51,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
 
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
-  status->ready = true;
+	status->ready = true;
 }
 
 
