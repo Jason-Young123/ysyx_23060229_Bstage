@@ -1,11 +1,13 @@
 #include <am.h>
 #include <riscv/riscv.h>
 #include <ysyxsoc.h>
+#include <klib.h>
+#include <klib-macros.h>
 
 //#define SYNC_ADDR (VGACTL_BASE + 4)
 
-#define SCREEN_W 400
-#define SCREEN_H 300
+#define SCREEN_W 640
+#define SCREEN_H 480
 
 
 void __am_gpu_init() {
@@ -31,13 +33,22 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     /*for(int y = 0; y < ctl->h; y++){
         out(FB_BASE+4*(y+ctl->y)*SCREEN_W, color_buf+y*ctl->w, ctl->w);
     }*/
+	int h = ctl->h; 
+	int w = ctl->w;
+	int y_start = ctl->y;
+	int x_start = ctl->x;
 
-    for(int y = 0; y < ctl -> h; y++){
-        for(int x = 0; x < ctl -> w; x++){
-            outl(FB_BASE + 4*((y + ctl -> y)*SCREEN_W + (x + ctl -> x)), color_buf[y*ctl->w+x]);
+    //uint64_t t1 = io_read(AM_TIMER_UPTIME).us;
+	for(int y = 0; y < h; y++){
+        for(int x = 0; x < w; x++){
+            //outl(FB_BASE + 4*((y_start + y)*SCREEN_W + (x_start + x)), color_buf[y*ctl->w+x]);
+            outl(FB_BASE + 4*((y_start + y)*SCREEN_W + (x_start + x)), color_buf[y*w+x]);
             //outl(FB_BASE + y * 400 + x, 0x00ff0000);
+			//*(volatile uint32_t *)(FB_BASE + ((y_start + y) * SCREEN_W + (x_start + x)) * 4) = 0x00ff0000;
         }
     }
+	//uint64_t t2 = io_read(AM_TIMER_UPTIME).us;
+	//printf("time on vga kernel real is: %d ms\n", (t2 - t1)/1000);
 	//用于测试
     //for(int i = 0; i < 400*50; ++i)
     //  outl(FB_BASE + 4*i, 0x00ffffff);
