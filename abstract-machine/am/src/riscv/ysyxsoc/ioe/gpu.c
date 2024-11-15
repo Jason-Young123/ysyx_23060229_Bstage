@@ -27,24 +27,16 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 //表示这个方块是否要被立刻显示
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     uint32_t* color_buf = (uint32_t*)ctl -> pixels;
-    //uint8_t* color_buf = (uint8_t*)ctl->pixels;
-
-
-    /*for(int y = 0; y < ctl->h; y++){
-        out(FB_BASE+4*(y+ctl->y)*SCREEN_W, color_buf+y*ctl->w, ctl->w);
-    }*/
+	
 	int h = ctl->h; 
 	int w = ctl->w;
 	int y_start = ctl->y;
 	int x_start = ctl->x;
 
-    //uint64_t t1 = io_read(AM_TIMER_UPTIME).us;
 	for(int y = 0; y < h; y++){
         for(int x = 0; x < w; x++){
-            //outl(FB_BASE + 4*((y_start + y)*SCREEN_W + (x_start + x)), color_buf[y*ctl->w+x]);
+            //outl(FB_BASE + 4*((ctl->y + y)*SCREEN_W + (ctl->x + x)), color_buf[y*ctl->w+x]);
             outl(FB_BASE + 4*((y_start + y)*SCREEN_W + (x_start + x)), color_buf[y*w+x]);
-            //outl(FB_BASE + y * 400 + x, 0x00ff0000);
-			//*(volatile uint32_t *)(FB_BASE + ((y_start + y) * SCREEN_W + (x_start + x)) * 4) = 0x00ff0000;
         }
     }
 	//uint64_t t2 = io_read(AM_TIMER_UPTIME).us;
