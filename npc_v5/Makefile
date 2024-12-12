@@ -126,6 +126,12 @@ ifeq ($(ISWAVE), 1)
 endif
 
 
+perf:
+	@echo "Using microbench to evaluate performance ..."
+	@make -C $(KERNEL_HOME)/benchmarks/microbench ARCH=riscv32e-ysyxsoc mainargs=test run
+	@make -C $(YOSYS_HOME) sta
+	@tail -n 108 $(YOSYS_HOME)/result/ysyx_23060229-500MHz/synth_stat.txt
+
 waveclean:
 	rm $(WAVESIM_FILE)/$(TOP_MODULE)_wave
 	rm $(WAVESIM_FILE)/wave.vcd
