@@ -69,7 +69,7 @@ convert:
 	-cc $(TOP_MODULE_FILE) \
 	$(VFILE) \
 	$(INCLUDES) \
-	$(TIMING) 
+	$(TIMING)
 #$(shell find $(VFILE) -name "*.v") $(shell find $(VSRC) -name "*.v") \
 #$(TIMING)
 
