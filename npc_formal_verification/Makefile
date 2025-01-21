@@ -1,20 +1,17 @@
 .PHONY: wavesim
 
-#TOP_MODULE = ysyx_23060229_top
-VERSION = V5
+VERSION = FV
 
 CONSTR = $(NPC_$(VERSION)_HOME)/constr
 
 
-TOP_MODULE = ysyxSoCFull
-TOP_MODULE_FILE = $(SOC_HOME)/build/ysyxSoCFull.v
+TOP_MODULE = top
+TOP_MODULE_FILE = $(NPC_$(VERSION)_HOME)/vfile/top.v
 
-VFILE += $(shell find $(SOC_HOME)/perip -type f -name "*.v") \
-		$(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
+VFILE += $(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
 
-SEARCH_PATH = $(SOC_HOME)/perip/uart16550/rtl \
-			  $(SOC_HOME)/perip/spi/rtl \
-			  $(NPC_$(VERSION)_HOME)/vfile
+SEARCH_PATH = $(NPC_$(VERSION)_HOME)/vfile
+
 INCLUDES = $(foreach dir, $(SEARCH_PATH), -I$(dir))
 
 BOARDSIM_FILE = $(NPC_$(VERSION)_HOME)/boardsim_file
@@ -46,10 +43,6 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		#$(BOARDSIM_FILE)/boardsim.cpp
 		#$(WAVESIM_FILE)/wavesim.cpp\
 		#$(NVBOARD_HOME)/build/nvboard.a
-#SRCS += $(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp") \
-#		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp") \
-#		$(WAVESIM_FILE)/wavesim.cpp
-
 
 BIN ?= ./bin/dummy-riscv32e-ysyxsoc.bin
 ISWAVE = 0
@@ -70,8 +63,6 @@ convert:
 	$(VFILE) \
 	$(INCLUDES) \
 	$(TIMING)
-#$(shell find $(VFILE) -name "*.v") $(shell find $(VSRC) -name "*.v") \
-#$(TIMING)
 
 
 constrgen:
