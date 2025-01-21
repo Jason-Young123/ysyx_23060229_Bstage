@@ -13,7 +13,6 @@
 
 class Vysyx_23060229_top__Syms;
 class Vysyx_23060229_top___024root;
-class VerilatedVcdC;
 class Vysyx_23060229_top___024unit;
 
 
@@ -70,8 +69,6 @@ class Vysyx_23060229_top VL_NOT_FINAL : public VerilatedModel {
     bool eventsPending();
     /// Returns time at next time slot. Aborts if !eventsPending()
     uint64_t nextTimeSlot();
-    /// Trace signals in the model; called by application code
-    void trace(VerilatedVcdC* tfp, int levels, int options = 0);
     /// Retrieve name of this model instance (as passed to constructor).
     const char* name() const;
 
@@ -79,7 +76,6 @@ class Vysyx_23060229_top VL_NOT_FINAL : public VerilatedModel {
     const char* hierName() const override final;
     const char* modelName() const override final;
     unsigned threads() const override final;
-    std::unique_ptr<VerilatedTraceConfig> traceConfig() const override final;
 } VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);
 
 #endif  // guard
