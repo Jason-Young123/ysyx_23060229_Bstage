@@ -38,8 +38,8 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/psram -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/sdram -type f -name "*.cpp")\
 		$(shell find $(WAVESIM_FILE)/vga -type f -name "*.cpp")\
-		$(CONSTR)/auto_bind.cpp\
 		$(WAVESIM_FILE)/wavesim.cpp
+		#$(CONSTR)/auto_bind.cpp
 		#$(BOARDSIM_FILE)/boardsim.cpp
 		#$(WAVESIM_FILE)/wavesim.cpp\
 		#$(NVBOARD_HOME)/build/nvboard.a
