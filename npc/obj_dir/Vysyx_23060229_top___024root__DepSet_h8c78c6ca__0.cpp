@@ -34,6 +34,7 @@ void Vysyx_23060229_top___024root___eval_nba(Vysyx_23060229_top___024root* vlSel
     // Body
     if (vlSelf->__VnbaTriggered.at(0U)) {
         Vysyx_23060229_top___024root___nba_sequent__TOP__0(vlSelf);
+        vlSelf->__Vm_traceActivity[1U] = 1U;
     }
 }
 

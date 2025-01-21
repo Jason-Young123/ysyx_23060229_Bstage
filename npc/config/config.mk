@@ -9,7 +9,7 @@
 Q            := @
 KCONFIG_PATH := $(NEMU_HOME)/tools/kconfig
 FIXDEP_PATH  := $(NEMU_HOME)/tools/fixdep
-Kconfig      := $(NPC_HOME)/config/Kconfig
+Kconfig      := $(NPC_$(VERSION)_HOME)/config/Kconfig
 #rm-distclean += include/generated include/config .config .config.old
 silent := -s
 
@@ -29,8 +29,8 @@ $(FIXDEP):
 menuconfig: $(MCONF) $(CONF) $(FIXDEP)
 	$(Q)$(MCONF) $(Kconfig)
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
-	@cp $(NPC_HOME)/.config $(NPC_HOME)/config/.config
-	@$(NPC_HOME)/config/generate.sh
+	@cp $(NPC_$(VERSION)_HOME)/.config $(NPC_$(VERSION)_HOME)/config/.config
+	@$(NPC_$(VERSION)_HOME)/config/generate.sh
 
 
 savedefconfig: $(CONF)

@@ -24,7 +24,7 @@ module ysyx_23060229_Register #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(
 		if(rst) begin
 			$display("Register resetting ...");
             $readmemh("resource/reg.hex",Reg);
-			pc <= 32'h80000000;//pc reset
+			pc <= 32'h30000000;//pc reset
 		end
 		else begin 
 			pc <= pcin;//pc updated

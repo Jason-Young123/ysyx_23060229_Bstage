@@ -1,18 +1,20 @@
 .PHONY: wavesim
 
+VERSION = V0
+
 TOP_MODULE = ysyx_23060229_top
 
-CONSTR = $(NPC_HOME)/constr
-VFILE = $(NPC_HOME)/vfile
-BOARDSIM_FILE = $(NPC_HOME)/boardsim_file
-WAVESIM_FILE = $(NPC_HOME)/wavesim_file
+CONSTR = $(NPC_$(VERSION)_HOME)/constr
+VFILE = $(NPC_$(VERSION)_HOME)/vfile
+BOARDSIM_FILE = $(NPC_$(VERSION)_HOME)/boardsim_file
+WAVESIM_FILE = $(NPC_$(VERSION)_HOME)/wavesim_file
 
 VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
 					--x-initial fast --noassert
 
 
 
-CFLAGS += -I$(NPC_HOME)/wavesim_file
+CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 	   /lib/x86_64-linux-gnu/libSDL2.so
 
@@ -31,7 +33,7 @@ ISWAVE = 0
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 include ~/Desktop/ysyx-workbench/Makefile
-include $(NPC_HOME)/config/config.mk
+include $(NPC_$(VERSION)_HOME)/config/config.mk
 
 #TIMING = --timing
 
