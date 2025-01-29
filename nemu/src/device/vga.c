@@ -71,31 +71,10 @@ static inline void update_screen() {
 #endif
 #endif
 
-
-
-
-//vga_update_screen 在nemu中被调用，类比串口的putchar，不过有延迟而已
 void vga_update_screen() {
-	if(vgactl_port_base[1] == 1){
-		update_screen();
-		vgactl_port_base[1] = 0;
-	}
+  // TODO: call `update_screen()` when the sync register is non-zero,
+  // then zero out the sync register
 }
-
-
-
-
-/*static void vga_port_handler(uint32_t offset, int len, bool is_write) {
-  	//printf("in rtc_io_handler: offset = %d, len = %d, is_write = %d\n",offset,len,is_write);
-  	if(offset == 0 && is_write == 1){//写vgactl_port_base[0]，亦即VGACTL_ADDR
-	}
-	
-	else if(offset == 4 && is_write == 1){}
-}*/
-
-
-
-
 
 void init_vga() {
   vgactl_port_base = (uint32_t *)new_space(8);

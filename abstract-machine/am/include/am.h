@@ -20,14 +20,6 @@ typedef struct {
 // Arch-dependent processor context
 typedef struct Context Context;
 
-
-/*typedef struct arg{
-	void* func1;
-	void* arg1;
-	void* func2;
-} Arg;*/
-
-
 // An event of type @event, caused by @cause of pointer @ref
 typedef struct {
   enum {
@@ -54,7 +46,6 @@ extern "C" {
 // ----------------------- TRM: Turing Machine -----------------------
 extern   Area        heap;
 void     putch       (char ch);
-char	 getch		 (void);
 void     halt        (int code) __attribute__((__noreturn__));
 
 // -------------------- IOE: Input/Output Devices --------------------

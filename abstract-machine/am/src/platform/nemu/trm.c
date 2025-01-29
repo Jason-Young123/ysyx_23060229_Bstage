@@ -11,7 +11,6 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch) {
-  //printf("in am/src/platform/nemu/trm.c");
   outb(SERIAL_PORT, ch);
 }
 
@@ -23,6 +22,6 @@ void halt(int code) {
 }
 
 void _trm_init() {
-  int ret = main(mainargs);//set the rule that prog starts with main
+  int ret = main(mainargs);
   halt(ret);
 }

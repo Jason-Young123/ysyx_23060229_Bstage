@@ -6,5 +6,3 @@ LDFLAGS       += -melf64lriscv
 
 # overwrite ARCH_H defined in $(AM_HOME)/Makefile
 ARCH_H := arch/riscv.h
-
-#$(info #include out1--------------------)

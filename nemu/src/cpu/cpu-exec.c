@@ -30,14 +30,7 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
-//functions defined in other files
 void device_update();
-int check_usage(int wp_used[32], char expression_stored[32][32],\
-                word_t result[32]);
-word_t expr(char *e, bool *success, bool *null);
-void update_wp_result(int no, word_t _result);
-
-
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -45,56 +38,22 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-
-
-#ifdef CONFIG_WP_ON
-  int wp_used[32];
-  char expression_stored[32][32];
-  word_t result[32];
-  int num = check_usage(wp_used, expression_stored, result);
-
-  for(int i = 0; i < num; i++){
-  	bool success, null;
-	word_t cur = expr(expression_stored[i], &success, &null);
-	if(cur != result[i]){
-		printf("--------------------------------------\n");
-		printf("! changes at watchpoint NO.%d: %s detected\n",\
-						wp_used[i],expression_stored[i]);
-		printf("previous result: %u ; current result: %u\n",\
-						result[i], cur);
-		update_wp_result(wp_used[i], cur);
-		if(nemu_state.state == NEMU_RUNNING)//exclude the situation that 
-			nemu_state.state = NEMU_STOP;//nemu has executed the ebreak inst
-		printf("watchpoint triggered !\n");
-        printf("--------------------------------------\n");
-	}
-  }
-#endif
-
 }
 
-
-
-//cpu.pc is not the same as s->pc
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
-  isa_exec_once(s);//s->dnpc and s->snpc updated
-  //printf("test 1:%s\n",s->logbuf);
-  cpu.pc = s->dnpc;//cpu.pc updated
+  isa_exec_once(s);
+  cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//s->pc not updated
-  //printf("test 2:%s\n",s->logbuf);
-  int ilen = s->snpc - s->pc;//s->snpc has to be larger than s->pc
-							 //s->snpc - s->pc represents the previous inst
-							 //just executed
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
+  int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
-  //printf("test 3:%s\n",s->logbuf);
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0) space_len = 0;
@@ -102,13 +61,10 @@ static void exec_once(Decode *s, vaddr_t pc) {
   memset(p, ' ', space_len);
   p += space_len;
 
-
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-  //printf("test 4:%s\n",s->logbuf);
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
@@ -121,19 +77,10 @@ static void execute(uint64_t n) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
-
-    if (nemu_state.state != NEMU_RUNNING) {
-		//if(nemu_state.state == NEMU_STOP){
-		//	printf("watchpoint triggered !\n");
-		//	printf("--------------------------------------\n");
-		//}
-		break;
-	}
+    if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }
-
-
 
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
