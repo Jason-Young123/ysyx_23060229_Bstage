@@ -60,6 +60,7 @@ void sim_t::diff_get_regs(void* diff_context) {
     ctx->gpr[i] = state->XPR[i];
   }
   ctx->pc = state->pc;
+  //printf("%x\n",state->pc);
 }
 
 void sim_t::diff_set_regs(void* diff_context) {

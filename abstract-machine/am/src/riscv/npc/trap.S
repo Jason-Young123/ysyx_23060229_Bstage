@@ -32,6 +32,7 @@ f(30) f(31)
 #define POP(n)  LOAD  concat(x, n), (n * XLEN)(sp);
 
 #define CONTEXT_SIZE  ((NR_REGS + 3 + 1) * XLEN)
+//#define CONTEXT_SIZE 144
 #define OFFSET_SP     ( 2 * XLEN)
 #define OFFSET_CAUSE  ((NR_REGS + 0) * XLEN)
 #define OFFSET_STATUS ((NR_REGS + 1) * XLEN)
@@ -55,8 +56,12 @@ __am_asm_trap:
   mv a0, sp
   jal __am_irq_handle
 
+  #切换伪栈顶指针
+  mv sp, a0
+
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
+  
   csrw mstatus, t1
   csrw mepc, t2
 

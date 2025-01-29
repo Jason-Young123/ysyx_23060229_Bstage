@@ -10,6 +10,8 @@ void trm_init() {
 }
 
 void putch(char ch) {
+  //putchar('&');
+  //printf("in am/src/native/trm.c");
   putchar(ch);
 }
 

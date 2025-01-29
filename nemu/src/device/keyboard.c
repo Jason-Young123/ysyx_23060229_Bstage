@@ -36,6 +36,9 @@ f(UP) f(DOWN) f(LEFT) f(RIGHT) f(INSERT) f(DELETE) f(HOME) f(END) f(PAGEUP) f(PA
 enum {
   NEMU_KEY_NONE = 0,
   MAP(NEMU_KEYS, NEMU_KEY_NAME)
+  //展成NEMU_KEY_ESCAPE = 1,
+  //NEMU_KEY_F1 = 2,
+  //...
 };
 
 #define SDL_KEYMAP(k) keymap[SDL_SCANCODE_ ## k] = NEMU_KEY_ ## k;
@@ -43,6 +46,8 @@ static uint32_t keymap[256] = {};
 
 static void init_keymap() {
   MAP(NEMU_KEYS, SDL_KEYMAP)
+  //SDL_KEYMAP(ESCAPE) -> 	keymap[SDL_SCANCODE_ESCAPE] = NEMU_KEY_ESCAPE
+  //						keymap[SDL_SCANCODE_F1] = NEMU_KEY_F1
 }
 
 #define KEY_QUEUE_LEN 1024
@@ -64,12 +69,17 @@ static uint32_t key_dequeue() {
   return key;
 }
 
+
+//该函数会在device.c中被device_update()函数调用，最终会传入键码和是否有键按下标志
+//如果有键按下，则 0x80?? 入队，否则 0x00?? 入队
 void send_key(uint8_t scancode, bool is_keydown) {
   if (nemu_state.state == NEMU_RUNNING && keymap[scancode] != NEMU_KEY_NONE) {
     uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
     key_enqueue(am_scancode);
   }
 }
+
+
 #else // !CONFIG_TARGET_AM
 #define NEMU_KEY_NONE 0
 
@@ -82,11 +92,16 @@ static uint32_t key_dequeue() {
 
 static uint32_t *i8042_data_port_base = NULL;
 
+
+
 static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
   assert(!is_write);
   assert(offset == 0);
   i8042_data_port_base[0] = key_dequeue();
+  //printf("%d\n", i8042_data_port_base[0]);
 }
+
+
 
 void init_i8042() {
   i8042_data_port_base = (uint32_t *)new_space(4);

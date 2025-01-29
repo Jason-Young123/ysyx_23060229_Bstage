@@ -7,16 +7,23 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
+    //printf("mepc: %x\n", c->mepc);
+    //printf("mcause: %x\n", c->mcause);
+    //printf("mstatus: %x\n", c-> mstatus);
     switch (c->mcause) {
-      default: ev.event = EVENT_ERROR; break;
+        case 0xb: ev.event = EVENT_YIELD; break;
+        default: ev.event = EVENT_ERROR; break;
     }
-
+;
+    c->mepc += 4;
     c = user_handler(ev, c);
     assert(c != NULL);
+    //c->mepc += 4;//软件实现mepc自增4
   }
 
   return c;
 }
+
 
 extern void __am_asm_trap(void);
 
@@ -31,7 +38,15 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+	//在栈底部创建一个上下文结构
+    //暂时不考虑Context中的void *pdir成员变量
+    Context* Cptr = (Context*)( kstack.end - sizeof(Context) );
+    Cptr -> mepc = (uintptr_t)entry;
+    Cptr -> gpr[10] = (uintptr_t)arg;
+    //Cptr -> gpr[11] = (uintptr_t)(arg + 1);
+    //Cptr -> gpr[12] = (uintptr_t)(arg + 2);
+
+    return Cptr;
 }
 
 void yield() {

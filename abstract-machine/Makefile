@@ -23,22 +23,29 @@ $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
+#检查am.h文件是否存在
+
 
 ### Check: environment variable `$ARCH` must be in the supported list
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
+#检查$ARCH是否合法
+
 
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
+#拆分ISA和PLATFORM
 
 ### Check if there is something to build
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)
 endif
+#检查$SRC是否合法
+
 
 ### Checks end here
 endif
@@ -49,11 +56,15 @@ endif
 WORK_DIR  = $(shell pwd)
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
+#创建路径./build/riscv32e-npc
+
 
 ### Compilation targets (a binary image or archive)
 IMAGE_REL = build/$(NAME)-$(ARCH)
 IMAGE     = $(abspath $(IMAGE_REL))
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
+#创建ARCHIVE=./build/add-riscv32e-npc.a
+
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
 OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
@@ -62,6 +73,13 @@ LINKAGE   = $(OBJS) \
   $(addsuffix -$(ARCH).a, $(join \
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
     $(LIBS) ))
+
+#$(info #the image is: $(IMAGE))
+#$(info #the archive is: $(ARCHIVE))
+#$(info #the objs is: $(OBJS))
+#$(info #the libs is: $(LIBS))
+#$(info #the linkage is: $(LINKAGE))
+
 
 ## 3. General Compilation Flags
 
@@ -79,6 +97,8 @@ READELF   = $(CROSS_COMPILE)readelf
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
+#$(info #the inc_path is: $(INC_PATH))
+
 ARCH_H := arch/$(ARCH).h
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
@@ -89,12 +109,16 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
-LDFLAGS  += -z noexecstack
+LDFLAGS  += -z noexecstack 
+#-M > /home/jason/map.log
 
 ## 4. Arch-Specific Configurations
 
 ### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
+
+#$(info #include in------------------)
 -include $(AM_HOME)/scripts/$(ARCH).mk
+
 
 ### Fall back to native gcc/binutils if there is no cross compiler
 ifeq ($(wildcard $(shell which $(CC))),)
@@ -105,9 +129,20 @@ endif
 ## 5. Compilation Rules
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
+	#echo "work dir is $(WORK_DIR)"
+	#echo "dst dir is $(DST_DIR)"
+	#echo "src $(SRCS)"
+	#echo "objs $(OBJS)"
+	#echo "libs $(LIBS)"
+	#echo "linkage $(LINKAGE)"
+
+
 $(DST_DIR)/%.o: %.c
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
+
+#$(info #include out3-----------------, $(DST_DIR))
+
 
 ### Rule (compile): a single `.cc` -> `.o` (g++)
 $(DST_DIR)/%.o: %.cc

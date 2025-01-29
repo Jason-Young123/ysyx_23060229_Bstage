@@ -62,6 +62,9 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
 
+  extern uint32_t sregs[4096];//defined in src/isa/riscv32/reg.c
+  sregs[0x300] = 0x00001800;
+
   void *handle;
   handle = dlopen(ref_so_file, RTLD_LAZY);
   assert(handle);
@@ -121,10 +124,13 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     is_skip_ref = false;
     return;
   }
-
+  
+  //printf("#\n");
   ref_difftest_exec(1);
+  //printf("##\n");
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-
+  //printf("###\n");
+  //printf("%x\n",ref_r.pc);
   checkregs(&ref_r, pc);
 }
 #else
