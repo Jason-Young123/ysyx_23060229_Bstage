@@ -1,4 +1,4 @@
-VERSION=IV
+VERSION=FV
 
 AM_SRCS := riscv/ysyxsoc/start.S \
 		   riscv/ysyxsoc/trm.c \
