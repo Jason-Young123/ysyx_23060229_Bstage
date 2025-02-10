@@ -29,6 +29,30 @@ void int2str(char *out, int in){
 }
 
 
+void long2str(char *out, long in){
+    char tmp[30];
+    int i = 0, j = 0;
+    if(in < 0){
+        in = -in;
+        out[j++] = '-';
+    }
+    if(in == 0){
+        tmp[i++] = '0';
+    }
+    else{
+        while(in){
+            tmp[i++] = in % 10 + '0';
+            in /= 10;
+        }
+    }
+    while(i){
+        out[j++] = tmp[--i];
+    }
+    out[j] = '\0';
+}
+
+
+
 void int2xstr(char *out, int in, bool _x){
 	int i = 0;
 	if(_x){
@@ -47,12 +71,31 @@ void int2xstr(char *out, int in, bool _x){
 }
 
 
+void long2xstr(char *out, int in, bool _x){
+    int i = 0;
+    if(_x){
+        out[i++] = '0';
+        out[i++] = 'x';
+    }
+
+    for(int j = 0; j < 8; ++j){
+        uint8_t tmp = (in >> (28 - 4 * j)) & 0x0000000f;
+        if(tmp <= 9)
+            out[i++] = tmp + '0';
+        else
+            out[i++] = tmp - 10 + 'a';
+    }
+    out[i] = '\0';
+}
+
+
 int printf(const char *fmt, ...) {
   assert(fmt);
   int i = 0;
 
   va_list ap;
   int d;
+  long dd;
   char c;
   char *s;
   char tmp[30];
@@ -75,6 +118,13 @@ int printf(const char *fmt, ...) {
 		putstr(tmp);
         fmt += 2;
     }
+	else if(*fmt == '%' && *(fmt+1) == 'l' && *(fmt+2) == 'd'){
+		dd = va_arg(ap, long);
+		long2str(tmp,dd);
+		i += strlen(tmp);
+		putstr(tmp);
+		fmt += 3;
+	}
 	else if(*fmt == '%' && *(fmt+1) == '#' && *(fmt+2) == 'x'){
 		d = va_arg(ap, int);
 		int2xstr(tmp,d,true);
