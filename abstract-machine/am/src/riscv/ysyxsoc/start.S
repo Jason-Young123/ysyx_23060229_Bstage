@@ -87,7 +87,6 @@ _SSBL:
 
 
 
-
 		#模拟bootloader从rom加载data段至ram
         lui a2, %hi(_edata_rom)
         addi a2,a2,%lo(_edata_rom)
@@ -103,7 +102,42 @@ _SSBL:
         sw a3,-4(a4)
         bne a2,a5,data_copy_loop
     end_data_copy_loop:
-		
+
+
+
+		#模拟bss.extra的加载(直接对RAM区域置0),仅对rtt有效
+        lui a2, %hi(_ebss_extra_ram)
+        addi a2,a2,%lo(_ebss_extra_ram)
+        lui a5, %hi(_sbss_extra_ram)
+        addi a5,a5,%lo(_sbss_extra_ram)
+        beq a2,a5,end_bss_extra_copy_loop
+    bss_extra_copy_loop:
+        li a3,0
+        addi a5,a5,4
+        sw a3,-4(a5)
+        bne a2,a5,bss_extra_copy_loop
+    end_bss_extra_copy_loop:
+
+
+
+		#模拟bss的加载
+        lui a2, %hi(_ebss_ram)
+        addi a2,a2,%lo(_ebss_ram)
+        lui a5, %hi(_sbss_ram)
+        addi a5,a5,%lo(_sbss_ram)
+        beq a2,a5,end_bss_copy_loop
+    bss_copy_loop:
+        li a3,0
+        addi a5,a5,4
+        sw a3,-4(a5)
+        bne a2,a5,bss_copy_loop
+    end_bss_copy_loop:
+
+
+
+
+
+
 		#la a0,_start
 		lui a0,%hi(_start)
         addi a0,a0,%lo(_start)

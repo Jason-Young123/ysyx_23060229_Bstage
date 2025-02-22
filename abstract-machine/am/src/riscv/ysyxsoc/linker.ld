@@ -101,18 +101,26 @@ SECTIONS {
     } > ram AT > rom
 	_edata_rom = _sdata_rom + SIZEOF(.data);
 
-	
-	.bss.extra : {
-    . = ALIGN(8);
-    __am_apps_bss_start = .;
-    *(__am_apps.bss*)
-    *(__am_apps.sbss*)
-    *(__am_apps.scommon*)
-    __am_apps_bss_end = .;
-    . = ALIGN(8);
-  } > ram AT > ram
-		
 
+
+	/*有关bss.extra的分配*/
+	/*_sbss_extra_rom = LOADADDR(.bss.extra);*/
+	.bss.extra : {
+    	. = ALIGN(8);
+		_sbss_extra_ram = .;
+    	__am_apps_bss_start = .;
+    	*(__am_apps.bss*)
+    	*(__am_apps.sbss*)
+    	*(__am_apps.scommon*)
+    	__am_apps_bss_end = .;
+    	. = ALIGN(8);
+		_ebss_extra_ram = .;
+  	} > ram AT > ram
+	/*_ebss_extra_rom = _sbss_extra_rom + SIZEOF(.bss.extra);*/
+		
+	
+	/*有关bss的分配*/
+	/*_sbss_rom = LOADADDR(.bss);*/
 	.bss : {
     	_sbss_ram = .;
     	*(.bss*)
@@ -121,6 +129,8 @@ SECTIONS {
 		. = ALIGN(8);
 		_ebss_ram = .;
   	} > ram AT > ram
+	/*_ebss_rom = _sbss_rom + SIZEOF(.bss);*/
+
 	
 	_heap_start = _ebss_ram;
 	/*. = ORIGIN(ram) + 0x1fff + 1;*/
