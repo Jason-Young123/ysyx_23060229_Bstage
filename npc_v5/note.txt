@@ -21,3 +21,7 @@ npc改进版本5：接入SoC
 vfile_1223: 没有BTB版本
 vfile_1226: 有BTB版本
 以上LSU均经过修改,去除了Wait_Write_Regs状态;未经修改的LSU在当前目录下
+
+
+
+objcopy -I binary rtthread-riscv32e-ysyxsoc.bin -O verilog rtt.hex
