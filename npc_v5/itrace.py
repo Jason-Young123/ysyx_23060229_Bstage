@@ -21,7 +21,7 @@ def count_numbers_in_log(log_file_path, output_file_path):
         # 写入结果到文件
         for number, count in sorted_number_counts:
             # 将数字转换回十六进制字符串（不带0x前缀），并确保字符串长度为8，不足部分用0填充
-            hex_number = format(number, '08x')[2:]  # 去掉前缀'0x'
+            hex_number = format(number, '08x')  # 去掉前缀'0x'
             output_file.write(f"{hex_number}:{count}\n")
  
 # 指定日志文件的路径和输出文件的路径
