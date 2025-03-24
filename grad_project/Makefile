@@ -5,8 +5,8 @@ VERSION = GP
 CONSTR = $(NPC_$(VERSION)_HOME)/constr
 
 
-TOP_MODULE = top_dut
-TOP_MODULE_FILE = $(NPC_$(VERSION)_HOME)/vfile/top_dut.v
+TOP_MODULE = top
+TOP_MODULE_FILE = $(NPC_$(VERSION)_HOME)/vfile/top.v
 
 VFILE += $(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
 
