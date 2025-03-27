@@ -17,7 +17,7 @@ INCLUDES = $(foreach dir, $(SEARCH_PATH), -I$(dir))
 BOARDSIM_FILE = $(NPC_$(VERSION)_HOME)/boardsim_file
 WAVESIM_FILE = $(NPC_$(VERSION)_HOME)/wavesim_file
 
-VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
+VERILATOR_FLAGS += -MMD --build -cc -O3 --x-assign fast \
 					--x-initial fast --noassert
 
 
@@ -54,7 +54,7 @@ TIMING = --timescale "1ns/1ns" --no-timing
 # to convert .v/.sv files into .c files
 convert:
 	@verilator --autoflush \
-	--top-module $(TOP_MODULE)  \
+	--top-module $(TOP_MODULE) \
 	-cc $(TOP_MODULE_FILE) \
 	$(VFILE) \
 	$(INCLUDES) \
