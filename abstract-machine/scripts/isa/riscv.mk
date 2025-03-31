@@ -1,5 +1,7 @@
 #CROSS_COMPILE := riscv64-linux-gnu-
 CROSS_COMPILE := riscv32-unknown-elf-
+#CROSS_COMPILE := riscv64-unknown-elf-
+#CROSS_COMPILE := riscv64-unknown-linux-gnu-
 
 COMMON_CFLAGS := -fno-pic -march=rv64g -mcmodel=medany -mstrict-align
 CFLAGS        += $(COMMON_CFLAGS) -static
