@@ -94,11 +94,9 @@ boardclean:
 
 wavesim:
 	$(call git_commit, "wavesim in npc")
-	#@verilator --autoflush --trace \
-	#	--top-module $(TOP_MODULE) \
-	#	-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
-	#
-	verialtor --trace \
+	@verilator --autoflush --trace \
+		--top-module $(TOP_MODULE) \
+		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
 		--exe $(SRCS) -CFLAGS $(CFLAGS)	-CFLAGS $(CFLAGS_BD) \
 		-D $(LIBS) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
 	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
