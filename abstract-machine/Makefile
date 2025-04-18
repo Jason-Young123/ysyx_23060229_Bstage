@@ -139,6 +139,8 @@ endif
 
 $(DST_DIR)/%.o: %.c
 	@mkdir -p $(dir $@) && echo + CC $<
+	@echo "CLAGS: $(CFLAGS)"
+	@echo "ASFLAGS: $(ASFLAGS)"
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
 #$(info #include out3-----------------, $(DST_DIR))
@@ -157,6 +159,7 @@ $(DST_DIR)/%.o: %.cpp
 ### Rule (compile): a single `.S` -> `.o` (gcc, which preprocesses and calls as)
 $(DST_DIR)/%.o: %.S
 	@mkdir -p $(dir $@) && echo + AS $<
+	@echo "ASFLAGS: $(ASFLAGS)"
 	@$(AS) $(ASFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
@@ -165,7 +168,8 @@ $(LIBS): %:
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
 $(IMAGE).elf: $(OBJS) $(LIBS)
-	#echo $(LDFLAGS)
+	echo "LAFLAGS: $(LDFLAGS)"
+	echo "LINKAGE: $(LINKAGE)"
 	@echo + LD "->" $(IMAGE_REL).elf
 	@$(LD) $(LDFLAGS) -o $(IMAGE).elf --start-group $(LINKAGE) --end-group
 

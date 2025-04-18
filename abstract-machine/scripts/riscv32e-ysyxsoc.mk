@@ -2,7 +2,8 @@ include $(AM_HOME)/scripts/isa/riscv.mk
 include $(AM_HOME)/scripts/platform/ysyxsoc.mk
 #COMMON_CFLAGS += -march=rv32e_zicsr -mabi=ilp32e  # overwrite
 #COMMON_CFLAGS += -march=rv32ev_zicsr -mabi=ilp32e  # overwrite
-COMMON_CFLAGS += -march=rv32e_zve32x_zicsr -mabi=ilp32e # overwrite
+#zve32x
+COMMON_CFLAGS += -march=rv32e_zicsr -mabi=ilp32e # overwrite
 LDFLAGS       += -melf32lriscv                    # overwrite
 
 AM_SRCS += riscv/ysyxsoc/libgcc/div.S \

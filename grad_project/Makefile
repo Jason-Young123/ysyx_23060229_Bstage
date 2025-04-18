@@ -40,7 +40,11 @@ SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
 		#$(WAVESIM_FILE)/wavesim.cpp\
 		#$(NVBOARD_HOME)/build/nvboard.a
 
-BIN ?= ./bin/dummy-riscv32e-ysyxsoc.bin
+
+#需要在./software/src下存在相应文件
+TEST ?= empty
+BIN = ./bin/$(TEST).bin
+
 ISWAVE = 0
 
 
@@ -104,6 +108,11 @@ wavesim:
 
 
 #BIN传给了main函数
+run:
+	@$(MAKE) -C ./software all TEST=$(TEST)
+	@$(WAVESIM_FILE)/$(TOP_MODULE)_wave $(BIN)
+
+
 wave:
 	@$(WAVESIM_FILE)/$(TOP_MODULE)_wave $(BIN)
 
