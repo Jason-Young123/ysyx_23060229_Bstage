@@ -121,7 +121,7 @@ void _trm_init(){
 	//bootloader();
 	
 	//初始化串口
-	init_uart();
+	//init_uart();
 
 	//读出ysyx和学号
 	csrr_id();
