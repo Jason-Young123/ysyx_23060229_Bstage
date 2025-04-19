@@ -22,7 +22,7 @@ COBJ = $(patsubst $(WDIR)/%,$(DSTDIR)/%,$(CSRC:.c=.o))
 IMAGE = $(basename $(notdir $(TARGET)))
 
 #ARCH = rv32e_zve32x_zicsr
-ARCH = rv32e_zicsr
+ARCH = rv32e_zicsr_zifencei
 CROSS_COMPILER = riscv32-unknown-elf-
 CC = $(CROSS_COMPILER)gcc
 AS = $(CROSS_COMPILER)gcc
