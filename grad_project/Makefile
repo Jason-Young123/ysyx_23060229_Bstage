@@ -6,7 +6,7 @@ CONSTR = $(NPC_$(VERSION)_HOME)/constr
 
 
 TOP_MODULE = top
-TOP_MODULE_FILE = $(NPC_$(VERSION)_HOME)/vfile/top.v
+TOP_MODULE_FILE = $(NPC_$(VERSION)_HOME)/vfile/$(TOP_MODULE).v
 
 VFILE += $(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
 

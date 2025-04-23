@@ -16,7 +16,7 @@ OBJS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(addprefix $(DSTDIR)/,$(SRCS))))
 
 #测试用例
 TEST ?= empty
-TARGET = $(WDIR)/src/$(TEST)
+TARGET = $(WDIR)/src/scalar/$(TEST)
 CSRC = $(TARGET).c
 COBJ = $(patsubst $(WDIR)/%,$(DSTDIR)/%,$(CSRC:.c=.o))
 IMAGE = $(basename $(notdir $(TARGET)))
@@ -35,7 +35,7 @@ OBJDUMP = $(CROSS_COMPILER)objdump
 
 INCLUDES += $(WDIR)/includes/ \
 			$(WDIR)/klib/include/
-CINCLUDES += $(WDIR)/src/include/
+CINCLUDES += $(WDIR)/src/scalar/include/
 
 CFLAGS += 	-O2 -MMD -Wall -Werror $(foreach dir,$(INCLUDES),-I$(dir)) \
 			-fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector -Wno-main \
