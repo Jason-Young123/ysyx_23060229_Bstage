@@ -124,7 +124,7 @@ void _trm_init(){
 	//init_uart();
 
 	//读出ysyx和学号
-	csrr_id();
+	//csrr_id();
 
 	int ret = main(mainargs);
     halt(ret);

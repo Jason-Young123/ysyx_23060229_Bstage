@@ -8,20 +8,25 @@ KDIR = $(WDIR)/klib/src
 AUXDIR = $(WDIR)/libgcc
 ARCHIVE = $(DSTDIR)/mylib.a
 
+
 #运行时环境
 SRCS += $(wildcard *.c *.S) \
 		$(wildcard $(KDIR)/*.c) \
 		$(wildcard $(AUXDIR)/*.c $(AUXDIR)/*.S)
 OBJS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(addprefix $(DSTDIR)/,$(SRCS))))
 
+
+
 #测试用例
 TEST ?= empty
 TARGET = $(WDIR)/src/scalar/$(TEST)
-CSRC = $(TARGET).c
-COBJ = $(patsubst $(WDIR)/%,$(DSTDIR)/%,$(CSRC:.c=.o))
+CSRC += $(TARGET).c  $(WDIR)/src/vector/include/vector.c
+COBJ = $(patsubst %.c,%.o,$(addprefix $(DSTDIR)/, $(CSRC)))
 IMAGE = $(basename $(notdir $(TARGET)))
 
-#ARCH = rv32e_zve32x_zicsr
+
+
+#ARCH = rv32e_zve32x_zicsr_zifencei
 ARCH = rv32e_zicsr_zifencei
 CROSS_COMPILER = riscv32-unknown-elf-
 CC = $(CROSS_COMPILER)gcc
@@ -35,7 +40,8 @@ OBJDUMP = $(CROSS_COMPILER)objdump
 
 INCLUDES += $(WDIR)/includes/ \
 			$(WDIR)/klib/include/
-CINCLUDES += $(WDIR)/src/scalar/include/
+CINCLUDES += $(WDIR)/src/vector/include/
+
 
 CFLAGS += 	-O2 -MMD -Wall -Werror $(foreach dir,$(INCLUDES),-I$(dir)) \
 			-fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector -Wno-main \
@@ -66,7 +72,8 @@ $(ARCHIVE): $(OBJS)
 	@$(AR) rcs $(ARCHIVE) $(OBJS)
 
 #针对特定目标编译
-$(COBJ): $(CSRC)
+#$(COBJ): $(CSRC)
+$(DSTDIR)/%.o: %.c
 	@echo "+CC $^ ..."
 	@mkdir -p $(dir $@)
 	@$(CC) -std=gnu11 $(CFLAGS) -I$(CINCLUDES) -c -o $@ $(realpath $<)
