@@ -1,31 +1,31 @@
 .PHONY: wavesim
 
 #TOP_MODULE = ysyx_23060229_top
-VERSION = V5
+#VERSION = V5
 
-CONSTR = $(NPC_$(VERSION)_HOME)/constr
+CONSTR = $(NPC_HOME)/constr
 
 
 TOP_MODULE = ysyxSoCFull
 TOP_MODULE_FILE = $(SOC_HOME)/build/ysyxSoCFull.v
 
 VFILE += $(shell find $(SOC_HOME)/perip -type f -name "*.v") \
-		$(shell find $(NPC_$(VERSION)_HOME)/vfile -type f -name "*.v")
+		$(shell find $(NPC_HOME)/vfile -type f -name "*.v")
 
 SEARCH_PATH = $(SOC_HOME)/perip/uart16550/rtl \
 			  $(SOC_HOME)/perip/spi/rtl \
-			  $(NPC_$(VERSION)_HOME)/vfile
+			  $(NPC_HOME)/vfile
 INCLUDES = $(foreach dir, $(SEARCH_PATH), -I$(dir))
 
-BOARDSIM_FILE = $(NPC_$(VERSION)_HOME)/boardsim_file
-WAVESIM_FILE = $(NPC_$(VERSION)_HOME)/wavesim_file
+BOARDSIM_FILE = $(NPC_HOME)/boardsim_file
+WAVESIM_FILE = $(NPC_HOME)/wavesim_file
 
 VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
 					--x-initial fast --noassert
 
 
 
-CFLAGS += -I$(NPC_$(VERSION)_HOME)/wavesim_file
+CFLAGS += -I$(NPC_HOME)/wavesim_file
 CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
 LIBS += /lib/x86_64-linux-gnu/libreadline.so\
 	   /lib/x86_64-linux-gnu/libSDL2.so\
@@ -57,7 +57,7 @@ ISWAVE = 0
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 include ~/Desktop/ysyx-workbench/Makefile
-include $(NPC_$(VERSION)_HOME)/config/config.mk
+include $(NPC_HOME)/config/config.mk
 
 TIMING = --timescale "1ns/1ns" --no-timing
 
