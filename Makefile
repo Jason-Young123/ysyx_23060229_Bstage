@@ -41,4 +41,11 @@ endef
 _default:
 	@echo "Please run 'make' under subprojects."
 
+verilog:
+	cp ./vfile/ysyx_23060229.v ./build/
+
+
+
+
+
 .PHONY: .git_commit .clean_index _default
