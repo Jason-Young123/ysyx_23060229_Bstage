@@ -1,4 +1,7 @@
-VERSION=V5
+#获取当前路径
+CURPATH = $(dir $(filter %platform/ysyxsoc.mk,$(MAKEFILE_LIST)))
+ROOTPATH = $(abspath $(CURPATH)../../..)
+include $(ROOTPATH)/Makefile
 
 AM_SRCS := riscv/ysyxsoc/start.S \
 		   riscv/ysyxsoc/trm.c \
@@ -28,7 +31,18 @@ image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc -O binary $(IMAGE).elf $(IMAGE).bin
-	#@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NPC_HOME) wave BIN=$(IMAGE).bin
+	@echo "***** Execute target:run in $(CURPATH) *****"
+	@$(MAKE) -C $(ROOTPATH) convert_SoC
+	@$(MAKE) -C $(ROOTPATH) sim_SoC
+	@$(MAKE) -C $(ROOTPATH) exec_SoC BIN=$(IMAGE).bin
+
+
+
+#@echo $(MAKEFILE_LIST)
+#@echo $(WDIR_23060229)
+#@$(MAKE) -C $(WDIR_23060229) convert_SoC
+#@$(MAKE) -C $(WDIR_23060229) sim_SoC
+#@$(MAKE) -C $(WDIR_23060229) $(WDIR_23060229)/VysyxSoCFull $(IMAGE).bin
+#@$(MAKE) -C $(NPC_HOME) wave BIN=$(IMAGE).bin

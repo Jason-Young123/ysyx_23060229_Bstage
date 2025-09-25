@@ -1,5 +1,5 @@
-#CROSS_COMPILE := riscv64-linux-gnu-
-CROSS_COMPILE := riscv32-unknown-elf-
+CROSS_COMPILE := riscv64-linux-gnu-
+#CROSS_COMPILE := riscv32-unknown-elf-
 #CROSS_COMPILE := riscv64-unknown-elf-
 #CROSS_COMPILE := riscv64-unknown-linux-gnu-
 
