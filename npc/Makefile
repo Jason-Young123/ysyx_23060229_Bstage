@@ -1,147 +1,150 @@
-.PHONY: wavesim
-
-#TOP_MODULE = ysyx_23060229_top
-#VERSION = V5
-
-CONSTR = $(NPC_HOME)/constr
-
-
-TOP_MODULE = ysyxSoCFull
-TOP_MODULE_FILE = $(SOC_HOME)/build/ysyxSoCFull.v
-
-VFILE += $(shell find $(SOC_HOME)/perip -type f -name "*.v") \
-		$(shell find $(NPC_HOME)/vfile -type f -name "*.v")
-
-SEARCH_PATH = $(SOC_HOME)/perip/uart16550/rtl \
-			  $(SOC_HOME)/perip/spi/rtl \
-			  $(NPC_HOME)/vfile
-INCLUDES = $(foreach dir, $(SEARCH_PATH), -I$(dir))
-
-BOARDSIM_FILE = $(NPC_HOME)/boardsim_file
-WAVESIM_FILE = $(NPC_HOME)/wavesim_file
-
-VERILATOR_CFLAGS += -MMD --build -cc -O3 --x-assign fast \
-					--x-initial fast --noassert
-
-
-
-CFLAGS += -I$(NPC_HOME)/wavesim_file
-CFLAGS_BD += -I$(NVBOARD_HOME)/usr/include
-LIBS += /lib/x86_64-linux-gnu/libreadline.so\
-	   /lib/x86_64-linux-gnu/libSDL2.so\
-	   /lib/x86_64-linux-gnu/libSDL2_image.so\
-	   /lib/x86_64-linux-gnu/libSDL2_ttf.so\
-	   $(NVBOARD_HOME)/build/nvboard.a
-
-SRCS += $(shell find $(WAVESIM_FILE)/register -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/sdb -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/flash -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/psram -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/sdram -type f -name "*.cpp")\
-		$(shell find $(WAVESIM_FILE)/vga -type f -name "*.cpp")\
-		$(CONSTR)/auto_bind.cpp\
-		$(WAVESIM_FILE)/wavesim.cpp
-		#$(BOARDSIM_FILE)/boardsim.cpp
-		#$(WAVESIM_FILE)/wavesim.cpp\
-		#$(NVBOARD_HOME)/build/nvboard.a
-#SRCS += $(shell find $(WAVESIM_FILE)/engine -type f -name "*.cpp") \
-#		$(shell find $(WAVESIM_FILE)/mrom -type f -name "*.cpp") \
-#		$(WAVESIM_FILE)/wavesim.cpp
-
-
-BIN ?= ./bin/dummy-riscv32e-ysyxsoc.bin
-ISWAVE = 0
-
-
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 include ~/Desktop/ysyx-workbench/Makefile
 include $(NPC_HOME)/config/config.mk
 
+WDIR_23060229 = $(shell pwd)/..
+SOC_HOME_23060229 = $(WDIR_23060229)/ysyxSoC
+NPC_HOME_23060229 = $(WDIR_23060229)/npc
+SIM_HOME_23060229 = $(NPC_HOME_23060229)/wavesim_file
+
+TOP_MODULE_SOC = ysyxSoCFull
+TOP_MODULE_FILE_SOC = $(SOC_HOME_23060229)/build/$(TOP_MODULE_SOC).v
+VFILE_SOC = $(shell find $(SOC_HOME_23060229)/perip -type f -name "*.v") \
+        $(shell find $(NPC_HOME_23060229)/build -type f -name "ysyx_23060229.v")
+SEARCH_PATH_SOC = $(SOC_HOME_23060229)/perip/uart16550/rtl \
+              $(SOC_HOME_23060229)/perip/spi/rtl \
+			  $(NPC_HOME_23060229)/build
+INCLUDES_SOC = $(foreach dir, $(SEARCH_PATH_SOC), -I$(dir))
 TIMING = --timescale "1ns/1ns" --no-timing
 
+TOP_MODULE_NONSOC = ysyxNonSoCFull
+TOP_MODULE_FILE_NONSOC = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC).v
+VFILE_NONSOC = $(TOP_MODULE_FILE_NONSOC)
+TB_NONSOC = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC)_tb.v
+VVP_NONSOC = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC)
+SEARCH_PATH_NONSOC = $(NPC_HOME_23060229)/build
+INCLUDES_NONSOC = $(foreach dir, $(SEARCH_PATH_NONSOC), -I$(dir))
 
-# to convert .v/.sv files into .c files
-convert:
+
+TOP_MODULE_NONSOC_NL = ysyxNonSoCFull_netlist
+TOP_MODULE_FILE_NONSOC_NL = ./vfile/$(TOP_MODULE_NONSOC_NL).v ./vfile/cells.v
+VFILE_NONSOC_NL = $(TOP_MODULE_FILE_NONSOC_NL)
+TB_NONSOC_NL = ./vfile/$(TOP_MODULE_NONSOC_NL)_tb.v
+VVP_NONSOC_NL = ./$(TOP_MODULE_NONSOC_NL)
+SEARCH_PATH_NONSOC_NL = ./vfile
+INCLUDES_NONSOC_NL = $(foreach dir, $(SEARCH_PATH_NONSOC_NL), -I$(dir))
+
+
+
+CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/engine -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/sdb -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/mrom -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/flash -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/psram -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/sdram -type f -name "*.cpp")\
+        $(shell find $(SIM_HOME_23060229)/vga -type f -name "*.cpp")\
+        $(NPC_HOME_23060229)/constr/auto_bind.cpp\
+        $(SIM_HOME_23060229)/wavesim.cpp
+CFLAGS_SIM += -I$(SIM_HOME_23060229)
+CFLAGS_BD_SIM += -I$(NVBOARD_HOME)/usr/include
+LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
+       /lib/x86_64-linux-gnu/libSDL2.so\
+       /lib/x86_64-linux-gnu/libSDL2_image.so\
+       /lib/x86_64-linux-gnu/libSDL2_ttf.so\
+       $(NVBOARD_HOME)/build/nvboard.a
+
+BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
+
+
+
+ascertain:
+	@echo $(SPLIT)
+	@echo $(shell pwd)
+
+
+verilog:
+	$(call git_commit, "task:verilog in npc")
+	@echo "***** Execute target:verilog in $(shell pwd) *****"
+	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
+
+# 将SoC版本的.v源码转为.cpp文件,包括:ysyx_23060229, ysyxSoCFull, perip等
+convert_SoC:
+	@echo "***** Execute target:convert_SoC in $(shell pwd) *****"
 	@verilator --autoflush \
-	--top-module $(TOP_MODULE)  \
-	-cc $(TOP_MODULE_FILE) \
-	$(VFILE) \
-	$(INCLUDES) \
-	$(TIMING)
-#$(shell find $(VFILE) -name "*.v") $(shell find $(VSRC) -name "*.v") \
-#$(TIMING)
+		-Dysyx_23060229_CONFIG_FLASH \
+    	--top-module $(TOP_MODULE_SOC)  \
+    	-cc $(TOP_MODULE_FILE_SOC) \
+    	$(VFILE_SOC) \
+    	$(INCLUDES_SOC) \
+    	$(TIMING) \
 
-
-constrgen:
-	@python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py  $(CONSTR)/$(TOP_MODULE).nxdc  $(CONSTR)/auto_bind.cpp
-
-constrclean:
-	rm $(CONSTR)/auto_bind.cpp
-
-
-#boardsim:
-#	$(call git_commit, "boardsim in npc")
-#	verilator $(VERILATOR_CFLAGS) \
-#	-CFLAGS -MMD -CFLAGS -O3 -CFLAGS -I/usr/include/SDL2 -CFLAGS -D_REENTRANT -CFLAGS  -CFLAGS -DTOP_NAME="\"V$(TOP_MODULE)\"" -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf \
-#	--Mdir obj_dir --exe -o $(TOP_MODULE) -I$(VFILE)
-#	cp obj_dir/$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
-
-boardsim:
-	$(call git_commit, "boardsim in npc")
+# 生成带SoC的仿真文件,C++的SDB实现
+#$(call git_commit, "wavesim in npc")
+sim_SoC:
+	@echo "***** Execute target:sim_SoC in $(shell pwd) *****"
 	@verilator --autoflush --trace \
-		--top-module $(TOP_MODULE) \
-		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
-		--exe $(SRCS) -CFLAGS $(CFLAGS) -CFLAGS $(CFLAGS_BD) \
-		-D $(LIBS) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
-	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
-	@cp obj_dir/V$(TOP_MODULE) $(BOARDSIM_FILE)/$(TOP_MODULE)_board
+		-Dysyx_23060229_CONFIG_FLASH \
+        --top-module $(TOP_MODULE_SOC) \
+        -cc $(TOP_MODULE_FILE_SOC) $(VFILE_SOC) $(INCLUDES_SOC) $(TIMING) \
+        --exe $(CSRCS_SIM) -CFLAGS $(CFLAGS_SIM) -CFLAGS $(CFLAGS_BD_SIM) \
+        -D $(LIBS_SIM) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
+	@make -s -C obj_dir -f V$(TOP_MODULE_SOC).mk V$(TOP_MODULE_SOC)
+	@cp obj_dir/V$(TOP_MODULE_SOC) $(NPC_HOME_23060229)
 
-board:
-	$(BOARDSIM_FILE)/$(TOP_MODULE)_board
-
-boardclean:
-	rm $(BOARDSIM_FILE)/$(TOP_MODULE)_board
-
-
-wavesim:
-	$(call git_commit, "wavesim in npc")
-	@verilator --autoflush --trace \
-		--top-module $(TOP_MODULE) \
-		-cc $(TOP_MODULE_FILE) $(VFILE) $(INCLUDES) $(TIMING) \
-		--exe $(SRCS) -CFLAGS $(CFLAGS)	-CFLAGS $(CFLAGS_BD) \
-		-D $(LIBS) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
-	@make -C obj_dir -f V$(TOP_MODULE).mk V$(TOP_MODULE)
-	@cp obj_dir/V$(TOP_MODULE) $(WAVESIM_FILE)/$(TOP_MODULE)_wave
+exec_SoC:
+	@echo "***** Execute target:exec_SoC in $(shell pwd) *****"
+	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN)
 
 
-#BIN传给了main函数
-wave:
-	@$(WAVESIM_FILE)/$(TOP_MODULE)_wave $(BIN)
+# 将nonSoC版本的.v源码转为可执行文件,包括:ysyx_23060229, ysyx_23060229_memory, ysyxNonSoCFull
+convert_nonSoC:
+	@echo "***** Execute target:convert_nonSoC in $(shell pwd) *****"
+	@iverilog -o $(VVP_NONSOC) -P$(TOP_MODULE_NONSOC)_tb.HEX_FILE='"$(IMG).hex"' \
+		$(TB_NONSOC) $(VFILE_NONSOC) $(INCLUDES_NONSOC)
+
+convert_foo:
+	@iverilog -o foo ./vfile/foo_tb.v ./vfile/foo.v ./vfile/cells.v
+exec_foo:
+	@vvp -n foo -lxt2
 
 
-ifeq ($(ISWAVE), 1)
-	@gtkwave $(WAVESIM_FILE)/wave.vcd
-endif
+convert_nonSoC_netlist:
+	@iverilog -o ysyxNonSoCFull_netlist ./vfile/ysyxNonSoCFull_netlist_tb.v ./vfile/ysyxNonSoCFull_netlist.v \
+		./vfile/ysyx_23060229_netlist.v ./vfile/ysyx_23060229_memory.v ./vfile/cells.v \
+		-PysyxNonSoCFull_netlist_tb.HEX_FILE='"$(IMG).hex"'
+
+exec_nonSoC_netlist:
+	@vvp -n ysyxNonSoCFull_netlist -lxt2
 
 
-perf:
-	@echo "Using microbench to evaluate performance ..."
-	@make -C $(KERNEL_HOME)/benchmarks/microbench ARCH=riscv32e-ysyxsoc mainargs=test run
-	@make -C $(YOSYS_HOME) sta
-	@tail -n 108 $(YOSYS_HOME)/result/ysyx_23060229-500MHz/synth_stat.txt
+exec_nonSoC:
+	@echo "***** Execute target:exec_nonSoC in $(shell pwd) *****"
+	@vvp -n $(VVP_NONSOC) -lxt2
 
-waveclean:
-	rm $(WAVESIM_FILE)/$(TOP_MODULE)_wave
-	rm $(WAVESIM_FILE)/wave.vcd
+
+#BIN_FILE := $(if $(wildcard ../$(IMG).bin),../$(IMG).bin,$(if $(wildcard ./$(IMG).bin),./$(IMG).bin,))
+convert_format:
+	@echo "***** Execute target:convert_format in $(shell pwd) *****"
+	@objcopy -I binary $(IMG).bin -O verilog $(IMG).hex
+
+
+
+# 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
+sim-iverilog:
+	@echo "***** Execute target:sim-iverilog in $(shell pwd) *****"
+	@$(MAKE) convert_format IMG=$(basename $(IMG))
+	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
+	@$(MAKE) exec_nonSoC
 
 
 clean:
-	rm ./obj_dir/*
-	make constrclean
-	make boardclean
-	make waveclean
+	@rm $(NPC_HOME_23060229)/obj_dir/*
+	@rm $(NPC_HOME_23060229)/build/*
+	@rm $(NPC_HOME_23060229)/VysyxSoCFull
+	@rm $(NPC_HOME_23060229)/ysyxNonSoCFull
 
 
 
+
+.PHONY: .git_commit .clean_index _default

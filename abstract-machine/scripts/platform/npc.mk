@@ -1,4 +1,7 @@
-VERSION=V4
+CURPATH = $(dir $(filter %platform/npc.mk,$(MAKEFILE_LIST)))
+ROOTPATH = $(abspath $(CURPATH)../../..)
+NPC_HOME = $(ROOTPATH)/npc
+
 
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
@@ -31,6 +34,8 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 
+#$(MAKE) -C $(NPC_$(VERSION)_HOME) wave BIN=$(IMAGE).bin
 run: image
-	$(MAKE) -C $(NPC_$(VERSION)_HOME) wave BIN=$(IMAGE).bin
+	@echo "***** Execute target:run in $(CURPATH) *****"
+	@$(MAKE) -C $(NPC_HOME) sim-iverilog IMG=$(IMAGE)
 

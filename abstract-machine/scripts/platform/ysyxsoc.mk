@@ -1,7 +1,8 @@
 #获取当前路径
 CURPATH = $(dir $(filter %platform/ysyxsoc.mk,$(MAKEFILE_LIST)))
 ROOTPATH = $(abspath $(CURPATH)../../..)
-include $(ROOTPATH)/Makefile
+NPC_HOME = $(ROOTPATH)/npc
+#include $(ROOTPATH)/Makefile
 
 AM_SRCS := riscv/ysyxsoc/start.S \
 		   riscv/ysyxsoc/trm.c \
@@ -34,9 +35,9 @@ image: $(IMAGE).elf
 
 run: image
 	@echo "***** Execute target:run in $(CURPATH) *****"
-	@$(MAKE) -C $(ROOTPATH) convert_SoC
-	@$(MAKE) -C $(ROOTPATH) sim_SoC
-	@$(MAKE) -C $(ROOTPATH) exec_SoC BIN=$(IMAGE).bin
+	@$(MAKE) -C $(NPC_HOME) convert_SoC
+	@$(MAKE) -C $(NPC_HOME) sim_SoC
+	@$(MAKE) -C $(NPC_HOME) exec_SoC BIN=$(IMAGE).bin
 
 
 
