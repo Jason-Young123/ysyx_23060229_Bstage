@@ -65,7 +65,7 @@ ascertain:
 
 verilog:
 	$(call git_commit, "task:verilog in npc")
-	@echo "***** Execute target:verilog in $(shell pwd) *****"
+	@echo "================= Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
 
 # 将SoC版本的.v源码转为.cpp文件,包括:ysyx_23060229, ysyxSoCFull, perip等
