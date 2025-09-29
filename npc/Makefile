@@ -65,13 +65,13 @@ ascertain:
 
 verilog:
 	$(call git_commit, "task:verilog in npc")
-	@echo "================= Execute target:verilog in $(shell pwd) ========================"
+	@echo "======================== Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
 
 # 将SoC版本的.v源码转为.cpp文件,包括:ysyx_23060229, ysyxSoCFull, perip等
 convert_SoC:
 	$(call git_commit, "task:verilog in npc")
-	@echo "***** Execute target:convert_SoC in $(shell pwd) *****"
+	@echo "======================== Execute target:convert_SoC in $(shell pwd) ========================"
 	@verilator --autoflush \
 		-Dysyx_23060229_CONFIG_FLASH \
     	--top-module $(TOP_MODULE_SOC)  \
@@ -83,7 +83,7 @@ convert_SoC:
 # 生成带SoC的仿真文件,C++的SDB实现
 #$(call git_commit, "wavesim in npc")
 sim_SoC:
-	@echo "***** Execute target:sim_SoC in $(shell pwd) *****"
+	@echo "======================== Execute target:sim_SoC in $(shell pwd) ========================"
 	@verilator --autoflush --trace \
 		-Dysyx_23060229_CONFIG_FLASH \
         --top-module $(TOP_MODULE_SOC) \
@@ -94,13 +94,13 @@ sim_SoC:
 	@cp obj_dir/V$(TOP_MODULE_SOC) $(NPC_HOME_23060229)
 
 exec_SoC:
-	@echo "***** Execute target:exec_SoC in $(shell pwd) *****"
+	@echo "======================== Execute target:exec_SoC in $(shell pwd) ========================"
 	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN)
 
 
 # 将nonSoC版本的.v源码转为可执行文件,包括:ysyx_23060229, ysyx_23060229_memory, ysyxNonSoCFull
 convert_nonSoC:
-	@echo "***** Execute target:convert_nonSoC in $(shell pwd) *****"
+	@echo "======================== Execute target:convert_nonSoC in $(shell pwd) ========================"
 	@iverilog -o $(VVP_NONSOC) -P$(TOP_MODULE_NONSOC)_tb.HEX_FILE='"$(IMG).hex"' \
 		$(TB_NONSOC) $(VFILE_NONSOC) $(INCLUDES_NONSOC)
 
@@ -120,20 +120,20 @@ exec_nonSoC_netlist:
 
 
 exec_nonSoC:
-	@echo "***** Execute target:exec_nonSoC in $(shell pwd) *****"
+	@echo "======================== Execute target:exec_nonSoC in $(shell pwd) ========================"
 	@vvp -n $(VVP_NONSOC) -lxt2
 
 
 #BIN_FILE := $(if $(wildcard ../$(IMG).bin),../$(IMG).bin,$(if $(wildcard ./$(IMG).bin),./$(IMG).bin,))
 convert_format:
-	@echo "***** Execute target:convert_format in $(shell pwd) *****"
+	@echo "======================== Execute target:convert_format in $(shell pwd) ========================"
 	@objcopy -I binary $(IMG).bin -O verilog $(IMG).hex
 
 
 
 # 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
 sim-iverilog:
-	@echo "***** Execute target:sim-iverilog in $(shell pwd) *****"
+	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
 	@$(MAKE) exec_nonSoC
