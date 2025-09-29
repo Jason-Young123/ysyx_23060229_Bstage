@@ -30,12 +30,13 @@ VVP_NONSOC = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC)
 
 
 TOP_MODULE_NONSOC_NL = ysyxNonSoCFull_netlist
-TOP_MODULE_FILE_NONSOC_NL = ./vfile/$(TOP_MODULE_NONSOC_NL).v ./vfile/cells.v
-VFILE_NONSOC_NL = $(TOP_MODULE_FILE_NONSOC_NL)
-TB_NONSOC_NL = ./vfile/$(TOP_MODULE_NONSOC_NL)_tb.v
-VVP_NONSOC_NL = ./$(TOP_MODULE_NONSOC_NL)
-SEARCH_PATH_NONSOC_NL = ./vfile
-INCLUDES_NONSOC_NL = $(foreach dir, $(SEARCH_PATH_NONSOC_NL), -I$(dir))
+TOP_MODULE_FILE_NONSOC_NL = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC_NL).v
+VFILE_NONSOC_NL = $(TOP_MODULE_FILE_NONSOC_NL) \
+				  $(NPC_HOME_23060229)/build/ysyx_23060229_memory.v
+TB_NONSOC_NL = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC_NL)_tb.v
+VVP_NONSOC_NL = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC_NL)
+#SEARCH_PATH_NONSOC_NL = ./vfile
+#INCLUDES_NONSOC_NL = $(foreach dir, $(SEARCH_PATH_NONSOC_NL), -I$(dir))
 
 
 
@@ -105,6 +106,8 @@ exec_SoC:
 
 
 
+
+
 convert_format:
 	@echo "======================== Execute target:convert_format in $(shell pwd) ========================"
 	@objcopy -I binary $(IMG).bin -O verilog $(IMG).hex
@@ -122,11 +125,33 @@ exec_nonSoC:
 # 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
 sim-iverilog:
 	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
-	@$(call git_commit, "task:convert in npc")
+	@$(call git_commit, "task:sim-iverilog in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
 	@$(MAKE) exec_nonSoC
 
+
+
+
+
+
+convert_nonSoC_netlist:
+	@echo "======================== Execute target:convert_nonSoC_netlist in $(shell pwd) ========================"
+	@iverilog -o $(VVP_NONSOC_NL) -P$(TOP_MODULE_NONSOC_NL)_tb.HEX_FILE='"$(IMG).hex"' \
+		-P$(TOP_MODULE_NONSOC_NL)_tb.NETLIST_FILE='"$(basename $(NETLIST))"' \
+		$(TB_NONSOC_NL) $(VFILE_NONSOC_NL) $(basename $(NETLIST)).v $(basename $(CELLS))
+
+exec_nonSoC_netlist:
+	@echo "======================== Execute target:exec_nonSoC_netlist in $(shell pwd) ========================"
+	@vvp -n $(VVP_NONSOC_NL) -lxt2
+
+#启动iverilog网表仿真,传参为IMG(.bin), NETLIST(.v), CELLS(.v),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
+sim-iverilog-netlist:
+	@echo "======================== Execute target:sim-iverilog-netlist in $(shell pwd) ========================"
+	@$(call git_commit, "task:sim-iverilog-netlist in npc")
+	@$(MAKE) convert_format IMG=$(basename $(IMG))
+	@$(MAKE) convert_nonSoC_netlist IMG=$(basename $(IMG)) NETLIST=$(NETLIST) CELLS=$(CELLS)
+	@$(MAKE) exec_nonSoC_netlist
 
 
 
