@@ -17,13 +17,16 @@ SEARCH_PATH_SOC = $(SOC_HOME_23060229)/perip/uart16550/rtl \
 INCLUDES_SOC = $(foreach dir, $(SEARCH_PATH_SOC), -I$(dir))
 TIMING = --timescale "1ns/1ns" --no-timing
 
+
 TOP_MODULE_NONSOC = ysyxNonSoCFull
 TOP_MODULE_FILE_NONSOC = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC).v
-VFILE_NONSOC = $(TOP_MODULE_FILE_NONSOC)
+VFILE_NONSOC = $(TOP_MODULE_FILE_NONSOC) \
+			   $(NPC_HOME_23060229)/build/ysyx_23060229.v \
+			   $(NPC_HOME_23060229)/build/ysyx_23060229_memory.v
 TB_NONSOC = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC)_tb.v
 VVP_NONSOC = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC)
-SEARCH_PATH_NONSOC = $(NPC_HOME_23060229)/build
-INCLUDES_NONSOC = $(foreach dir, $(SEARCH_PATH_NONSOC), -I$(dir))
+#SEARCH_PATH_NONSOC = $(NPC_HOME_23060229)/build
+#INCLUDES_NONSOC = $(foreach dir, $(SEARCH_PATH_NONSOC), -I$(dir))
 
 
 TOP_MODULE_NONSOC_NL = ysyxNonSoCFull_netlist
@@ -64,13 +67,15 @@ ascertain:
 
 
 verilog:
-	$(call git_commit, "task:verilog in npc")
+	@$(call git_commit, "task:verilog in npc")
 	@echo "======================== Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
 
+
+
 # 将SoC版本的.v源码转为.cpp文件,包括:ysyx_23060229, ysyxSoCFull, perip等
 convert_SoC:
-	$(call git_commit, "task:verilog in npc")
+	@$(call git_commit, "task:convert in npc")
 	@echo "======================== Execute target:convert_SoC in $(shell pwd) ========================"
 	@verilator --autoflush \
 		-Dysyx_23060229_CONFIG_FLASH \
@@ -98,11 +103,34 @@ exec_SoC:
 	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN)
 
 
+
+
+convert_format:
+	@echo "======================== Execute target:convert_format in $(shell pwd) ========================"
+	@objcopy -I binary $(IMG).bin -O verilog $(IMG).hex
+
 # 将nonSoC版本的.v源码转为可执行文件,包括:ysyx_23060229, ysyx_23060229_memory, ysyxNonSoCFull
 convert_nonSoC:
 	@echo "======================== Execute target:convert_nonSoC in $(shell pwd) ========================"
 	@iverilog -o $(VVP_NONSOC) -P$(TOP_MODULE_NONSOC)_tb.HEX_FILE='"$(IMG).hex"' \
-		$(TB_NONSOC) $(VFILE_NONSOC) $(INCLUDES_NONSOC)
+		$(TB_NONSOC) $(VFILE_NONSOC) 
+
+exec_nonSoC:
+	@echo "======================== Execute target:exec_nonSoC in $(shell pwd) ========================"
+	@vvp -n $(VVP_NONSOC) -lxt2
+
+# 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
+sim-iverilog:
+	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
+	@$(call git_commit, "task:convert in npc")
+	@$(MAKE) convert_format IMG=$(basename $(IMG))
+	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
+	@$(MAKE) exec_nonSoC
+
+
+
+
+
 
 convert_foo:
 	@iverilog -o foo ./vfile/foo_tb.v ./vfile/foo.v ./vfile/cells.v
@@ -119,24 +147,12 @@ exec_nonSoC_netlist:
 	@vvp -n ysyxNonSoCFull_netlist -lxt2
 
 
-exec_nonSoC:
-	@echo "======================== Execute target:exec_nonSoC in $(shell pwd) ========================"
-	@vvp -n $(VVP_NONSOC) -lxt2
 
 
 #BIN_FILE := $(if $(wildcard ../$(IMG).bin),../$(IMG).bin,$(if $(wildcard ./$(IMG).bin),./$(IMG).bin,))
-convert_format:
-	@echo "======================== Execute target:convert_format in $(shell pwd) ========================"
-	@objcopy -I binary $(IMG).bin -O verilog $(IMG).hex
 
 
 
-# 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
-sim-iverilog:
-	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
-	@$(MAKE) convert_format IMG=$(basename $(IMG))
-	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
-	@$(MAKE) exec_nonSoC
 
 
 clean:
