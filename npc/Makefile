@@ -163,13 +163,13 @@ exec_foo:
 	@vvp -n foo -lxt2
 
 
-convert_nonSoC_netlist:
-	@iverilog -o ysyxNonSoCFull_netlist ./vfile/ysyxNonSoCFull_netlist_tb.v ./vfile/ysyxNonSoCFull_netlist.v \
-		./vfile/ysyx_23060229_netlist.v ./vfile/ysyx_23060229_memory.v ./vfile/cells.v \
-		-PysyxNonSoCFull_netlist_tb.HEX_FILE='"$(IMG).hex"'
+#convert_nonSoC_netlist:
+#	@iverilog -o ysyxNonSoCFull_netlist ./vfile/ysyxNonSoCFull_netlist_tb.v ./vfile/ysyxNonSoCFull_netlist.v \
+#		./vfile/ysyx_23060229_netlist.v ./vfile/ysyx_23060229_memory.v ./vfile/cells.v \
+#		-PysyxNonSoCFull_netlist_tb.HEX_FILE='"$(IMG).hex"'
 
-exec_nonSoC_netlist:
-	@vvp -n ysyxNonSoCFull_netlist -lxt2
+#exec_nonSoC_netlist:
+#	@vvp -n ysyxNonSoCFull_netlist -lxt2
 
 
 
