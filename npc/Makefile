@@ -70,6 +70,7 @@ verilog:
 
 # 将SoC版本的.v源码转为.cpp文件,包括:ysyx_23060229, ysyxSoCFull, perip等
 convert_SoC:
+	$(call git_commit, "task:verilog in npc")
 	@echo "***** Execute target:convert_SoC in $(shell pwd) *****"
 	@verilator --autoflush \
 		-Dysyx_23060229_CONFIG_FLASH \
