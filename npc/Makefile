@@ -68,6 +68,7 @@ ascertain:
 
 
 verilog:
+	@$(call git_commit, "RTL sim")
 	@$(call git_commit, "task:verilog in npc")
 	@echo "======================== Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
@@ -125,6 +126,7 @@ exec_nonSoC:
 # 启动iverilog仿真,传参为IMG(.bin格式),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
 sim-iverilog:
 	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
+	@$(call git_commit, "RTL sim")
 	@$(call git_commit, "task:sim-iverilog in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
@@ -147,6 +149,7 @@ exec_nonSoC_netlist:
 #启动iverilog网表仿真,传参为IMG(.bin), NETLIST(.v), CELLS(.v),支持绝对路径或相对路径/文件名(但文件必须位于npc目录下)
 sim-iverilog-netlist:
 	@echo "======================== Execute target:sim-iverilog-netlist in $(shell pwd) ========================"
+	@$(call git_commit, "RTL sim")
 	@$(call git_commit, "task:sim-iverilog-netlist in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC_netlist IMG=$(basename $(IMG)) NETLIST=$(NETLIST) CELLS=$(CELLS)
