@@ -69,7 +69,7 @@ ascertain:
 
 verilog:
 	@$(call git_commit, "RTL sim")
-	@$(call git_commit, "task:verilog in npc")
+	#@$(call git_commit, "task:verilog in npc")
 	@echo "======================== Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
 
