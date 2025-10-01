@@ -20,12 +20,16 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 						 --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
-
 CFLAGS += -I$(AM_HOME)/am/src/riscv/npc/include
 
-.PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
-#$(info #include out2--------------------, $(IMAGE), $(NAME))
+MAINARGS_MAX_LEN = 64
+MAINARGS_PLACEHOLDER = The insert-arg rule in Makefile will insert mainargs here.
+CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=\""$(MAINARGS_PLACEHOLDER)"\"
+
+insert-arg: image
+	@python $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) "$(MAINARGS_PLACEHOLDER)" "$(mainargs)"
+
 
 
 image: $(IMAGE).elf
@@ -39,3 +43,8 @@ run: image
 	@echo "***** Execute target:run in $(CURPATH) *****"
 	@$(MAKE) -C $(NPC_HOME) sim-iverilog IMG=$(IMAGE)
 
+
+run: insert-arg
+	echo "TODO: add command here to run simulation"
+
+.PHONY: insert-arg
