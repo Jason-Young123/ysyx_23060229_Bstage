@@ -1,8 +1,8 @@
-include $(NVBOARD_HOME)/scripts/nvboard.mk
-include ~/Desktop/ysyx-workbench/Makefile
+include $(YSYX_HOME)/Makefile
 include $(NPC_HOME)/config/config.mk
 
-WDIR_23060229 = $(shell pwd)/..
+#WDIR_23060229 = $(shell pwd)/..
+WDIR_23060229 = $(YSYX_HOME)
 SOC_HOME_23060229 = $(WDIR_23060229)/ysyxSoC
 NPC_HOME_23060229 = $(WDIR_23060229)/npc
 SIM_HOME_23060229 = $(NPC_HOME_23060229)/wavesim_file
@@ -51,12 +51,10 @@ CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
         $(NPC_HOME_23060229)/constr/auto_bind.cpp\
         $(SIM_HOME_23060229)/wavesim.cpp
 CFLAGS_SIM += -I$(SIM_HOME_23060229)
-CFLAGS_BD_SIM += -I$(NVBOARD_HOME)/usr/include
 LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
        /lib/x86_64-linux-gnu/libSDL2.so\
        /lib/x86_64-linux-gnu/libSDL2_image.so\
        /lib/x86_64-linux-gnu/libSDL2_ttf.so\
-       $(NVBOARD_HOME)/build/nvboard.a
 
 BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
 
@@ -95,7 +93,7 @@ sim_SoC:
 		-Dysyx_23060229_CONFIG_FLASH \
         --top-module $(TOP_MODULE_SOC) \
         -cc $(TOP_MODULE_FILE_SOC) $(VFILE_SOC) $(INCLUDES_SOC) $(TIMING) \
-        --exe $(CSRCS_SIM) -CFLAGS $(CFLAGS_SIM) -CFLAGS $(CFLAGS_BD_SIM) \
+        --exe $(CSRCS_SIM) -CFLAGS $(CFLAGS_SIM) \
         -D $(LIBS_SIM) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
 	@make -s -C obj_dir -f V$(TOP_MODULE_SOC).mk V$(TOP_MODULE_SOC)
 	@cp obj_dir/V$(TOP_MODULE_SOC) $(NPC_HOME_23060229)
@@ -183,10 +181,10 @@ exec_foo:
 
 
 clean:
-	@rm $(NPC_HOME_23060229)/obj_dir/*
-	@rm $(NPC_HOME_23060229)/build/*
-	@rm $(NPC_HOME_23060229)/VysyxSoCFull
-	@rm $(NPC_HOME_23060229)/ysyxNonSoCFull
+	@rm -f $(NPC_HOME_23060229)/obj_dir/*
+	@rm -f $(NPC_HOME_23060229)/build/*
+	@rm -f $(NPC_HOME_23060229)/VysyxSoCFull
+	@rm -f $(NPC_HOME_23060229)/ysyxNonSoCFull
 
 
 
