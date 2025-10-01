@@ -43,11 +43,11 @@ image: $(IMAGE).elf
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc -O binary $(IMAGE).elf $(IMAGE).bin
 
-run: image
-	@echo "***** Execute target:run in $(CURPATH) *****"
-	@$(MAKE) -C $(NPC_HOME) convert_SoC
-	@$(MAKE) -C $(NPC_HOME) sim_SoC
-	@$(MAKE) -C $(NPC_HOME) exec_SoC BIN=$(IMAGE).bin
+#run: image
+#	@echo "***** Execute target:run in $(CURPATH) *****"
+#	@$(MAKE) -C $(NPC_HOME) convert_SoC
+#	@$(MAKE) -C $(NPC_HOME) sim_SoC
+#	@$(MAKE) -C $(NPC_HOME) exec_SoC BIN=$(IMAGE).bin
 
 
 run: insert-arg

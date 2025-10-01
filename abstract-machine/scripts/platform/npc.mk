@@ -39,9 +39,9 @@ image: $(IMAGE).elf
 
 
 #$(MAKE) -C $(NPC_$(VERSION)_HOME) wave BIN=$(IMAGE).bin
-run: image
-	@echo "***** Execute target:run in $(CURPATH) *****"
-	@$(MAKE) -C $(NPC_HOME) sim-iverilog IMG=$(IMAGE)
+#run: image
+#	@echo "***** Execute target:run in $(CURPATH) *****"
+#	@$(MAKE) -C $(NPC_HOME) sim-iverilog IMG=$(IMAGE)
 
 
 run: insert-arg
