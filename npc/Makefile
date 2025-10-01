@@ -48,7 +48,6 @@ CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
         $(shell find $(SIM_HOME_23060229)/psram -type f -name "*.cpp")\
         $(shell find $(SIM_HOME_23060229)/sdram -type f -name "*.cpp")\
         $(shell find $(SIM_HOME_23060229)/vga -type f -name "*.cpp")\
-        $(NPC_HOME_23060229)/constr/auto_bind.cpp\
         $(SIM_HOME_23060229)/wavesim.cpp
 CFLAGS_SIM += -I$(SIM_HOME_23060229)
 LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
