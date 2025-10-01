@@ -130,7 +130,7 @@ exec_nonSoC:
 sim-iverilog:
 	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
 	@$(call git_commit, "sim RTL")
-	@$(call git_commit, "task:sim-iverilog in npc")
+	#@$(call git_commit, "task:sim-iverilog in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
 	@$(MAKE) exec_nonSoC
@@ -153,7 +153,7 @@ exec_nonSoC_netlist:
 sim-iverilog-netlist:
 	@echo "======================== Execute target:sim-iverilog-netlist in $(shell pwd) ========================"
 	@$(call git_commit, "sim RTL")
-	@$(call git_commit, "task:sim-iverilog-netlist in npc")
+	#@$(call git_commit, "task:sim-iverilog-netlist in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC_netlist IMG=$(basename $(IMG)) NETLIST=$(NETLIST) CELLS=$(CELLS)
 	@$(MAKE) exec_nonSoC_netlist
