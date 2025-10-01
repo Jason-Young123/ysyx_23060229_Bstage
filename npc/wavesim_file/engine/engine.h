@@ -17,7 +17,7 @@
 //#include <difftest/difftest.h>
 #include <include/auto.h>
 #include <include/general.h>
-#include <nvboard.h>
+//#include <nvboard.h>
 
 
 void init_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time);

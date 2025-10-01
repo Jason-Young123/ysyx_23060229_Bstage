@@ -9,7 +9,7 @@
 #include <mrom/mrom.h>
 #include <flash/flash.h>
 #include <register/register.h>
-#include <nvboard.h>
+//#include <nvboard.h>
 
 using namespace std;
 
@@ -28,7 +28,7 @@ VysyxSoCFull* top = new VysyxSoCFull;
 VerilatedVcdC* m_trace = new VerilatedVcdC;
 
 
-void nvboard_bind_all_pins(VysyxSoCFull* top);
+//void nvboard_bind_all_pins(VysyxSoCFull* top);
 
 
 int main(int argc, char *argv[]){
@@ -94,8 +94,8 @@ int main(int argc, char *argv[]){
 #endif
 
 #ifdef CONFIG_NVBOARD
-	nvboard_bind_all_pins(top);
-	nvboard_init();
+	//nvboard_bind_all_pins(top);
+	//nvboard_init();
 #endif
 
 	init_engine(top, m_trace, &sim_time);
