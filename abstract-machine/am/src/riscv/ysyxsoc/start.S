@@ -151,6 +151,8 @@ _SSBL:
 _start:
 	mv s0,zero
 	la sp,_stack_pointer
-	jal _trm_init
+	la ra, _trm_init # 先将 _trm_init 地址加载到 ra 寄存器中
+ 	jalr ra, 0(ra) # 然后使用间接寻址的方式跳转
+	#jal _trm_init
 
 
