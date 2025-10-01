@@ -100,7 +100,7 @@ sim_SoC:
         --exe $(CSRCS_SIM) -CFLAGS $(CFLAGS_SIM)\
 		-CFLAGS "-fpch-preprocess" \
         -D $(LIBS_SIM) -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
-	@make -s -C obj_dir -f V$(TOP_MODULE_SOC).mk V$(TOP_MODULE_SOC)
+	@+$(MAKE) -s -C obj_dir -f V$(TOP_MODULE_SOC).mk V$(TOP_MODULE_SOC)
 	@cp obj_dir/V$(TOP_MODULE_SOC) $(NPC_HOME_23060229)
 
 exec_SoC:
