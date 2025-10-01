@@ -142,7 +142,7 @@ sim-iverilog:
 
 convert_nonSoC_netlist:
 	@echo "======================== Execute target:convert_nonSoC_netlist in $(shell pwd) ========================"
-	@iverilog -o $(VVP_NONSOC_NL) -P$(TOP_MODULE_NONSOC_NL)_tb.HEX_FILE='"$(IMG).hex"' \
+	@iverilog -g2012 -o $(VVP_NONSOC_NL) -P$(TOP_MODULE_NONSOC_NL)_tb.HEX_FILE='"$(IMG).hex"' \
 		$(TB_NONSOC_NL) $(VFILE_NONSOC_NL) $(basename $(NETLIST)).v $(basename $(CELLS)).v
 
 exec_nonSoC_netlist:
