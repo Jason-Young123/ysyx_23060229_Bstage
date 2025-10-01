@@ -20,10 +20,8 @@ Area heap = RANGE((uintptr_t)&_heap_start, (uintptr_t)&_heap_end);
 
 int main(const char *args);
 
-#ifndef MAINARGS
-    #define MAINARGS ""
-#endif
-static const char mainargs[] = MAINARGS;
+static const char mainargs[MAINARGS_MAX_LEN] = MAINARGS_PLACEHOLDER; // defined in CFLAGS
+
 
 //outb和inb定义于riscv.h
 void putch(char ch){
