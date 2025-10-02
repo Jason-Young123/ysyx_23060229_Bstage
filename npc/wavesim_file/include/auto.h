@@ -8,6 +8,7 @@
 #define CONFIG_N 2
 #define CONFIG_M 3
 #define CONFIG_STAT 1
+#define CONFIG_NVBOARD 1
 #define CONFIG_SDB 1
 #define CONFIG_PRINT_INST 1
 #define CONFIG_MAX_NO_INST 20

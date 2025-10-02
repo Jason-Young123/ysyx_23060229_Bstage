@@ -55,7 +55,7 @@ void init_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 
     while(*sim_time <= 105){
         //printf("sim_time: %ld\n",*sim_time);
-        //nvboard_update();
+        nvboard_update();
 		top -> clock = !top -> clock;
         if(*sim_time == 100)
             top -> reset = 0;
@@ -127,7 +127,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	//while(top -> one_inst_done == 0 && is_simulating){
 	while(is_simulating){
 #ifdef CONFIG_NVBOARD
-		//nvboard_update();
+		nvboard_update();
 #endif
 		top -> clock = 1;//这里会触发hit_good/bad_trap，从而导致is_simulating = 0
     	top -> eval();
@@ -158,7 +158,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	//while(top -> one_inst_done == 1 && is_simulating){
 	while(is_simulating){
 #ifdef CONFIG_NVBOARD
-        //nvboard_update();
+        nvboard_update();
 #endif
 		top -> clock = 1;//这里会触发hit_good/bad_trap，从而导致is_simulating = 0
         top -> eval();
@@ -214,7 +214,7 @@ void exec_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, 
 void exec_engine_wodug(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, uint32_t no_inst){
 	while(is_simulating){
 #ifdef CONFIG_NVBOARD
-        //nvboard_update();
+        nvboard_update();
 #endif
         top -> clock = 1;//这里会触发hit_good/bad_trap，从而导致is_simulating = 0
         top -> eval();
