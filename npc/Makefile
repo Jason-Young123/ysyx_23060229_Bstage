@@ -58,7 +58,7 @@ LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
        /lib/x86_64-linux-gnu/libSDL2.so\
        /lib/x86_64-linux-gnu/libSDL2_image.so\
        /lib/x86_64-linux-gnu/libSDL2_ttf.so\
-	   $(NVBD_HOME_23060229)/build/nvboard.a
+#$(NVBD_HOME_23060229)/build/nvboard.a
 
 BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
 
