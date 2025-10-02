@@ -1,7 +1,7 @@
 From ad906feb144b6ece91f13259a37eacf5edcde6a7 Mon Sep 17 00:00:00 2001
 From: NJU_Yang Jiaxin <2098543558@qq.com>
 Date: Thu, 2 Oct 2025 00:30:02 +0800
-Subject: [PATCH] modify by ysyx_23060229 @ 2025.10.2 00:30
+Subject: [PATCH 1/2] modify by ysyx_23060229 @ 2025.10.2 00:30
 
 ---
  bsp/abstract-machine/Makefile             |   4 +
