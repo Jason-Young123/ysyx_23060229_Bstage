@@ -1,7 +1,7 @@
 From b2f33c2c514b604e15cc159c757e4a00582ad5db Mon Sep 17 00:00:00 2001
 From: NJU_Yang Jiaxin <2098543558@qq.com>
 Date: Thu, 2 Oct 2025 10:37:08 +0800
-Subject: [PATCH 2/2] modify rtt/uart.c such that if \0 is encountered, prog
+Subject: [PATCH 2/3] modify rtt/uart.c such that if \0 is encountered, prog
  will exit
 
 ---
