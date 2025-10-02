@@ -58,7 +58,8 @@ LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
        /lib/x86_64-linux-gnu/libSDL2.so\
        /lib/x86_64-linux-gnu/libSDL2_image.so\
        /lib/x86_64-linux-gnu/libSDL2_ttf.so\
-	   $(NVBD_HOME_23060229)/build/nvboard.a
+	   $(NPC_HOME_23060229)/constr/nvboard.a
+#$(NVBD_HOME_23060229)/build/nvboard.a
 
 BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
 
@@ -93,7 +94,6 @@ convert_SoC:
 #$(call git_commit, "wavesim in npc")
 sim_SoC:
 	@echo "======================== Execute target:sim_SoC in $(shell pwd) ========================"
-	@$(MAKE) -C $(NVBOARD_HOME)/example run
 	@verilator --autoflush --trace \
 		-Dysyx_23060229_CONFIG_FLASH \
         --top-module $(TOP_MODULE_SOC) \
