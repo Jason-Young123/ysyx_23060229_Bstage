@@ -51,6 +51,7 @@ CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
         $(shell find $(SIM_HOME_23060229)/vga -type f -name "*.cpp")\
         $(SIM_HOME_23060229)/wavesim.cpp\
 		$(NPC_HOME_23060229)/constr/auto_bind.cpp\
+		$(shell find $(NVBD_HOME_23060229)/src -type f -name "*.cpp")
 
 CFLAGS_SIM += -I$(SIM_HOME_23060229)
 CFLAGS_BD_SIM += -I$(NVBD_HOME_23060229)/usr/include
