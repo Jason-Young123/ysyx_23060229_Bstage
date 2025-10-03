@@ -83,7 +83,6 @@ convert_SoC:
 	@$(call git_commit, "task:convert in npc")
 	@echo "======================== Execute target:convert_SoC in $(shell pwd) ========================"
 	@verilator --autoflush \
-		-Dysyx_23060229_CONFIG_FLASH \
     	--top-module $(TOP_MODULE_SOC)  \
     	-cc $(TOP_MODULE_FILE_SOC) \
     	$(VFILE_SOC) \

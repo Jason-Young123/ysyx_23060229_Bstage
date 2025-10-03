@@ -1,7 +1,7 @@
 `ifndef __YSYXNONSOCFULL__
 `define __YSYXNONSOCFULL__
 
-//`define ysyx_23060229_nonSoC_Memory//用于定义RESET_PC
+`define ysyx_23060229_nonSoC//用于定义RESET_PC=0x80000000
 `define ysyx_23060229_sim_iverilog//用于ebreak退出仿真环境
 
 //`include "ysyx_23060229.v"
