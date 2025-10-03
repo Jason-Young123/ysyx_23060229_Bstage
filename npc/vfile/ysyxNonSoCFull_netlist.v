@@ -1,7 +1,7 @@
 `ifndef __YSYXNONSOCFULL_NETLIST__
 `define __YSYXNONSOCFULL_NETLIST__
 
-`define ysyx_23060229_nonSoC//用于定义RESET_PC
+//`define ysyx_23060229_nonSoC//用于定义RESET_PC
 `define ysyx_23060229_sim_iverilog//用于ebreak退出仿真环境
 
 
