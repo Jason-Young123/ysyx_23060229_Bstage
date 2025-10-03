@@ -94,7 +94,6 @@ convert_SoC:
 sim_SoC:
 	@echo "======================== Execute target:sim_SoC in $(shell pwd) ========================"
 	@verilator --autoflush --trace \
-		-Dysyx_23060229_CONFIG_FLASH \
         --top-module $(TOP_MODULE_SOC) \
         -cc $(TOP_MODULE_FILE_SOC) $(VFILE_SOC) $(INCLUDES_SOC) $(TIMING) \
         --exe $(CSRCS_SIM) -CFLAGS $(CFLAGS_SIM) -CFLAGS $(CFLAGS_BD_SIM)\
