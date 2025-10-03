@@ -346,7 +346,7 @@ module ysyx_23060229_icache(
     always @(posedge clk) begin
 		if(rst) begin
 			for(i = 0; i < block_num; i = i + 1)
-				valid[i] = 0;
+				valid[i] <= 0;
 		end
 			
 		else if(wen) begin
