@@ -28,13 +28,27 @@ static void serial_putc(char ch) {
   MUXDEF(CONFIG_TARGET_AM, putch(ch), putc(ch, stderr));
 }
 
+//modified @ 2025.10.05 by jason Y.
+static void serial_getc(void){
+	//实现要求:从stdin获取一个char并将其存入serial_base[0]
+	//int ch = MUXDEF(CONFIG_TARGET_AM, getch(), getc(stdin));
+    char ch = getc(stdin);
+	if (ch != EOF) {
+        serial_base[0] = (uint8_t)ch;
+    } else {
+        // 如果遇到EOF，可以设置为0或者保持原值
+        // serial_base[0] = 0;
+    }
+
+}
+
 static void serial_io_handler(uint32_t offset, int len, bool is_write) {
   assert(len == 1);
   switch (offset) {
     /* We bind the serial port with the host stderr in NEMU. */
     case CH_OFFSET:
       if (is_write) serial_putc(serial_base[0]);
-      else ;//panic("do not support read");
+      else serial_getc();//panic("do not support read");
       break;
     default: panic("do not support offset = %d", offset);
   }
