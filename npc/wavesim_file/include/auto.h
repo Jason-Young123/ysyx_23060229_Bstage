@@ -7,6 +7,8 @@
 #define CONFIG_ICACHE 1
 #define CONFIG_N 2
 #define CONFIG_M 3
+#define CONFIG_CALIB_AXI4 1
+#define CONFIG_CALIB_APB 1
 #define CONFIG_STAT 1
 #define CONFIG_NVBOARD 1
 #define CONFIG_SDB 1
