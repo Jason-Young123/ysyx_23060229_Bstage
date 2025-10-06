@@ -31,12 +31,12 @@
 //PART I: Configuration & Macros
 //-----------------------------------------I1:auto-----------------------------------------//
 `define ysyx_23060229_CONFIG_FLASH 1//由verilator -D选项传入
-//`define ysyx_23060229_CONFIG_FAST_FLASH 1
+`define ysyx_23060229_CONFIG_FAST_FLASH 1
 `define ysyx_23060229_CONFIG_N 2
 `define ysyx_23060229_CONFIG_M 3
 //`define ysyx_23060229_CONFIG_ITRACE 1
-`define ysyx_23060229_CONFIG_CALIB_AXI4 1
-`define ysyx_23060229_CONFIG_CALIB_APB 1
+//`define ysyx_23060229_CONFIG_CALIB_AXI4 1
+//`define ysyx_23060229_CONFIG_CALIB_APB 1
 //`define verilator //会在开启verilator仿真时自动定义;开启后会输出统计数据
 //`define simulation 1 //deprecated
 //-----------------------------------------end-of-auto-----------------------------------------//
