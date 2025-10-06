@@ -35,8 +35,8 @@
 `define ysyx_23060229_CONFIG_N 2
 `define ysyx_23060229_CONFIG_M 3
 //`define ysyx_23060229_CONFIG_ITRACE 1
-//`define ysyx_23060229_CONFIG_CALIB_AXI4 1
-//`define ysyx_23060229_CONFIG_CALIB_APB 1
+`define ysyx_23060229_CONFIG_CALIB_AXI4 1
+`define ysyx_23060229_CONFIG_CALIB_APB 1
 //`define verilator //会在开启verilator仿真时自动定义;开启后会输出统计数据
 //`define simulation 1 //deprecated
 //-----------------------------------------end-of-auto-----------------------------------------//
