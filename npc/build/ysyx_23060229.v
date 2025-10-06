@@ -31,7 +31,7 @@
 //PART I: Configuration & Macros
 //-----------------------------------------I1:auto-----------------------------------------//
 `define ysyx_23060229_CONFIG_FLASH 1//由verilator -D选项传入
-`define ysyx_23060229_CONFIG_FAST_FLASH 1
+//`define ysyx_23060229_CONFIG_FAST_FLASH 1
 `define ysyx_23060229_CONFIG_N 2
 `define ysyx_23060229_CONFIG_M 3
 //`define ysyx_23060229_CONFIG_ITRACE 1
