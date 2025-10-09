@@ -36,8 +36,8 @@ static char* rl_gets() {
 
 static int cmd_c(uint64_t* sim_time) {
 	if(is_simulating)
- 		//exec_engine(top, m_trace, sim_time, -1); 	
- 		exec_engine_wodug(top, m_trace, sim_time, -1); 	
+ 		exec_engine(top, m_trace, sim_time, -1); 	
+ 		//exec_engine_wodug(top, m_trace, sim_time, -1); 	
 	else
 		printf("Simulation has ended; Press 'q' to exit and check the wave.\n");
   	return 0;

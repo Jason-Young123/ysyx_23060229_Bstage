@@ -11,6 +11,20 @@ extern bool difftest_to_skip;
 extern bool difftest_skipping;
 
 
+int32_t top_pc;
+int32_t top_inst;
+
+extern "C" void flash_read(int32_t pc){
+	top_pc = pc;
+	return;
+}
+
+
+extern "C" void flash_read(int32_t inst){
+	top_inst = inst;
+}
+
+
 uint32_t inst_get(uint32_t addr){
 	//由于存在bootloader加载,因而前期和后期的取值区域不同
 	//前期从mrom/flash取inst,后期从psram取inst
@@ -125,7 +139,10 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	}
 	top -> reset = 0;*/
 	//while(top -> one_inst_done == 0 && is_simulating){
-	while(is_simulating){
+	
+	int32_t pc_tmp = top_pc;
+
+	while(is_simulating && pc_tmp == top_pc){
 #ifdef CONFIG_NVBOARD
 		nvboard_update();
 #endif
@@ -147,16 +164,16 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
    		(*sim_time)++;
 	}
 	
-	update_reg(top);
-	int inst = inst_get(0);
+	//update_reg(top);
+	//int inst = inst_get(0);
 	if(is_print)
-    	printf("pc: %#8.8x  inst: %#8.8x\n", 0, inst);
+    	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);
 	//print the previous inst having been decoded
     //printf("pc: %#8.8x  inst: %#8.8x\n", top->pc,top->inst);
 
 
 	//while(top -> one_inst_done == 1 && is_simulating){
-	while(is_simulating){
+	/*while(is_simulating){
 #ifdef CONFIG_NVBOARD
         nvboard_update();
 #endif
@@ -176,7 +193,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
         m_trace -> dump(*sim_time);
 #endif
         (*sim_time)++;
-	}
+	}*/
 	
 	//fclose(logFile);
 }
