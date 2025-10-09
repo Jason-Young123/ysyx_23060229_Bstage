@@ -95,6 +95,7 @@
 	import "DPI-C" function void flush_counter_increase();
 
 	import "DPI-C" function void get_current_pc(input int pc);
+	import "DPI-C" function void get_current_inst(input int inst);
 `endif
 
 
@@ -640,6 +641,7 @@ module ysyx_23060229_IDU(
 			//modify by Jason @ 2025.10.9
 			`ifdef verilator
 				get_current_pc(pc);
+				get_current_inst(inst);
 			`endif
 			case(state)
 				Wait_IFU_Valid: begin
