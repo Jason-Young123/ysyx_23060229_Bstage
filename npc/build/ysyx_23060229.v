@@ -93,8 +93,6 @@
 	import "DPI-C" function void csr_inst_counter_increase();
 
 	import "DPI-C" function void flush_counter_increase();
-
-	import "DPI-C" function void
 `endif
 
 

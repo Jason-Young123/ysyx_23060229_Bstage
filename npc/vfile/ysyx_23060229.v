@@ -93,6 +93,8 @@
 	import "DPI-C" function void csr_inst_counter_increase();
 
 	import "DPI-C" function void flush_counter_increase();
+
+	import "DPI-C" function void get_current_pc(input int pc);
 `endif
 
 
@@ -635,6 +637,10 @@ module ysyx_23060229_IDU(
 		end
 
 		else begin
+			//modify by Jason @ 2025.10.9
+			`ifdef verilator
+				get_current_pc(pc);
+			`endif
 			case(state)
 				Wait_IFU_Valid: begin
 					if(validFromIFU) begin//确保IFU预测正确时才进行状态转换
