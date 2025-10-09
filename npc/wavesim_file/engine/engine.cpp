@@ -128,7 +128,7 @@ void exec_once(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 
 
 void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, bool is_print){
-	printf("Warning: Function exec_one_inst is deprecated; Any use may lead to unexpected behavior.\n");
+	//printf("Warning: Function exec_one_inst is deprecated; Any use may lead to unexpected behavior.\n");
 	//logFile = fopen("log_cache", "a");
 	/*while(*sim_time >= 40237 && *sim_time <= 40999){
 		top -> clock = !top -> clock;
@@ -201,7 +201,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 
 //只有exec_engine是向sdb提供的调用接口，exec_once并不是
 void exec_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, uint32_t no_inst){
-	printf("Warning: Function exec_engine is deprecated; Any use may lead to unexpected behavior.\n");
+	//printf("Warning: Function exec_engine is deprecated; Any use may lead to unexpected behavior.\n");
 	for(uint32_t i = 0; i < no_inst; i++){
 		if(!wp_triggered && is_simulating){
 			/*if(*sim_time >= 2345 && *sim_time <= 2588){

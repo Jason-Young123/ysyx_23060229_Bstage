@@ -156,7 +156,7 @@ long xstr2int(char *str){
 static int cmd_si(uint64_t *sim_time){
     /*extract the first argument*/
 	
-	printf("Warning: Function cmd_si is deprecated; Any use may lead to unexpected behavior.\n");
+	//printf("Warning: Function cmd_si is deprecated; Any use may lead to unexpected behavior.\n");
 	if(is_simulating){
     	char *arg = strtok(NULL, "\0");
 
