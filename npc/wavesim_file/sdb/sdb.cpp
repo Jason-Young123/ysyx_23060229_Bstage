@@ -437,9 +437,9 @@ static int cmd_d(uint64_t *sim_time){
 
 
 
-
+//modify by Jason @ 2025.10.9
 void sdb_set_batch_mode() {
-  is_batch_mode = true;
+  is_batch_mode = false;
 }
 
 
