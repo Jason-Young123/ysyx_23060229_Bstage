@@ -638,14 +638,14 @@ module ysyx_23060229_IDU(
 		end
 
 		else begin
-			//modify by Jason @ 2025.10.9
-			`ifdef verilator
-				get_current_pc(pc);
-				get_current_inst(inst);
-			`endif
 			case(state)
 				Wait_IFU_Valid: begin
 					if(validFromIFU) begin//确保IFU预测正确时才进行状态转换
+					//modify by Jason @ 2025.10.9
+					`ifdef verilator
+						get_current_pc(pc);
+						get_current_inst(inst);
+					`endif
 						stall_quest_fencei <= 0;//通常都为0,除非遇到fence.i
 											
 						pc_out <= pc;
