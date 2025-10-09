@@ -14,13 +14,13 @@ extern bool difftest_skipping;
 int32_t top_pc;
 int32_t top_inst;
 
-extern "C" void flash_read(int32_t pc){
+extern "C" void get_current_pc(int32_t pc){
 	top_pc = pc;
 	return;
 }
 
 
-extern "C" void flash_read(int32_t inst){
+extern "C" void get_current_inst(int32_t inst){
 	top_inst = inst;
 }
 
