@@ -28,8 +28,8 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 
 //出队
 extern "C" void one_inst_done(void){
-	pc_top = pc_queue[head];	
-	inst_top = inst_queue[head];
+	top_pc = pc_queue[head];	
+	top_inst = inst_queue[head];
 	head = (head + 1) % 10;
 	return;
 }
@@ -174,16 +174,12 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
     	m_trace -> dump(*sim_time);
 #endif
    		(*sim_time)++;
-	}
 	
-	//update_reg(top);
-	//int inst = inst_get(0);
+	} while(is_simulating && pc_tmp == top_pc);
+
 	if(is_print)
     	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);
-	//print the previous inst having been decoded
-    //printf("pc: %#8.8x  inst: %#8.8x\n", top->pc,top->inst);
-	} while(is_simulating && pc_tmp == top_pc)
-
+	
 	//while(top -> one_inst_done == 1 && is_simulating){
 	/*while(is_simulating){
 #ifdef CONFIG_NVBOARD
