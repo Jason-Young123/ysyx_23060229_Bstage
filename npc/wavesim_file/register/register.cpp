@@ -18,7 +18,7 @@ const char *csregname[6] = {
   "mcause", "mvendorid", "marchid" 
 };
 
-extern "C" void get_current_inst(int32_t id, int32_t regvalue){
+extern "C" void get_current_reg(int32_t id, int32_t regvalue){
 	if(id >= 0 && id <= 15){
 		registers[id] = regvalue;
 	}
@@ -43,7 +43,7 @@ void update_reg(VysyxSoCFull* top){
 		//registers[i] = top -> regs[i];
 		registers[i] = 0;
 	//regpc = top -> pc;
-	regpc = 0;
+	//regpc = 0;
 }
 
 
