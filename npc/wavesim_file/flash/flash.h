@@ -12,6 +12,6 @@
 long init_flash(const char* img_file);
 
 extern "C" void flash_read(int32_t addr, int32_t *data);
-void flash_read_(int32_t addr, int32_t *data);
+void flash_read_sdb(int32_t addr, int32_t *data);
 
 #endif

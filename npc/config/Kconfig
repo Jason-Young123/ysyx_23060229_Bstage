@@ -173,6 +173,9 @@ config MAX_NO_INST
 config ITRACE
 	bool "Enable Itrace"
 	default y
+config MTRACE
+	bool "Enable Mtrace"
+	default y
 	
 config WP
 	bool "Enable Watchpoint"

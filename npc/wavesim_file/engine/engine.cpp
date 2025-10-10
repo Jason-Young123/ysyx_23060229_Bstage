@@ -18,9 +18,10 @@ int32_t inst_queue[10];
 uint32_t head = 0;
 uint32_t tail = 0;
 
+
 //入队
 extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
-	pc_queue[tail] = pc;
+	pc_queue[tail] = pc;//代表IDU刚取到的指令
 	inst_queue[tail] = inst;
 	tail = (tail + 1) % 10;
 	return;
@@ -28,7 +29,7 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 
 //出队
 extern "C" void one_inst_done(void){
-	top_pc = pc_queue[head];	
+	top_pc = pc_queue[head];//代表刚执行完的指令
 	top_inst = inst_queue[head];
 	head = (head + 1) % 10;
 	return;
@@ -52,6 +53,40 @@ void display_itrace(){
             printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
         for(int i = 0; i < ringbuf_itrace_tail; ++i)
             printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+    }
+
+    printf("------------------------------------------------------------------------\n");
+}
+
+
+
+//mtrace相关
+int32_t ringbuf_mtrace_pc[50];
+int32_t ringbuf_mtrace_addr[50];
+int32_t ringbuf_mtrace_head = 0;
+int32_t ringbuf_mtrace_tail = 0;
+
+extern "C" void mtrace_record(int32_t pc, int32_t addr){
+#ifdef CONFIG_MTRACE
+	ringbuf_mtrace_pc[ringbuf_mtrace_tail] = pc;
+    ringbuf_mtrace_addr[ringbuf_mtrace_tail] = addr;
+    ringbuf_mtrace_tail = (ringbuf_mtrace_tail + 1) % 50;
+    if(ringbuf_mtrace_head == ringbuf_mtrace_tail)
+        ringbuf_mtrace_head = (ringbuf_mtrace_head + 1) % 50;
+#endif
+	return;
+}
+
+void display_mtrace(){
+    printf("---------------------------------mtrace----------------------------------\n");
+    if(ringbuf_mtrace_head < ringbuf_mtrace_tail)
+        for(int i = ringbuf_mtrace_head; i < ringbuf_mtrace_tail; ++i)
+            printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
+    else{
+        for(int i = ringbuf_mtrace_head; i < 50; ++i)
+            printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
+        for(int i = 0; i < ringbuf_mtrace_tail; ++i)
+            printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
     }
 
     printf("------------------------------------------------------------------------\n");
@@ -306,6 +341,9 @@ extern "C" void hit_good_trap(){
 #ifdef CONFIG_ITRACE
 	display_itrace();
 #endif
+#ifdef CONFIG_ITRACE
+	display_mtrace();
+#endif
 
 #ifdef CONFIG_STAT
 	double hit_percentage = (double)hit_counter/(double)IFU_counter;
@@ -347,6 +385,9 @@ extern "C" void hit_bad_trap(){
 	printf("\033[31mhit bad trap! Simulation has ended.\033[0m\n");
 #ifdef CONFIG_ITRACE
 	display_itrace();
+#endif
+#ifdef CONFIG_ITRACE
+	display_mtrace();
 #endif
     is_simulating = false;
 }

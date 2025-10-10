@@ -98,6 +98,8 @@
 	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
 	import "DPI-C" function void one_inst_done();//在仿真环境中pc/inst出队;注意不同inst判定one_inst_done的时机不同;
 	//对于写reg/csreg的指令,判定时机为写入reg/csreg后;对于写mem的指令,判定时机为返回bvalid信号
+	import "DPI-C" function void mtrace_record(input int pc, input int addr);
+	
 `endif
 
 
@@ -1712,6 +1714,7 @@ module ysyx_23060229_LSU(
 						if(arready) begin
 							wen_csreg <= 0; state <= Wait_Rvalid; //araddr_tmp <= dest_csreg_mem;
 						end
+						`ifdef verilator mtrace_record(pc, araddr); `endif
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
 						if(awready & wready) begin
@@ -1726,6 +1729,7 @@ module ysyx_23060229_LSU(
 							state <= Wait_Awready;
 							awaddr_tmp <= dest_csreg_mem;
 						end
+						`ifdef verilator mtrace_record(pc, awaddr); `endif
 					end
 					
 					

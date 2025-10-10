@@ -293,7 +293,7 @@ static int cmd_x(uint64_t *sim_time){
 
 				else if(CHECK_FLASH(tmp2)){
 #ifdef CONFIG_FLASH
-                    flash_read(tmp2 - 0x30000000, &data);
+                    flash_read_sdb(tmp2 - 0x30000000, &data);
                     printf("in flash: 0x%8.8x : 0x%8.8x\n", tmp2, data);
 #else
                     printf("addr 0x%8.8x is out of boundary\n", tmp2);

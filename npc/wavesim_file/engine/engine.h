@@ -29,5 +29,7 @@ void exec_engine_wodug(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_
 extern "C" void get_current_pc_inst(int32_t pc, int32_t inst);
 extern "C" void one_inst_done(void);
 
+extern "C" void mtrace_record(int32_t pc, int32_t addr);
+
 
 #endif
