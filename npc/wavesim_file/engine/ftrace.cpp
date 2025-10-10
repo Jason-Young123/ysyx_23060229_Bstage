@@ -124,3 +124,49 @@ void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name){
 
 
 
+//ftrace相关
+int32_t ringbuf_ftrace_pc[50];
+char *ringbuf_ftrace_func[50];
+int32_t ringbuf_ftrace_head = 0;
+int32_t ringbuf_ftrace_tail = 0;
+char *previous_func_name = "****";
+
+extern "C" void ftrace_record(int32_t pc) {
+#ifdef CONFIG_FTRACE
+    bool success;
+    char *func_name; uint32_t value;
+
+    check_pc(pc, &success, &value, &func_name);//耗时巨大
+
+    if (success && func_name != previous_func_name) {
+        // 如果func_name和previous_func_name不同（指针比较）
+        previous_func_name = func_name;  // 更新指针指向
+
+        ringbuf_ftrace_pc[ringbuf_ftrace_tail] = value;
+        ringbuf_ftrace_func[ringbuf_ftrace_tail] = func_name;
+
+        ringbuf_ftrace_tail = (ringbuf_ftrace_tail + 1) % 50;
+        if (ringbuf_ftrace_head == ringbuf_ftrace_tail) {
+            ringbuf_ftrace_head = (ringbuf_ftrace_head + 1) % 50;
+        }
+
+    }
+#endif
+    return;
+}
+
+void display_ftrace(){
+    printf("\033[33m---------------------------------ftrace----------------------------------\n");
+    if(ringbuf_ftrace_head <= ringbuf_ftrace_tail)
+        for(int i = ringbuf_ftrace_head; i < ringbuf_ftrace_tail; ++i)
+            printf("At %#8.8x, function: %s\n", ringbuf_ftrace_pc[i], ringbuf_ftrace_func[i]);
+    else{
+        for(int i = ringbuf_ftrace_head; i < 50; ++i)
+            printf("At %#8.8x, function: %s\n", ringbuf_ftrace_pc[i], ringbuf_ftrace_func[i]);
+        for(int i = 0; i < ringbuf_ftrace_tail; ++i)
+            printf("At %#8.8x, function: %s\n", ringbuf_ftrace_pc[i], ringbuf_ftrace_func[i]);
+    }
+    printf("-------------------------------------------------------------------------\033[0m\n");
+}
+
+
