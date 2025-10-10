@@ -4,8 +4,10 @@
  * ysyxSOC Configuration Menu
  *
  */
+#define CONFIG_ETRACE 1
 #define CONFIG_FLASH_AVAILABLE 1
 #define CONFIG_MAX_NO_INST 20
+#define CONFIG_ITRACE 1
 #define CONFIG_CALIB_APB 1
 #define CONFIG_N 2
 #define CONFIG_STAT 1
@@ -14,8 +16,10 @@
 #define CONFIG_FLASH 1
 #define CONFIG_M 3
 #define CONFIG_SDB 1
+#define CONFIG_FTRACE 1
 #define CONFIG_ICACHE 1
 #define CONFIG_SDRAM 1
+#define CONFIG_MTRACE 1
 #define CONFIG_PSRAM_AVAILABLE 1
 #define CONFIG_FAST_FLASH 1
 #define CONFIG_NVBOARD 1

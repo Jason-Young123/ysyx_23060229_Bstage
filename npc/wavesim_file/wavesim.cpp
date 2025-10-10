@@ -86,6 +86,32 @@ int main(int argc, char *argv[]){
 	printf("\033[36mWatchpoint is \033[31mOFF\033[0m\n");
 #endif
 
+//检查四大trace
+#ifdef CONFIG_ITRACE
+	printf("\033[36mItrace is \033[32mON\033[0m\n");
+#else
+	printf("\033[36mItrace is \033[31mOFF\033[0m\n");
+#endif
+
+#ifdef CONFIG_MTRACE
+	printf("\033[36mMtrace is \033[32mON\033[0m\n");
+#else
+	printf("\033[36mMtrace is \033[31mOFF\033[0m\n");
+#endif
+
+#ifdef CONFIG_FTRACE
+	printf("\033[36mFtrace is \033[32mON\033[36m, elf file found in %s\033[0m\n", argv[2]);
+#else
+	printf("\033[36mFtrace is \033[31mOFF\033[0m\n");
+#endif
+
+#ifdef CONFIG_ETRACE
+	printf("\033[36mEtrace is \033[32mON\033[0m\n");
+#else
+	printf("\033[36mEtrace is \033[31mOFF\033[0m\n");
+#endif
+
+
 #ifdef CONFIG_DIFFTEST
 	printf("\033[36mDifftest is \033[32mON\033[0m\n");
 	printf("\033[36mPath of reference file:\n%s\033[0m\n",ref_so_file);
