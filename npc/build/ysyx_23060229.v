@@ -94,9 +94,9 @@
 
 	import "DPI-C" function void flush_counter_increase();
 
-	import "DPI-C" function void get_current_pc(input int pc);
-	import "DPI-C" function void get_current_inst(input int inst);
+	import "DPI-C" function void get_current_pc_inst(input int pc, input int inst);//在仿真环境中pc/inst入队
 	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
+	import "DPI-C" function void one_inst_done();//在仿真环境中pc/inst出队
 `endif
 
 
@@ -303,7 +303,6 @@ module ysyx_23060229_CSRegister(
 			//modify by Jason @ 2025.10.10
         	`ifdef verilator
 				get_current_reg({20'h00000, waddr}, wdata);
-				get_current_reg(32'h00000f11, CSReg[4]); get_current_reg(32'h00000f12, CSReg[5]);
         	`endif
 			
 			if(wen[6]) begin//wen = 8'b11xx_xxxx, 说明要额外写入异常, 其中低6位为异常原因
@@ -657,8 +656,7 @@ module ysyx_23060229_IDU(
 					if(validFromIFU) begin//确保IFU预测正确时才进行状态转换
 					//modify by Jason @ 2025.10.9
 					`ifdef verilator
-						get_current_pc(pc);
-						get_current_inst(inst);
+						get_current_pc_inst(pc, inst);
 					`endif
 						stall_quest_fencei <= 0;//通常都为0,除非遇到fence.i
 											
@@ -1669,13 +1667,13 @@ module ysyx_23060229_LSU(
 					if(flag == `ysyx_23060229_WriteReg) begin//仅写reg
                         wen_reg <= 1; wen_csreg <= 0;
                         state <= Wait_EXU_Valid;
-                       	//`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done(); `endif
                     end
 					if(flag == `ysyx_23060229_WriteCSReg) begin//写reg和csreg
                         waddr_csreg <= dest_csreg_mem[11:0]; wdata_csreg <= result_csreg_mem;
                         wen_reg <= 1; wen_csreg <= 8'b10000000;
                         state <= Wait_EXU_Valid;
-                        //`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done(); `endif
                     end
 					
 					
@@ -1685,18 +1683,21 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
+                       	`ifdef verilator one_inst_done(); `endif
                     end
 					if(flag == `ysyx_23060229_Jump_CS) begin//仅写csreg,就是ecall
 						wen_reg <= 0;
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 8'b11001011;
+                       	`ifdef verilator one_inst_done(); `endif
 					end
 					if(flag == `ysyx_23060229_Jump_B) begin//啥都不做，比如Jump_B
 						wen_reg <= 0;
                         state <= Wait_EXU_Valid;
                         waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
+                       	`ifdef verilator one_inst_done(); `endif
 					end
 
 
@@ -1743,13 +1744,13 @@ module ysyx_23060229_LSU(
 						`ifdef verilator
 							LSU_counter_increase();
 						`endif
-						//`ifdef simulation one_inst_done <= 1;`endif
 						state <= Wait_EXU_Valid;
 						wen_reg <= 1; wen_csreg <= 0;
 						wdata_reg <= 	(typ_tmp[2:0] == 3'b000) ? {{24{slice1[7]}}, slice1} : 
 										(typ_tmp[2:0] == 3'b001) ? {24'b0, slice1} : 
 										(typ_tmp[2:0] == 3'b010) ? {{16{slice2[15]}}, slice2} : 
 										(typ_tmp[2:0] == 3'b011) ? {16'b0, slice2} : rdata;
+                       	`ifdef verilator one_inst_done(); `endif
 					end
 					
 					`ifdef verilator
@@ -1778,7 +1779,7 @@ module ysyx_23060229_LSU(
 						`ifdef verilator
 							LSU_counter_increase();
 						`endif
-						//`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done(); `endif
 					end
 					`ifdef verilator
 					if(bvalid && bresp == 2'b11) begin
