@@ -62,7 +62,7 @@ LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
 #$(NVBD_HOME_23060229)/build/nvboard.a
 
 BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
-
+ELF ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.elf
 
 
 ascertain:

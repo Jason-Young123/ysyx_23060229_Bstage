@@ -51,10 +51,10 @@ image: $(IMAGE).elf
 
 
 run: insert-arg
-	@echo "***** Execute target:run in $(CURPATH) *****"
+	@echo "======================== Execute target:run in $(CURPATH) ========================"
 	@$(MAKE) -C $(NPC_HOME) convert_SoC
 	@$(MAKE) -C $(NPC_HOME) sim_SoC
-	@$(MAKE) -C $(NPC_HOME) exec_SoC BIN=$(IMAGE).bin
+	@$(MAKE) -C $(NPC_HOME) exec_SoC BIN=$(IMAGE).bin ELF=$(IMAGE).elf
 
 .PHONY: insert-arg
 
