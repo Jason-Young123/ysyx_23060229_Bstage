@@ -16,6 +16,7 @@
 #define CONFIG_FLASH 1
 #define CONFIG_M 3
 #define CONFIG_SDB 1
+#define CONFIG_FTRACE 1
 #define CONFIG_ICACHE 1
 #define CONFIG_SDRAM 1
 #define CONFIG_MTRACE 1

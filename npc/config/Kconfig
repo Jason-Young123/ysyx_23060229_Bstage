@@ -176,6 +176,9 @@ config ITRACE
 config MTRACE
 	bool "Enable Mtrace"
 	default y
+config FTRACE
+	bool "Enable Ftrace"
+	default y
 config ETRACE
 	bool "Enable Etrace"
 	default y

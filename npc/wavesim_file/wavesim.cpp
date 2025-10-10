@@ -98,6 +98,10 @@ int main(int argc, char *argv[]){
 	nvboard_init();
 #endif
 
+#ifdef CONFIG_FTRACE
+	init_ftrace(argv[2]);
+#endif
+
 	init_engine(top, m_trace, &sim_time);
 
 #ifdef CONFIG_DIFFTEST

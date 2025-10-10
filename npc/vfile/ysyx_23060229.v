@@ -102,7 +102,7 @@
 	import "DPI-C" function void mtrace_record(input int pc, input int addr);
 	import "DPI-C" function void etrace_record_pc(input int pc);
 	import "DPI-C" function void etrace_record();
-
+	import "DPI-C" function void ftrace_record(input int pc);
 `endif
 
 
@@ -668,6 +668,7 @@ module ysyx_23060229_IDU(
 					`ifdef verilator
 						get_current_pc_inst(pc, inst);
 						itrace_record(pc, inst);
+						ftrace_record(pc);
 					`endif
 						stall_quest_fencei <= 0;//通常都为0,除非遇到fence.i
 											
