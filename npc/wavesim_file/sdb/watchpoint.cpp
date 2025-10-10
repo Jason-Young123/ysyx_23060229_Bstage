@@ -155,8 +155,10 @@ void scan_watchpoints(){
             printf("\033[36m---------------------------------------------------------------------\n");
             printf("! changes at watchpoint NO.%d: %s detected\n",\
                         wp_used[i],expression_stored[i]);
-            printf("previous result: %u ; current result: %u\n",\
-                        result[i], cur);
+            printf("previous result: %u (hex: %#x)\n",\
+                        result[i], result[i]);
+            printf("current result: %u  (hex: %#x)\n",\
+                        cur, cur);
             update_wp_result(wp_used[i], cur);
             //if(nemu_state.state == NEMU_RUNNING)//exclude the situation that 
             //nemu_state.state = NEMU_STOP;//nemu has executed the ebreak inst
