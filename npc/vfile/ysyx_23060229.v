@@ -1701,7 +1701,7 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 8'b11001011;
-                       	`ifdef verilator etrace_record(pc); `endif//为避免重复写入,需在CSReg中额外调用etrace_record
+                       	`ifdef verilator etrace_record_pc(pc); `endif//为避免重复写入,需在CSReg中额外调用etrace_record
 					end
 					if(flag == `ysyx_23060229_Jump_B) begin//啥都不做，比如Jump_B
 						wen_reg <= 0;
