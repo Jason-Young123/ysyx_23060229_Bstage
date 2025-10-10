@@ -136,23 +136,9 @@ void exec_once(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 
 
 void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, bool is_print){
-	//printf("Warning: Function exec_one_inst is deprecated; Any use may lead to unexpected behavior.\n");
 	//logFile = fopen("log_cache", "a");
-	/*while(*sim_time >= 40237 && *sim_time <= 40999){
-		top -> clock = !top -> clock;
-		top -> reset = 1;
-		top -> eval();
-		m_trace -> dump(*sim_time);
-		(*sim_time) ++;
-	}
-	top -> reset = 0;*/
-	//while(top -> one_inst_done == 0 && is_simulating){
 	
 	int32_t pc_tmp = top_pc;
-	
-	//用do-while
-
-	//while(is_simulating && pc_tmp == top_pc){
 	do {
 #ifdef CONFIG_NVBOARD
 		nvboard_update();
@@ -211,12 +197,6 @@ void exec_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, 
 	//printf("Warning: Function exec_engine is deprecated; Any use may lead to unexpected behavior.\n");
 	for(uint32_t i = 0; i < no_inst; i++){
 		if(!wp_triggered && is_simulating){
-			/*if(*sim_time >= 2345 && *sim_time <= 2588){
-				top -> reset = 1;
-			}
-			else{
-				top -> reset = 0;
-			}*/
 #ifdef CONFIG_PRINT_INST
 			if(no_inst <= CONFIG_MAX_NO_INST)
 				exec_one_inst(top, m_trace, sim_time, true);
@@ -259,11 +239,6 @@ void exec_engine_wodug(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_
     }
 
 }
-
-
-
-
-
 
 
 
@@ -335,17 +310,14 @@ extern "C" void flush_counter_increase(){
 }
 
 extern "C" void hit_good_trap(){
+    printf("pc: %#8.8x  inst: %#8.8x\n", top_pc,top_inst);
     printf("\033[32mhit good trap! Simulation has ended.\033[0m\n");
 
 #ifdef CONFIG_STAT
 	double hit_percentage = (double)hit_counter/(double)IFU_counter;
 	double miss_penalty = (double)unhit_timer/(double)(IFU_counter - hit_counter);
 	double pred_percentage = 1.0 - (double)flush_counter/(double)(branch_inst_counter);
-#ifdef CONFIG_CALIB_AXI4
-	cycle_counter -= 44061;//考虑SDRAM初始化的延迟
-#else
-	cycle_counter -= 8673;
-#endif
+	
 	printf("---------------------------------statistics----------------------------------\n");
 	printf("total cycles = %ld, total instructions = %ld\n", cycle_counter, EXU_counter);
 	printf("CPI(cycles per inst) = %.4lf\n", ((double)cycle_counter)/((double)EXU_counter));
@@ -377,9 +349,7 @@ extern "C" void hit_good_trap(){
 
 
 extern "C" void hit_bad_trap(){
-	//extern Vysyx_23060229_top* top;
-    //printf("pc: %#8.8x  inst: %#8.8x\n", top->pc,top->inst);
-    //printf("pc: %#8.8x", top->pc);
+    printf("pc: %#8.8x  inst: %#8.8x\n", top_pc,top_inst);
 	printf("\033[31mhit bad trap! Simulation has ended.\033[0m\n");
     is_simulating = false;
 }
