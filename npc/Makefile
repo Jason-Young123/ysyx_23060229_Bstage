@@ -104,7 +104,7 @@ sim_SoC:
 
 exec_SoC:
 	@echo "======================== Execute target:exec_SoC in $(shell pwd) ========================"
-	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN)
+	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN) $(ELF)
 
 
 
