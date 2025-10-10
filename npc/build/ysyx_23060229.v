@@ -100,7 +100,9 @@
 	//对于写reg/csreg的指令,判定时机为写入reg/csreg后;对于写mem的指令,判定时机为返回bvalid信号
 	import "DPI-C" function void itrace_record(input int pc, input int inst);
 	import "DPI-C" function void mtrace_record(input int pc, input int addr);
-	
+	import "DPI-C" function void etrace_record_pc(input int pc);
+	import "DPI-C" function void etrace_record();
+
 `endif
 
 
@@ -317,6 +319,7 @@ module ysyx_23060229_CSRegister(
         		`ifdef verilator
 					get_current_reg(32'h00000342, {26'b0, wen[5:0]});
                 	one_inst_done();
+					etrace_record();//在LSU调用etrace_record_pc后正式写入ringbuf
 				`endif
 			end
 		end
@@ -1217,9 +1220,9 @@ module ysyx_23060229_IDU(
 
 							//ECALL写入MEPC和MCAUSE，跳转至MTVEC
 							32'b0000000_00000_00000_000_00000_1110011: begin//ecall
-								`ifdef verilator
-                                    $display("Exception: Ecall in IDU! Error pc: %x", pc);
-                                `endif
+								//`ifdef verilator
+                                //    $display("Exception: Ecall in IDU! Error pc: %x", pc);
+                                //`endif
         			        	typ <= `ysyx_23060229_ECALL; 
 								imm <= 0;
             	    		    rs1 <= 0; rs2 <= 0; rd <= 0; csr <= `ysyx_23060229_MTVEC;
@@ -1698,7 +1701,7 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 8'b11001011;
-                       	//`ifdef verilator one_inst_done(); `endif
+                       	`ifdef verilator etrace_record(pc); `endif//为避免重复写入,需在CSReg中额外调用etrace_record
 					end
 					if(flag == `ysyx_23060229_Jump_B) begin//啥都不做，比如Jump_B
 						wen_reg <= 0;
