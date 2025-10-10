@@ -88,7 +88,6 @@ void init_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 #endif
         (*sim_time)++;
     }
-	//update_reg(top);
     printf("-------------------------------init_engine done------------------------------\n");
 }
 
