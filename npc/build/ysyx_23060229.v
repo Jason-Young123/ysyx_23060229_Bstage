@@ -96,6 +96,7 @@
 
 	import "DPI-C" function void get_current_pc(input int pc);
 	import "DPI-C" function void get_current_inst(input int inst);
+	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
 `endif
 
 
@@ -233,6 +234,13 @@ module ysyx_23060229_Register(
 
 	
 	always @(posedge clk) begin
+		//modify by Jason @ 2025.10.09
+		`ifdef verilator
+			get_current_reg(0, Reg[0]); get_current_reg(1, Reg[1]); get_current_reg(2, Reg[2]); get_current_reg(3, Reg[3]);
+			get_current_reg(4, Reg[4]); get_current_reg(5, Reg[5]); get_current_reg(6, Reg[6]); get_current_reg(7, Reg[7]);
+			get_current_reg(8, Reg[8]); get_current_reg(9, Reg[9]); get_current_reg(10, Reg[10]); get_current_reg(11, Reg[11]);
+			get_current_reg(12, Reg[12]); get_current_reg(13, Reg[13]); get_current_reg(14, Reg[14]); get_current_reg(15, Reg[15]);
+		`endif
 		if(rst) begin
 			Reg[0] <= 0;
 			//$display("Register resetting ...");
@@ -281,6 +289,11 @@ module ysyx_23060229_CSRegister(
 
 	always @(posedge clk) begin
 		//excp_written <= 0;
+		//modify by Jason @ 2025.10.10
+        `ifdef verilator
+            get_current_reg(12'h300, CSReg[0]); get_current_reg(12'h305, CSReg[1]); get_current_reg(12'h341, CSReg[2]); 
+			get_current_reg(12'h342, CSReg[3]); get_current_reg(12'hf11, CSReg[4]); get_current_reg(12'hf12, CSReg[5]);
+        `endif
 		if(rst) begin
 			CSReg[4] <= 32'h79737978;
 			CSReg[5] <= 32'h015fdf05;
