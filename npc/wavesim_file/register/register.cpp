@@ -2,9 +2,8 @@
 
 
 int32_t registers[32] = {0};
-int32_t csregisters[6] = {0};
+int32_t csregisters[6] = {0, 0, 0, 0, 0x79737978, 0x015fdf05};
 extern int32_t top_pc;//defined in engine/engine.cpp
-
 
 const char *regname[32] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",

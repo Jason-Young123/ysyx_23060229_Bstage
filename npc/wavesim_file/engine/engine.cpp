@@ -10,20 +10,29 @@ extern bool wp_triggered;
 extern bool difftest_to_skip;
 extern bool difftest_skipping;
 
-
 int32_t top_pc;
 int32_t top_inst;
 
-extern "C" void get_current_pc(int32_t pc){
-	top_pc = pc;
+int32_t pc_queue[10];
+int32_t inst_queue[10];
+uint32_t head = 0;
+uint32_t tail = 0;
+
+//入队
+extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
+	pc_queue[tail] = pc;
+	inst_queue[tail] = inst;
+	tail = (tail + 1) % 10;
 	return;
 }
 
-
-extern "C" void get_current_inst(int32_t inst){
-	top_inst = inst;
+//出队
+extern "C" void one_inst_done(void){
+	pc_top = pc_queue[head];	
+	inst_top = inst_queue[head];
+	head = (head + 1) % 10;
+	return;
 }
-
 
 uint32_t inst_get(uint32_t addr){
 	//由于存在bootloader加载,因而前期和后期的取值区域不同
@@ -141,8 +150,11 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	//while(top -> one_inst_done == 0 && is_simulating){
 	
 	int32_t pc_tmp = top_pc;
+	
+	//用do-while
 
-	while(is_simulating && pc_tmp == top_pc){
+	//while(is_simulating && pc_tmp == top_pc){
+	do {
 #ifdef CONFIG_NVBOARD
 		nvboard_update();
 #endif
@@ -170,7 +182,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
     	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);
 	//print the previous inst having been decoded
     //printf("pc: %#8.8x  inst: %#8.8x\n", top->pc,top->inst);
-
+	} while(is_simulating && pc_tmp == top_pc)
 
 	//while(top -> one_inst_done == 1 && is_simulating){
 	/*while(is_simulating){
