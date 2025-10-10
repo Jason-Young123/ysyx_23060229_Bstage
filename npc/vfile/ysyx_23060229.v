@@ -234,13 +234,6 @@ module ysyx_23060229_Register(
 
 	
 	always @(posedge clk) begin
-		//modify by Jason @ 2025.10.09
-		`ifdef verilator
-			get_current_reg(0, Reg[0]); get_current_reg(1, Reg[1]); get_current_reg(2, Reg[2]); get_current_reg(3, Reg[3]);
-			get_current_reg(4, Reg[4]); get_current_reg(5, Reg[5]); get_current_reg(6, Reg[6]); get_current_reg(7, Reg[7]);
-			get_current_reg(8, Reg[8]); get_current_reg(9, Reg[9]); get_current_reg(10, Reg[10]); get_current_reg(11, Reg[11]);
-			get_current_reg(12, Reg[12]); get_current_reg(13, Reg[13]); get_current_reg(14, Reg[14]); get_current_reg(15, Reg[15]);
-		`endif
 		if(rst) begin
 			Reg[0] <= 0;
 			//$display("Register resetting ...");
@@ -249,6 +242,10 @@ module ysyx_23060229_Register(
 
 		else if(wen && |waddr) begin//考虑到JARL和JAR指令可能写0号reg
 			Reg[waddr] <= wdata;
+		//modify by Jason @ 2025.10.09
+		`ifdef verilator//指导仿真环境中的registers数组更新
+			get_current_reg(waddr, wdata);
+		`endif
 		end
 	end
 
@@ -289,11 +286,6 @@ module ysyx_23060229_CSRegister(
 
 	always @(posedge clk) begin
 		//excp_written <= 0;
-		//modify by Jason @ 2025.10.10
-        `ifdef verilator
-            get_current_reg(32'h00000300, CSReg[0]); get_current_reg(32'h00000305, CSReg[1]); get_current_reg(32'h00000341, CSReg[2]); 
-			get_current_reg(32'h00000342, CSReg[3]); get_current_reg(32'h00000f11, CSReg[4]); get_current_reg(32'h00000f12, CSReg[5]);
-        `endif
 		if(rst) begin
 			CSReg[4] <= 32'h79737978;
 			CSReg[5] <= 32'h015fdf05;
@@ -308,9 +300,18 @@ module ysyx_23060229_CSRegister(
                 12'h342: CSReg[3] <= wdata;//mcause
                 default: ;
             endcase
+			//modify by Jason @ 2025.10.10
+        	`ifdef verilator
+				get_current_reg({20'h00000, waddr}, wdata);
+				get_current_reg(32'h00000f11, CSReg[4]); get_current_reg(32'h00000f12, CSReg[5]);
+        	`endif
+			
 			if(wen[6]) begin//wen = 8'b11xx_xxxx, 说明要额外写入异常, 其中低6位为异常原因
 				CSReg[3] <= {26'b0, wen[5:0]};
-				//excp_written <= 1;
+				//modify by Jason @ 2025.10.10
+        		`ifdef verilator
+					get_current_reg(32'h00000342, {26'b0, wen[5:0]});
+				`endif
 			end
 		end
 	end
