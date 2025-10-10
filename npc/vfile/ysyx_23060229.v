@@ -244,7 +244,7 @@ module ysyx_23060229_Register(
 			Reg[waddr] <= wdata;
 		//modify by Jason @ 2025.10.09
 		`ifdef verilator//指导仿真环境中的registers数组更新
-			get_current_reg(waddr, wdata);
+			get_current_reg({28'h0000000, waddr}, wdata);
 		`endif
 		end
 	end
