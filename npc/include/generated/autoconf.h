@@ -4,6 +4,7 @@
  * ysyxSOC Configuration Menu
  *
  */
+#define CONFIG_ETRACE 1
 #define CONFIG_FLASH_AVAILABLE 1
 #define CONFIG_MAX_NO_INST 20
 #define CONFIG_ITRACE 1

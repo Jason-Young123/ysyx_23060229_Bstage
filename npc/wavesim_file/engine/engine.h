@@ -31,6 +31,8 @@ extern "C" void one_inst_done(void);
 
 extern "C" void itrace_record(int32_t pc, int32_t inst);
 extern "C" void mtrace_record(int32_t pc, int32_t addr);
+extern "C" void etrace_record_pc(int32_t pc);
+extern "C" void etrace_record(void);
 
 
 #endif

@@ -57,12 +57,12 @@ void display_itrace(){
     printf("---------------------------------itrace----------------------------------\n");
     if(ringbuf_itrace_head < ringbuf_itrace_tail)
         for(int i = ringbuf_itrace_head; i < ringbuf_itrace_tail; ++i)
-            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+            printf("At %#8.8x, inst: %#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
     else{
         for(int i = ringbuf_itrace_head; i < 50; ++i)
-            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+            printf("At %#8.8x, inst: %#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
         for(int i = 0; i < ringbuf_itrace_tail; ++i)
-            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+            printf("At %#8.8x, inst: %#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
     }
     printf("------------------------------------------------------------------------\n");
 }
@@ -96,6 +96,43 @@ void display_mtrace(){
             printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
         for(int i = 0; i < ringbuf_mtrace_tail; ++i)
             printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
+    }
+    printf("------------------------------------------------------------------------\n");
+}
+
+
+
+
+//etrace相关
+int32_t ringbuf_etrace_pc[50];
+int32_t etrace_pc_tmp = 0;
+int32_t ringbuf_etrace_head = 0;
+int32_t ringbuf_etrace_tail = 0;
+
+extern "C" void etrace_record_pc(int32_t pc){
+	etrace_pc_tmp = pc;
+}
+
+extern "C" void etrace_record(void){
+#ifdef CONFIG_MTRACE
+    ringbuf_etrace_pc[ringbuf_etrace_tail] = etrace_pc_tmp;
+    ringbuf_etrace_tail = (ringbuf_etrace_tail + 1) % 50;
+    if(ringbuf_etrace_head == ringbuf_etrace_tail)
+        ringbuf_etrace_head = (ringbuf_etrace_head + 1) % 50;
+#endif
+    return;
+}
+
+void display_etrace(){
+    printf("---------------------------------etrace----------------------------------\n");
+    if(ringbuf_etrace_head < ringbuf_etrace_tail)
+        for(int i = ringbuf_etrace_head; i < ringbuf_etrace_tail; ++i)
+            printf("At %#8.8x, type: ecall\n", ringbuf_etrace_pc[i]);
+    else{
+        for(int i = ringbuf_etrace_head; i < 50; ++i)
+            printf("At %#8.8x, type: ecall\n", ringbuf_etrace_pc[i]);
+        for(int i = 0; i < ringbuf_etrace_tail; ++i)
+            printf("At %#8.8x, type: ecall\n", ringbuf_etrace_pc[i]);
     }
     printf("------------------------------------------------------------------------\n");
 }
@@ -344,6 +381,9 @@ extern "C" void hit_good_trap(){
 #ifdef CONFIG_ITRACE
 	display_mtrace();
 #endif
+#ifdef CONFIG_ETRACE
+    display_etrace();
+#endif
 
 #ifdef CONFIG_STAT
 	double hit_percentage = (double)hit_counter/(double)IFU_counter;
@@ -388,6 +428,9 @@ extern "C" void hit_bad_trap(){
 #endif
 #ifdef CONFIG_ITRACE
 	display_mtrace();
+#endif
+#ifdef CONFIG_ETRACE
+    display_etrace();
 #endif
     is_simulating = false;
 }
