@@ -1714,7 +1714,7 @@ module ysyx_23060229_LSU(
 						if(arready) begin
 							wen_csreg <= 0; state <= Wait_Rvalid; //araddr_tmp <= dest_csreg_mem;
 						end
-						`ifdef verilator mtrace_record(pc, araddr); $display("okokoko"); `endif
+						`ifdef verilator mtrace_record(pc, araddr); `endif
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
 						if(awready & wready) begin
