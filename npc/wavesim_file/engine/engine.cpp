@@ -42,6 +42,16 @@ int32_t ringbuf_itrace_inst[50];
 int32_t ringbuf_itrace_head = 0;
 int32_t ringbuf_itrace_tail = 0;
 
+extern "C" void itrace_record(int32_t pc, int32_t inst){
+#ifdef CONFIG_ITRACE
+    ringbuf_itrace_pc[ringbuf_itrace_tail] = pc;
+    ringbuf_itrace_inst[ringbuf_itrace_tail] = inst;
+    ringbuf_itrace_tail = (ringbuf_itrace_tail + 1) % 50;
+    if(ringbuf_itrace_head == ringbuf_itrace_tail)
+        ringbuf_itrace_head = (ringbuf_itrace_head + 1) % 50;
+#endif
+	return;
+}
 
 void display_itrace(){
     printf("---------------------------------itrace----------------------------------\n");
@@ -54,7 +64,6 @@ void display_itrace(){
         for(int i = 0; i < ringbuf_itrace_tail; ++i)
             printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
     }
-
     printf("------------------------------------------------------------------------\n");
 }
 
@@ -88,7 +97,6 @@ void display_mtrace(){
         for(int i = 0; i < ringbuf_mtrace_tail; ++i)
             printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
     }
-
     printf("------------------------------------------------------------------------\n");
 }
 
@@ -212,15 +220,7 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	} while(is_simulating && pc_tmp == top_pc);
 
 	if(is_print)
-    	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);
-	
-#ifdef CONFIG_ITRACE
-	ringbuf_itrace_pc[ringbuf_itrace_tail] = top_pc;
-	ringbuf_itrace_inst[ringbuf_itrace_tail] = top_inst;
-	ringbuf_itrace_tail = (ringbuf_itrace_tail + 1) % 50;
-	if(ringbuf_itrace_head == ringbuf_itrace_tail)
-		ringbuf_itrace_head = (ringbuf_itrace_head + 1) % 50;
-#endif
+    	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);	
 }
 
 
