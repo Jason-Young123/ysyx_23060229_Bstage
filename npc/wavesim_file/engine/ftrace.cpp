@@ -58,25 +58,26 @@ void init_ftrace(const char* file_path){
         return;
     }
 
+	size_t ret;
     Elf32_Ehdr ehdr;
-    fread(&ehdr, sizeof(ehdr), 1, file);
+    ret = fread(&ehdr, sizeof(ehdr), 1, file);
 
     // 读取节头表
-    fseek(file, ehdr.e_shoff + ehdr.e_shstrndx * ehdr.e_shentsize, SEEK_SET);
+    ret = fseek(file, ehdr.e_shoff + ehdr.e_shstrndx * ehdr.e_shentsize, SEEK_SET);
     Elf32_Shdr shstrtab_hdr;
-    fread(&shstrtab_hdr, sizeof(shstrtab_hdr), 1, file);
+    ret = fread(&shstrtab_hdr, sizeof(shstrtab_hdr), 1, file);
 
     char shstrtab[0x1000];
-    fseek(file, shstrtab_hdr.sh_offset, SEEK_SET);
-    fread(shstrtab, shstrtab_hdr.sh_size, 1, file);
+    ret = fseek(file, shstrtab_hdr.sh_offset, SEEK_SET);
+    ret = fread(shstrtab, shstrtab_hdr.sh_size, 1, file);
 
     // 查找 symtab 和 strtab
     Elf32_Shdr symtab_hdr, strtab_hdr;
-    fseek(file, ehdr.e_shoff, SEEK_SET);
+    ret = fseek(file, ehdr.e_shoff, SEEK_SET);
 
     for (int i = 0; i < ehdr.e_shnum; i++) {
         Elf32_Shdr shdr;
-        fread(&shdr, sizeof(shdr), 1, file);
+        ret = fread(&shdr, sizeof(shdr), 1, file);
         const char* name = &shstrtab[shdr.sh_name];
 
         if (strcmp(name, ".symtab") == 0) {
@@ -87,11 +88,11 @@ void init_ftrace(const char* file_path){
     }
 
     // 读取数据到全局缓冲区
-    fseek(file, symtab_hdr.sh_offset, SEEK_SET);
-    fread(symtab, symtab_hdr.sh_size, 1, file);
+    ret = fseek(file, symtab_hdr.sh_offset, SEEK_SET);
+    ret = fread(symtab, symtab_hdr.sh_size, 1, file);
 
-    fseek(file, strtab_hdr.sh_offset, SEEK_SET);
-    fread(strtab, strtab_hdr.sh_size, 1, file);
+    ret = fseek(file, strtab_hdr.sh_offset, SEEK_SET);
+    ret = fread(strtab, strtab_hdr.sh_size, 1, file);
 
 	/* 从symtab依次读取16个字节(对应于symtab中一条entry)(直到达到symtab_hdr.sh_size),
      * 然后从上述16个字节中拆分得到Num, Value, Size, Type, Bind, Vis, Ndx, Name(strtab中偏移量)等信息,
@@ -129,7 +130,7 @@ int32_t ringbuf_ftrace_pc[50];
 char *ringbuf_ftrace_func[50];
 int32_t ringbuf_ftrace_head = 0;
 int32_t ringbuf_ftrace_tail = 0;
-char *previous_func_name = "****";
+char previous_func_name[] = "****";
 
 extern "C" void ftrace_record(int32_t pc) {
 #ifdef CONFIG_FTRACE
