@@ -34,6 +34,33 @@ extern "C" void one_inst_done(void){
 	return;
 }
 
+
+//itrace相关
+int32_t ringbuf_itrace_pc[50];
+int32_t ringbuf_itrace_inst[50];
+int32_t ringbuf_itrace_head = 0;
+int32_t ringbuf_itrace_tail = 0;
+
+
+void display_itrace(){
+    printf("---------------------------------itrace----------------------------------\n");
+    if(ringbuf_itrace_head < ringbuf_itrace_tail)
+        for(int i = ringbuf_itrace_head; i < ringbuf_itrace_tail; ++i)
+            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+    else{
+        for(int i = ringbuf_itrace_head; i < 50; ++i)
+            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+        for(int i = 0; i < ringbuf_itrace_tail; ++i)
+            printf("At %#8.8x, inst:%#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
+    }
+
+    printf("------------------------------------------------------------------------\n");
+}
+
+
+
+
+
 uint32_t inst_get(uint32_t addr){
 	//由于存在bootloader加载,因而前期和后期的取值区域不同
 	//前期从mrom/flash取inst,后期从psram取inst
@@ -94,12 +121,6 @@ void init_engine(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 
 
 void exec_once(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
-    //print the previous inst having been decoded
-    //printf("pc: %#8.8x  inst: %#8.8x\n", top->pc,top->inst);
-	
-	//if(difftest_to_skip)
-	//	difftest_skipping = true;
-	
 	top -> clock = 1;//这里会触发hit_good/bad_trap，从而导致is_simulating = 0
     top -> eval(); 
 #ifdef CONFIG_WAVEREC
@@ -123,21 +144,10 @@ void exec_once(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time){
 	if(top -> one_inst_done)
 		difftest_step();
 #endif
-
-	//update_devices();
 }
 
 
-//FILE *logFile;
-
-//extern "C" void inst_counter_increase(){
-//    inst_counter ++;
-//}
-
-
 void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time, bool is_print){
-	//logFile = fopen("log_cache", "a");
-	
 	int32_t pc_tmp = top_pc;
 	do {
 #ifdef CONFIG_NVBOARD
@@ -169,30 +179,13 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 	if(is_print)
     	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);
 	
-	//while(top -> one_inst_done == 1 && is_simulating){
-	/*while(is_simulating){
-#ifdef CONFIG_NVBOARD
-        nvboard_update();
+#ifdef CONFIG_ITRACE
+	ringbuf_itrace_pc[ringbuf_itrace_tail] = top_pc;
+	ringbuf_itrace_inst[ringbuf_itrace_tail] = top_inst;
+	ringbuf_itrace_tail = (ringbuf_itrace_tail + 1) % 50;
+	if(ringbuf_itrace_head == ringbuf_itrace_tail)
+		ringbuf_itrace_head = (ringbuf_itrace_head + 1) % 50;
 #endif
-		top -> clock = 1;//这里会触发hit_good/bad_trap，从而导致is_simulating = 0
-        top -> eval();
-#ifdef CONFIG_WAVEREC
-        m_trace -> dump(*sim_time);
-#endif
-        (*sim_time)++;
-
-        top -> clock = 0;
-        top -> eval();
-#ifdef CONFIG_STAT
-		cycle_counter ++;
-#endif
-#ifdef CONFIG_WAVEREC
-        m_trace -> dump(*sim_time);
-#endif
-        (*sim_time)++;
-	}*/
-	
-	//fclose(logFile);
 }
 
 
@@ -268,13 +261,11 @@ extern "C" void LSU_counter_increase(){
 	LSU_counter ++;
 }
 
-
 uint64_t cal_inst_counter;
 uint64_t ma_inst_counter;
 uint64_t branch_inst_counter;
 uint64_t cmp_inst_counter;
 uint64_t csr_inst_counter;
-
 
 extern "C" void cal_inst_counter_increase(){
 	cal_inst_counter ++;
@@ -296,25 +287,25 @@ extern "C" void csr_inst_counter_increase(){
 	csr_inst_counter ++;
 }
 
-
-
 uint64_t unhit_timer;
-
-
 extern "C" void unhit_timer_increase(){
 	unhit_timer ++;
 }
 
-
-
 uint64_t flush_counter;
-
 extern "C" void flush_counter_increase(){
 	flush_counter ++;
 }
 
+
+
+
 extern "C" void hit_good_trap(){
     printf("\033[32mhit good trap! Simulation has ended.\033[0m\n");
+
+#ifdef CONFIG_ITRACE
+	display_itrace();
+#endif
 
 #ifdef CONFIG_STAT
 	double hit_percentage = (double)hit_counter/(double)IFU_counter;
@@ -354,6 +345,9 @@ extern "C" void hit_good_trap(){
 extern "C" void hit_bad_trap(){
     printf("pc: %#8.8x  inst: %#8.8x\n", top_pc,top_inst);
 	printf("\033[31mhit bad trap! Simulation has ended.\033[0m\n");
+#ifdef CONFIG_ITRACE
+	display_itrace();
+#endif
     is_simulating = false;
 }
 

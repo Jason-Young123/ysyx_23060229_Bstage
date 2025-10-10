@@ -6,6 +6,7 @@
  */
 #define CONFIG_FLASH_AVAILABLE 1
 #define CONFIG_MAX_NO_INST 20
+#define CONFIG_ITRACE 1
 #define CONFIG_CALIB_APB 1
 #define CONFIG_N 2
 #define CONFIG_STAT 1
