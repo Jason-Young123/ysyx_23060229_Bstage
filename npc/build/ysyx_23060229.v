@@ -291,8 +291,8 @@ module ysyx_23060229_CSRegister(
 		//excp_written <= 0;
 		//modify by Jason @ 2025.10.10
         `ifdef verilator
-            get_current_reg(12'h300, CSReg[0]); get_current_reg(12'h305, CSReg[1]); get_current_reg(12'h341, CSReg[2]); 
-			get_current_reg(12'h342, CSReg[3]); get_current_reg(12'hf11, CSReg[4]); get_current_reg(12'hf12, CSReg[5]);
+            get_current_reg(32'h00000300, CSReg[0]); get_current_reg(32'h00000305, CSReg[1]); get_current_reg(32'h00000341, CSReg[2]); 
+			get_current_reg(32'h00000342, CSReg[3]); get_current_reg(32'h00000f11, CSReg[4]); get_current_reg(32'h00000f12, CSReg[5]);
         `endif
 		if(rst) begin
 			CSReg[4] <= 32'h79737978;
