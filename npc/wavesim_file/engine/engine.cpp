@@ -159,6 +159,10 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
     	m_trace -> dump(*sim_time);
 #endif
    		(*sim_time)++;
+
+#ifdef CONFIG_WP
+    	scan_watchpoints();//这里可能导致wp_triggered = 1
+#endif
 	
 	} while(is_simulating && pc_tmp == top_pc);
 
@@ -310,7 +314,6 @@ extern "C" void flush_counter_increase(){
 }
 
 extern "C" void hit_good_trap(){
-    printf("pc: %#8.8x  inst: %#8.8x\n", top_pc,top_inst);
     printf("\033[32mhit good trap! Simulation has ended.\033[0m\n");
 
 #ifdef CONFIG_STAT
