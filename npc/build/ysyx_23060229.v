@@ -1712,24 +1712,26 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
                         waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						if(arready) begin
+							`ifdef verilator mtrace_record(pc, araddr); `endif//在状态转移的一瞬记录,防止重复记录
 							wen_csreg <= 0; state <= Wait_Rvalid; //araddr_tmp <= dest_csreg_mem;
 						end
-						`ifdef verilator mtrace_record(pc, araddr); `endif
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
 						if(awready & wready) begin
 							state <= Wait_Bvalid; 
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
 						else if(awready) begin
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
 						else if(wready) begin
 							state <= Wait_Awready;
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						`ifdef verilator mtrace_record(pc, awaddr); `endif
 					end
 					
 					
