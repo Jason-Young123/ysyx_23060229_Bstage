@@ -54,7 +54,7 @@ int parse_symtab_entries(int symtab_size, char *symtab, int strtab_size, char *s
 void init_ftrace(const char* file_path){
 	FILE* file = fopen(file_path, "rb");
     if (!file) {
-        fprintf(stderr, "无法打开文件\n");
+        fprintf(stderr, "failed to open file %s\n", file_path);
         return;
     }
 
