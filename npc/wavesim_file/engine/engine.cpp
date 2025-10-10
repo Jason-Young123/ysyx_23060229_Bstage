@@ -55,7 +55,7 @@ extern "C" void itrace_record(int32_t pc, int32_t inst){
 
 void display_itrace(){
     printf("---------------------------------itrace----------------------------------\n");
-    if(ringbuf_itrace_head < ringbuf_itrace_tail)
+    if(ringbuf_itrace_head <= ringbuf_itrace_tail)
         for(int i = ringbuf_itrace_head; i < ringbuf_itrace_tail; ++i)
             printf("At %#8.8x, inst: %#8.8x\n", ringbuf_itrace_pc[i], ringbuf_itrace_inst[i]);
     else{
@@ -88,7 +88,7 @@ extern "C" void mtrace_record(int32_t pc, int32_t addr){
 
 void display_mtrace(){
     printf("---------------------------------mtrace----------------------------------\n");
-    if(ringbuf_mtrace_head < ringbuf_mtrace_tail)
+    if(ringbuf_mtrace_head <= ringbuf_mtrace_tail)
         for(int i = ringbuf_mtrace_head; i < ringbuf_mtrace_tail; ++i)
             printf("At %#8.8x, addr: %#8.8x\n", ringbuf_mtrace_pc[i], ringbuf_mtrace_addr[i]);
     else{
@@ -125,7 +125,7 @@ extern "C" void etrace_record(void){
 
 void display_etrace(){
     printf("---------------------------------etrace----------------------------------\n");
-    if(ringbuf_etrace_head < ringbuf_etrace_tail)
+    if(ringbuf_etrace_head <= ringbuf_etrace_tail)
         for(int i = ringbuf_etrace_head; i < ringbuf_etrace_tail; ++i)
             printf("At %#8.8x, type: ecall\n", ringbuf_etrace_pc[i]);
     else{
