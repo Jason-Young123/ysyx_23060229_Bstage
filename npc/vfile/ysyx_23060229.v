@@ -98,6 +98,7 @@
 	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
 	import "DPI-C" function void one_inst_done();//在仿真环境中pc/inst出队;注意不同inst判定one_inst_done的时机不同;
 	//对于写reg/csreg的指令,判定时机为写入reg/csreg后;对于写mem的指令,判定时机为返回bvalid信号
+	import "DPI-C" function void itrace_record(input int pc, input int inst);
 	import "DPI-C" function void mtrace_record(input int pc, input int addr);
 	
 `endif
@@ -663,6 +664,7 @@ module ysyx_23060229_IDU(
 					//modify by Jason @ 2025.10.9
 					`ifdef verilator
 						get_current_pc_inst(pc, inst);
+						itrace_record(pc, inst);
 					`endif
 						stall_quest_fencei <= 0;//通常都为0,除非遇到fence.i
 											
