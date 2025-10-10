@@ -51,7 +51,7 @@ int parse_symtab_entries(int symtab_size, char *symtab, int strtab_size, char *s
 
 
 
-void init_ftrace(char** file_path){
+void init_ftrace(const char* file_path){
 	FILE* file = fopen(file_path, "rb");
     if (!file) {
         fprintf(stderr, "无法打开文件\n");
@@ -110,8 +110,8 @@ void init_ftrace(char** file_path){
 //检测pc所在区域是否为func
 void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name){
 	for(int i = 0; i < NO_FENTRY; ++i){
-		if(pc >= FUNC[i].value && pc < FUNC[i].value + FUNC[i].size){
-			*success = true; *func_name = FUNC[i].name; *value = FUNC[i].value;
+		if(pc >= funcs[i].value && pc < funcs[i].value + funcs[i].size){
+			*success = true; *func_name = funcs[i].name; *value = funcs[i].value;
 			return;
 		}
 	}

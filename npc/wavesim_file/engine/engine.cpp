@@ -151,7 +151,7 @@ extern "C" void ftrace_record(int32_t pc) {
     bool success;
     char *func_name; uint32_t value;
     
-    check_pc(pc, &success, &value, &func_name);
+    check_pc(pc, &success, &value, &func_name);//耗时巨大
     
     if (success && func_name != previous_func_name) {
         // 如果func_name和previous_func_name不同（指针比较）
@@ -429,6 +429,9 @@ extern "C" void hit_good_trap(){
 #ifdef CONFIG_ITRACE
 	display_mtrace();
 #endif
+#ifdef CONFIG_FTRACE
+    display_ftrace();
+#endif
 #ifdef CONFIG_ETRACE
     display_etrace();
 #endif
@@ -476,6 +479,9 @@ extern "C" void hit_bad_trap(){
 #endif
 #ifdef CONFIG_ITRACE
 	display_mtrace();
+#endif
+#ifdef CONFIG_FTRACE
+    display_ftrace();
 #endif
 #ifdef CONFIG_ETRACE
     display_etrace();
