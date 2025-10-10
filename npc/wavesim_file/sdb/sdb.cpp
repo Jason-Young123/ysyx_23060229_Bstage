@@ -231,10 +231,10 @@ static int cmd_info(uint64_t *sim_time){
     }
 
     bool success;
-    uint32_t ret;
+    int32_t ret;
     ret = str2val_reg(arg, &success);
     if (success){// visit one specific reg
-    	printf("%3s : 0x%8.8x\n", arg, ret);
+    	printf("%10s : 0x%8.8x\n", arg, ret);
     }
     else if (strcmp(arg, "r") == 0){// visit all the regs
         display_reg();

@@ -47,8 +47,8 @@ def check_path(path):
 
 NEMU_HOME = YSYX_HOME / 'nemu'
 AM_HOME = YSYX_HOME / 'abstract-machine'
-OS_HOME = YSYX_HOME / 'nanos-lite'
-NAVY_HOME = YSYX_HOME / 'navy-apps'
+#OS_HOME = YSYX_HOME / 'nanos-lite'
+#NAVY_HOME = YSYX_HOME / 'navy-apps'
 NPC_HOME = YSYX_HOME / 'npc'
 
 for p in [NEMU_HOME, AM_HOME, OS_HOME, NAVY_HOME, NPC_HOME]:
@@ -61,10 +61,14 @@ NEMU_filelist  = shellv("find " + str(NEMU_HOME / "src" ) + " -name '*.[ch]' | g
 AM_filelist    = shellv("find " + str(AM_HOME / "am/src/riscv/nemu" ) + " -name '*.[chS]'")
 AM_filelist   += shellv("ls " + str(AM_HOME / "am/src/platform/nemu/{include/nemu.h,ioe/{gpu,input,ioe,timer}.c}"))
 AM_filelist   += shellv("ls " + str(AM_HOME / "klib/src/{stdio,string}.c"))
-OS_filelist    = shellv("find " + str(OS_HOME / "src" ) + " -name '*.c'" )
-NAVY_filelist  = shellv("ls " + str(NAVY_HOME / "libs/libos/src/{syscall.c,crt0/{crt0.c,start/riscv64.S}}"))
-NAVY_filelist += shellv("ls " + str(NAVY_HOME / "libs/libndl/NDL.c"))
-NAVY_filelist += shellv("ls " + str(NAVY_HOME / "libs/libminiSDL/src/{event,timer,video}.c"))
+
+NPC_filelist  += shellv("ls " + str(NPC_HOME / build / "ysyx_23060229.v"))
+NPC_filelist  += shellv("find " + str)
+
+#OS_filelist    = shellv("find " + str(OS_HOME / "src" ) + " -name '*.c'" )
+#NAVY_filelist  = shellv("ls " + str(NAVY_HOME / "libs/libos/src/{syscall.c,crt0/{crt0.c,start/riscv64.S}}"))
+#NAVY_filelist += shellv("ls " + str(NAVY_HOME / "libs/libndl/NDL.c"))
+#NAVY_filelist += shellv("ls " + str(NAVY_HOME / "libs/libminiSDL/src/{event,timer,video}.c"))
 
 filelist = NEMU_filelist + AM_filelist + OS_filelist + NAVY_filelist
 for f in filelist:
