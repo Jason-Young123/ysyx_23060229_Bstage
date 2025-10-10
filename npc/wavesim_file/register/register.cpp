@@ -50,12 +50,12 @@ void update_reg(VysyxSoCFull* top){
 
 void display_reg() {
     for(int i = 0; i < NO_REG; ++i){
-        printf("%3s : 0x%8.8x\n", regname[i], registers[i]);
+        printf("%10s : 0x%8.8x\n", regname[i], registers[i]);
     }
 	for(int j = 0; j < 6; ++j){
 		printf("%10s : 0x%8.8x\n", csregname[j], csregisters[j]);
 	}
-    printf("%3s : 0x%8.8x\n", "pc", top_pc);//注意为extern top_pc
+    printf("%10s : 0x%8.8x\n", "pc", top_pc);//注意为extern top_pc
 }
 
 
