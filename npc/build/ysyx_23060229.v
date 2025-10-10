@@ -1450,7 +1450,7 @@ module ysyx_23060229_EXU(
 						`ifdef verilator
 						if(typ[7:5] == `ysyx_23060229_Invalid) begin
 								if(typ[0]) begin hit_good_trap(); end//ebreak,特殊的invalid
-								else ; //hit_bad_trap(); //else 处理Illegal Inst异常
+								else hit_bad_trap(); //else 处理Illegal Inst异常
 						end
 						`endif
 						
