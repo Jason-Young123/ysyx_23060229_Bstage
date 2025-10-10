@@ -130,7 +130,7 @@ int32_t ringbuf_ftrace_pc[50];
 char *ringbuf_ftrace_func[50];
 int32_t ringbuf_ftrace_head = 0;
 int32_t ringbuf_ftrace_tail = 0;
-char previous_func_name[] = "****";
+char *previous_func_name = NULL;
 
 extern "C" void ftrace_record(int32_t pc) {
 #ifdef CONFIG_FTRACE
