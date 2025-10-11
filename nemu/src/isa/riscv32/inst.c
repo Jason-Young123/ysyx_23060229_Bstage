@@ -47,6 +47,7 @@ inline int64_t SEXT_64(uint32_t input){
 #define immJ() do { *imm = SEXT(( (BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) | (BITS\
 				(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) ), 21); } while(0)
 #define immR() do { *imm = 0; } while(0)
+//modify by Jason @ 2025.10.11
 #define immCSR() do {*imm = BITS(i, 31, 20); } while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -56,6 +57,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   *rd     = BITS(i, 11, 7);
   switch (type) {
     case TYPE_I: src1R(); *src2 = rs2; immI(); break;//*src2 = rs2 is only for slli,srli and srai
+	//modify by Jason @ 2025.10.11
 	case TYPE_I_CSR: src1R(); *src2 = rs1; immCSR(); break;
 	case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
@@ -64,7 +66,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
 	case TYPE_M: src1R(); src2R(); immR(); break;
 	case TYPE_J:	               immJ(); break;
   }
-  printf("the inst is %#x, type is %d\n", i, type);
+  //printf("the inst is %#x, type is %d\n", i, type);
 }
 
 static int decode_exec(Decode *s) {
@@ -147,8 +149,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai   , I, R(rd) = (int32_t)src1 >> src2);
 
   //CSR
+  //modify by Jason @ 2025.10.11
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I_CSR, R(rd) = SR(imm); SR(imm) = src1);
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrwi , I_CSR, printf("imm: %x, rd:%d\n", imm, rd); R(rd) = SR(imm); SR(imm) = src2);
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrwi , I_CSR, R(rd) = SR(imm); SR(imm) = src2);
   INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrs  , I_CSR, R(rd) = SR(imm); SR(imm) = src1 | SR(imm));
   INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrsi , I_CSR, R(rd) = SR(imm); SR(imm) = src2 | SR(imm));
   INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrc  , I_CSR, R(rd) = SR(imm); SR(imm) = src1 & SR(imm));
