@@ -47,7 +47,7 @@ inline int64_t SEXT_64(uint32_t input){
 #define immJ() do { *imm = SEXT(( (BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) | (BITS\
 				(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) ), 21); } while(0)
 #define immR() do { *imm = 0; } while(0)
-
+#define immCSR() do {*imm = BITS(i, 31, 20); } while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;//instruction
@@ -56,7 +56,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   *rd     = BITS(i, 11, 7);
   switch (type) {
     case TYPE_I: src1R(); *src2 = rs2; immI(); break;//*src2 = rs2 is only for slli,srli and srai
-	case TYPE_I_CSR: src1R(); *src2 = rs1; immI(); break;
+	case TYPE_I_CSR: src1R(); *src2 = rs1; immCSR(); break;
 	case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
 	case TYPE_B: src1R(); src2R(); immB(); break;
