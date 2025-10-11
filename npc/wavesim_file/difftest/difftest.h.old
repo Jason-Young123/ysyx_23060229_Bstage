@@ -1,5 +1,3 @@
-//re-resign difftest by Jason @ 2025.10.11
-
 #ifndef DIFFTEST_H
 #define DIFFTEST_H
 
@@ -13,16 +11,16 @@
 #include <include/auto.h>
 
 
-#define RESET_VECTOR 0x30000000
+#define RESET_VECTOR 0x80000000
 #define NPC_TO_NEMU 1
 #define NEMU_TO_NPC 0
 
-#define NR_GPR 16
+#define NR_GPR 32
 
 
 struct npc_context_t{
-    int32_t gpr[NR_GPR];
-    int32_t pc;
+    uint32_t gpr[NR_GPR];
+    uint32_t pc;
 };
 
 
