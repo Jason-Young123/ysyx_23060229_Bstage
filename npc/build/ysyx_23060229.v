@@ -310,7 +310,6 @@ module ysyx_23060229_CSRegister(
 			//modify by Jason @ 2025.10.10
         	`ifdef verilator
 				get_current_reg({20'h00000, waddr}, wdata);
-                one_inst_done();
         	`endif
 			
 			if(wen[6]) begin//wen = 8'b11xx_xxxx, 说明要额外写入异常, 其中低6位为异常原因
@@ -323,6 +322,9 @@ module ysyx_23060229_CSRegister(
 					etrace_record();//在LSU调用etrace_record_pc后正式写入ringbuf
 				`endif
 			end
+			`ifdef verilator
+				one_inst_done();
+			`endif
 		end
 	end
 endmodule
