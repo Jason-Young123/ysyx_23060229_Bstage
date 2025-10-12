@@ -318,7 +318,8 @@ module ysyx_23060229_CSRegister(
 				//modify by Jason @ 2025.10.10
         		`ifdef verilator
 					get_current_reg(32'h00000342, {26'b0, wen[5:0]});
-                	one_inst_done();
+					//modify by Jason @ 2025.10.12
+                	//one_inst_done();//这里多写了一次one_inst_done,导致仿真环境出现pc严重错误,误差10次
 					etrace_record();//在LSU调用etrace_record_pc后正式写入ringbuf
 				`endif
 			end
