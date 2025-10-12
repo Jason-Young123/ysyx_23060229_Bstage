@@ -271,18 +271,27 @@ uint32_t eval(int start, int end){
 
 			//case2: $pc
 			else if(tokens[start].type == '$'){
-				char tmp[4] = {};
-				if(end - start == 2){//pc, a0, t1 ...
+				char tmp[10] = {};//maxlen = len(mvendorid) = 9
+				//modify by Jason @ 2025.10.12
+				for(int i = 0; i < end - start; i++){
+					tmp[i] = tokens[start+i+1].type;
+				}
+				tmp[end-start] = '\0';
+
+				/*if(end - start == 2){//pc, a0, t1 ...
 					tmp[0] = tokens[start+1].type; tmp[1] = tokens[start+2].type; tmp[2] = '\0';
 				}
 				else if(end - start == 3){//s10, s11
 					tmp[0] = tokens[start+1].type; tmp[1] = tokens[start+2].type; 
 					tmp[2] = tokens[start+2].type; tmp[3] = '\0';
 				}
+				else if(end - start == 4){
+					
+				}
 				else{
 					printf("bad expression!\n");
                     assert(0);
-				}
+				}*/
 
 				bool success;
 				uint32_t ret = str2val_reg(tmp, &success);
