@@ -30,7 +30,7 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 //出队
 //step1: 记录刚被执行完毕的pc
 int32_t new_pc_done;
-extern "C" void one_inst_done_pc(pc){
+extern "C" void one_inst_done_pc(int32_t pc){
 	new_pc_done = pc;
 }
 
