@@ -13,8 +13,8 @@ extern bool difftest_skipping;
 int32_t top_pc;
 int32_t top_inst;
 
-int32_t pc_queue[10];
-int32_t inst_queue[10];
+int32_t pc_queue[20];
+int32_t inst_queue[20];
 uint32_t head = 0;
 uint32_t tail = 0;
 
