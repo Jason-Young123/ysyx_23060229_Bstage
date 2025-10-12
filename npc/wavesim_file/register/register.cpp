@@ -23,12 +23,13 @@ extern "C" void get_current_reg(int32_t id, int32_t regvalue){
 	}
 	else{
 		switch(id){
-				case 0x300: csregisters[0] = regvalue;
-				case 0x305: csregisters[1] = regvalue;
-				case 0x341: csregisters[2] = regvalue;
-				case 0x342: csregisters[3] = regvalue;
-				case 0xf11: csregisters[4] = regvalue;
-				case 0xf12: csregisters[5] = regvalue;
+				//modify by Jason @ 2025.10.12, break added
+				case 0x300: csregisters[0] = regvalue; break;
+				case 0x305: csregisters[1] = regvalue; break;
+				case 0x341: csregisters[2] = regvalue; break;
+				case 0x342: csregisters[3] = regvalue; break;
+				case 0xf11: csregisters[4] = regvalue; break;
+				case 0xf12: csregisters[5] = regvalue; break;
 				default: ;
 		}
 	}
