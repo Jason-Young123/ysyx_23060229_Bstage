@@ -28,11 +28,25 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 }
 
 //出队
+//step1: 记录刚被执行完毕的pc
+int32_t new_pc_done;
+extern "C" void one_inst_done_pc(pc){
+	new_pc_done = pc;
+}
+
+//step2: 将刚被执行完毕的pc出队, head指针更新;如果下一轮new_pc_done未
+//发生变化(重复执行one_inst_done),则if检测失败
 extern "C" void one_inst_done(void){
 	if(head == tail) printf("warning: head == tail\n");
-	top_pc = pc_queue[head];//代表刚执行完的指令
-	top_inst = inst_queue[head];
-	head = (head + 1) % 20;
+	
+	if(new_pc_done == pc_queue[head]){
+		top_pc = pc_queue[head];//代表刚执行完的指令
+		top_inst = inst_queue[head];
+		head = (head + 1) % 20;
+	}
+	else{
+		;//if检测失败,说明重复执行了
+	}
 	return;
 }
 
