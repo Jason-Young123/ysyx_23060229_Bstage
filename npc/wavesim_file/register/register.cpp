@@ -22,6 +22,7 @@ extern "C" void get_current_reg(int32_t id, int32_t regvalue){
 		registers[id] = regvalue;
 	}
 	else{
+				printf("change id %x to %x\n", id, regvalue);
 		switch(id){
 				//modify by Jason @ 2025.10.12, break added
 				case 0x300: csregisters[0] = regvalue; break;
