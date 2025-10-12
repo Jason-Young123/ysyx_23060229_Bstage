@@ -37,14 +37,17 @@ extern "C" void one_inst_done_pc(int32_t pc){
 //step2: 将刚被执行完毕的pc出队, head指针更新;如果下一轮new_pc_done未
 //发生变化(重复执行one_inst_done),则if检测失败
 extern "C" void one_inst_done(void){
-	if(new_pc_done == pc_queue[head]){
+	top_pc = pc_queue[head];//代表刚执行完的指令
+	top_inst = inst_queue[head];
+	head = (head + 1) % 20;
+	/*if(new_pc_done == pc_queue[head]){
 		top_pc = pc_queue[head];//代表刚执行完的指令
 		top_inst = inst_queue[head];
 		head = (head + 1) % 20;
 	}
 	else{
 		;//printf("检测到重复执行\n");//if检测失败,说明重复执行了
-	}
+	}*/
 	return;
 }
 
@@ -158,13 +161,12 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
     	m_trace -> dump(*sim_time);
 #endif
    		(*sim_time)++;
+	
+	} while(is_simulating && pc_tmp == top_pc);
 
 #ifdef CONFIG_WP
     	scan_watchpoints();//这里可能导致wp_triggered = 1
 #endif
-	
-	} while(is_simulating && pc_tmp == top_pc);
-
 
 	if(is_print)
     	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);	
