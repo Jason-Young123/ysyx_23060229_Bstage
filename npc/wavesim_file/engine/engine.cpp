@@ -159,12 +159,12 @@ void exec_one_inst(VysyxSoCFull* top, VerilatedVcdC* m_trace, uint64_t* sim_time
 #endif
    		(*sim_time)++;
 
-	
-	} while(is_simulating && pc_tmp == top_pc);
-
 #ifdef CONFIG_WP
     	scan_watchpoints();//这里可能导致wp_triggered = 1
 #endif
+	
+	} while(is_simulating && pc_tmp == top_pc);
+
 
 	if(is_print)
     	printf("pc: %#8.8x  inst: %#8.8x\n", top_pc, top_inst);	
