@@ -23,7 +23,7 @@ uint32_t tail = 0;
 extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 	pc_queue[tail] = pc;//代表IDU刚取到的指令
 	inst_queue[tail] = inst;
-	tail = (tail + 1) % 10;
+	tail = (tail + 1) % 20;
 	return;
 }
 
@@ -31,7 +31,7 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 extern "C" void one_inst_done(void){
 	top_pc = pc_queue[head];//代表刚执行完的指令
 	top_inst = inst_queue[head];
-	head = (head + 1) % 10;
+	head = (head + 1) % 20;
 	return;
 }
 
