@@ -96,6 +96,7 @@
 
 	import "DPI-C" function void get_current_pc_inst(input int pc, input int inst);//在仿真环境中pc/inst入队
 	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
+	import "DPI-C" function void one_inst_done_pc(input int pc);
 	import "DPI-C" function void one_inst_done();//在仿真环境中pc/inst出队;注意不同inst判定one_inst_done的时机不同;
 	//对于写reg/csreg的指令,判定时机为写入reg/csreg后;对于写mem的指令,判定时机为返回bvalid信号
 	import "DPI-C" function void itrace_record(input int pc, input int inst);
@@ -1682,13 +1683,13 @@ module ysyx_23060229_LSU(
 					if(flag == `ysyx_23060229_WriteReg) begin//仅写reg
                         wen_reg <= 1; wen_csreg <= 0;
                         state <= Wait_EXU_Valid;
-                       	//`ifdef verilator one_inst_done(); `endif//移动至register中
+                       	`ifdef verilator one_inst_done_pc(pc); `endif//先记录pc,然后在register中调用one_inst_done,避免重复执行
                     end
 					if(flag == `ysyx_23060229_WriteCSReg) begin//写reg和csreg
                         waddr_csreg <= dest_csreg_mem[11:0]; wdata_csreg <= result_csreg_mem;
                         wen_reg <= 1; wen_csreg <= 8'b10000000;
                         state <= Wait_EXU_Valid;
-                       	//`ifdef verilator one_inst_done(); `endif//移动至csreg中
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
                     end
 					
 					
@@ -1698,13 +1699,14 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
-                       	//`ifdef verilator one_inst_done(); `endif
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
                     end
 					if(flag == `ysyx_23060229_Jump_CS) begin//仅写csreg,就是ecall
 						wen_reg <= 0;
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 8'b11001011;
+						`ifdef verilator one_inst_done_pc(pc); `endif
                        	`ifdef verilator etrace_record_pc(pc); `endif//为避免重复写入,需在CSReg中额外调用etrace_record
 					end
 					if(flag == `ysyx_23060229_Jump_B) begin//啥都不做，比如Jump_B
@@ -1712,7 +1714,7 @@ module ysyx_23060229_LSU(
                         state <= Wait_EXU_Valid;
                         waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
-                       	`ifdef verilator one_inst_done(); `endif
+                       	`ifdef verilator one_inst_done_pc(pc); one_inst_done(); `endif
 					end
 
 
@@ -1769,7 +1771,7 @@ module ysyx_23060229_LSU(
 										(typ_tmp[2:0] == 3'b001) ? {24'b0, slice1} : 
 										(typ_tmp[2:0] == 3'b010) ? {{16{slice2[15]}}, slice2} : 
 										(typ_tmp[2:0] == 3'b011) ? {16'b0, slice2} : rdata;
-                       	//`ifdef verilator one_inst_done(); `endif
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
 					end
 					
 					`ifdef verilator
@@ -1798,7 +1800,7 @@ module ysyx_23060229_LSU(
 						`ifdef verilator
 							LSU_counter_increase();
 						`endif
-                       	`ifdef verilator one_inst_done(); `endif
+                       	`ifdef verilator one_inst_done_pc(pc); one_inst_done(); `endif
 					end
 					`ifdef verilator
 					if(bvalid && bresp == 2'b11) begin
