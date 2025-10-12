@@ -29,6 +29,7 @@ extern "C" void get_current_pc_inst(int32_t pc, int32_t inst){
 
 //出队
 extern "C" void one_inst_done(void){
+	if(head == tail) printf("warning: head == tail\n");
 	top_pc = pc_queue[head];//代表刚执行完的指令
 	top_inst = inst_queue[head];
 	head = (head + 1) % 20;
