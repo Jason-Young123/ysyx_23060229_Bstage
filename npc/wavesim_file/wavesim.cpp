@@ -128,14 +128,15 @@ int main(int argc, char *argv[]){
 	init_ftrace(argv[2]);
 #endif
 
-	init_engine(top, m_trace, &sim_time);
+	init_engine(top, m_trace, &sim_time);//完成reset信号的置位/复位
 
+//始终不支持difftest
 #ifdef CONFIG_DIFFTEST
 	init_difftest(ref_so_file, size, 0);//如果开启difftest这条指令必须在init_engine后执行
 #endif
+	
 	is_simulating = true;
 	
-
 #ifdef CONFIG_SDB
 	init_sdb();
 	//循环主体
