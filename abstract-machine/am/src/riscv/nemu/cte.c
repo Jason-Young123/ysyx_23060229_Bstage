@@ -6,7 +6,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 
 
 Context* __am_irq_handle(Context *c) {
-  printf("---------in irq_handle : %x ----------\n", c -> gpr[10]);
+  //printf("---------in irq_handle : %x ----------\n", c -> gpr[10]);
   if (user_handler) {
     Event ev = {0};
 	//printf("mepc: %x\n", c->mepc);
