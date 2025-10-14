@@ -29,8 +29,8 @@ int atoi(const char* nptr) {
   return x;
 }
 
-extern Area heap;
-extern char _heap_start;
+extern Area heap;//defined in trm.c
+extern char _heap_start;//defined in linker.ld, referenced in trm.c
 
 //size_t addr = 0x0f00000c;
 
