@@ -41,6 +41,7 @@ f(30) f(31)
 .align 3
 .globl __am_asm_trap
 __am_asm_trap:
+  #记录context的基地址,后续该地址会传入am_irq_handle作为参数*c
   addi sp, sp, -CONTEXT_SIZE
 
   MAP(REGS, PUSH)
