@@ -73,13 +73,14 @@ AM_DEVREG(29, GPIO_SEG_WR,  WR, uint32_t data);
 #define AM_KEY_NAMES(key) AM_KEY_##key,
 
 
+//modify by Jason @ 2025.10.16
+//用于SDL的scancode
 #if defined(__PLATFORM_NPC)||defined(__PLATFORM_NEMU)
 enum {
   AM_KEY_NONE = 0,
   AM_KEYS(AM_KEY_NAMES)
 };
 #endif
-
 
 //用于ps2
 #if defined(__PLATFORM_YSYXSOC)
