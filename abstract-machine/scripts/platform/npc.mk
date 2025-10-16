@@ -47,6 +47,6 @@ image: $(IMAGE).elf
 run: insert-arg
 	@echo "***** Execute target:run in $(CURPATH) *****"
 	#@$(MAKE) -C $(NPC_HOME) sim-iverilog IMG=$(IMAGE)
-	@$(MAKE) -C $(NPC_V4_HOME) wave BIN=$(IMAGE).bin
+	@$(MAKE) -C $(NPC_V4_HOME) wave BIN=$(IMAGE).bin ELF=$(IMAGE).elf
 
 .PHONY: insert-arg
