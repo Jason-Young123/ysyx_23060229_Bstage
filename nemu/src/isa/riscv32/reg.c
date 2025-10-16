@@ -24,8 +24,11 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
-
-uint32_t sregs[4096] = {0};
+//modify by Jason @ 2025.10.16
+uint32_t sregs[4096] = {
+	[0xf11] = 0x79737978,
+	[0xf12] = 0x015fdf05
+};
 
 
 void isa_reg_display() {
