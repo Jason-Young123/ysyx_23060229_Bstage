@@ -71,15 +71,19 @@ AM_DEVREG(29, GPIO_SEG_WR,  WR, uint32_t data);
 */
 
 #define AM_KEY_NAMES(key) AM_KEY_##key,
+
+
+#if defined(__PLATFORM_NPC)||defined(__PLATFORM_NEMU)
 enum {
   AM_KEY_NONE = 0,
   AM_KEYS(AM_KEY_NAMES)
 };
-
+#endif
 
 
 //用于ps2
-/*enum {
+#if defined(__PLATFORM_YSYXSOC)
+enum {
 	AM_KEY_NONE = 0, AM_KEY_ESCAPE = 0x76, AM_KEY_F1 = 0x05, AM_KEY_F2 = 0x06, AM_KEY_F3 = 0x04, AM_KEY_F4 = 0x0c,
   	AM_KEY_F5 = 0x03, AM_KEY_F6 = 0x0b, AM_KEY_F7 = 0x83, AM_KEY_F8 = 0x0a, AM_KEY_F9 = 0x01, AM_KEY_F10 = 0x09,
   	AM_KEY_F11 = 0x78, AM_KEY_F12 = 0x07, AM_KEY_GRAVE = 0x0e, AM_KEY_1 = 0x16, AM_KEY_2 = 0x1e, AM_KEY_3 = 0x26,
@@ -96,8 +100,8 @@ enum {
 	AM_KEY_RALT = 0xe011, AM_KEY_RCTRL = 0xe014, AM_KEY_UP = 0xe075, AM_KEY_DOWN = 0xe072, AM_KEY_LEFT = 0xe06b,
   	AM_KEY_RIGHT = 0xe074, AM_KEY_INSERT = 0xe070, AM_KEY_DELETE = 0xe071, AM_KEY_HOME = 0xe06c, AM_KEY_END = 0xe069,
   	AM_KEY_PAGEUP = 0xe07d, AM_KEY_PAGEDOWN = 0xe07a
-};*/
-
+};
+#endif
 
 
 // GPU
