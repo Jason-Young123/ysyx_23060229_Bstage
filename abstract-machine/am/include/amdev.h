@@ -75,12 +75,8 @@ AM_DEVREG(29, GPIO_SEG_WR,  WR, uint32_t data);
 
 //modify by Jason @ 2025.10.16
 //用于SDL的scancode
-#if defined(__PLATFORM_NPC)||defined(__PLATFORM_NEMU)
-enum {
-  AM_KEY_NONE = 0,
-  AM_KEYS(AM_KEY_NAMES)
-};
-#endif
+//#if defined(__PLATFORM_NPC)||defined(__PLATFORM_NEMU)
+//#endif
 
 //用于ps2
 #if defined(__PLATFORM_YSYXSOC)
@@ -102,7 +98,13 @@ enum {
   	AM_KEY_RIGHT = 0xe074, AM_KEY_INSERT = 0xe070, AM_KEY_DELETE = 0xe071, AM_KEY_HOME = 0xe06c, AM_KEY_END = 0xe069,
   	AM_KEY_PAGEUP = 0xe07d, AM_KEY_PAGEDOWN = 0xe07a
 };
+#else//其他所有架构默认采用scancode
+enum {
+  AM_KEY_NONE = 0,
+  AM_KEYS(AM_KEY_NAMES)
+};
 #endif
+
 
 
 // GPU
