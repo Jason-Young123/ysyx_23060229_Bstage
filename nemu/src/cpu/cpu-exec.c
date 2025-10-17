@@ -43,6 +43,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
+  //puts即printf
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
@@ -80,12 +81,12 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);//s->dnpc and s->snpc updated
-  printf("test 1:%s\n",s->logbuf);
+  //printf("test 1:%s\n",s->logbuf);
   cpu.pc = s->dnpc;//cpu.pc updated
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//s->pc not updated
-  printf("test 2:%s\n",s->logbuf);
+  //printf("test 2:%s\n",s->logbuf);
   int ilen = s->snpc - s->pc;//s->snpc has to be larger than s->pc
 							 //s->snpc - s->pc represents the previous inst
 							 //just executed
@@ -94,7 +95,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
-  printf("test 3:%s\n",s->logbuf);
+  //printf("test 3:%s\n",s->logbuf);
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0) space_len = 0;
