@@ -121,7 +121,7 @@ void init_monitor(int argc, char *argv[]) {
   init_log(log_file);
 
   /* Initialize memory. */
-  init_mem();
+  init_mem();//pmem in memory/paddr.c
 
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());
