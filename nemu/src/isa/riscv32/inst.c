@@ -47,7 +47,7 @@ inline int64_t SEXT_64(uint32_t input){
 #define immJ() do { *imm = SEXT(( (BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) | (BITS\
 				(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) ), 21); } while(0)
 #define immR() do { *imm = 0; } while(0)
-//modify by Jason @ 2025.10.11
+//modify by Jason @ 2025.10.11, no sign extension
 #define immCSR() do {*imm = BITS(i, 31, 20); } while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -69,9 +69,11 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   //printf("the inst is %#x, type is %d\n", i, type);
 }
 
+
+//负责解码的最底层函数
 static int decode_exec(Decode *s) {
   int rd = 0;
-  word_t src1 = 0, src2 = 0, imm = 0;
+  word_t src1 = 0, src2 = 0, imm = 0;//src1/2默认为无符号
   s->dnpc = s->snpc;
 
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
