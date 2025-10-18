@@ -529,11 +529,11 @@ module ysyx_23060229_IFU(
 					if(rvalid && rresp == 0 && rlast && rid == arid) begin
                         state <= Wait_IDU_Ready; wen <= 0;
 						tmp_offset <= 0;//最后一次向icache进行写入
-						if(tmp_offset == pc[`ysyx_23060229_M-1:0])
-                            inst <= rdata;
 						`ifdef verilator
                             IFU_counter_increase();
                         `endif
+						if(tmp_offset == pc[`ysyx_23060229_M-1:0])
+                            inst <= rdata;
                     end
 
 				end
