@@ -1523,7 +1523,7 @@ module ysyx_23060229_LSU(
 
 	//说明LSU已经取走了内存读写地址
 	assign LSU_arready_set = arready;
-	assign LSU_awready_set = awready;
+	assign LSU_awready_set = wready;//BUG1
 	
 	//暂存的araddr,awaddr,typ
 	reg [31:0] araddr_tmp;
@@ -1658,7 +1658,7 @@ module ysyx_23060229_LSU(
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						else if(awready) begin
+						else if(awready) begin//出问题
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
