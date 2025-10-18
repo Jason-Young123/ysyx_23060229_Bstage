@@ -514,6 +514,8 @@ module ysyx_23060229_IFU(
 							end
 						end
 					end
+					//若发生icache冲刷(stall_quest_fencei==1)则停留在Idle状态
+					//直至IDU自行将stall_quest_fencei置0,其间icache也完成了复位
 				end
 
 
@@ -1411,7 +1413,7 @@ module ysyx_23060229_EXU(
 					end
 				end
 
-				Wait_LSU_Ready: begin
+				Wait_LSU_Ready: begin//保持直到下级将结果取走,防止提前转换状态导致本级暂存的数据发生变化而下级AXI4还没做好读取数据的准备
 					if(flag == `ysyx_23060229_ReadMem)
 						state <= (readyFromLSU & LSU_arready_set) ? Wait_IDU_Valid : state;
 					else if(flag == `ysyx_23060229_WriteMem)
@@ -1539,7 +1541,7 @@ module ysyx_23060229_LSU(
 
 	//AR和R通道时刻做好准备
 	assign arlen = 0;
-	assign arburst = 0;
+	assign arburst = 0;//不开启突发
 	assign arid = 2;
 	assign arsize = typ[3:1];
 	//assign arsize = (typ == `ysyx_23060229_I_LB || typ == `ysyx_23060229_I_LBU) ? 3'b000 : 
@@ -1552,16 +1554,16 @@ module ysyx_23060229_LSU(
 
 	//AW,W和B通道时刻做好准备
 	assign awlen = 0;
-	assign awburst = 0;
+	assign awburst = 0;//不开启突发
 	assign wlast = 1;
 	assign awid = 3;
 	assign awsize = (typ == `ysyx_23060229_S_SB) ? 3'b000 : 
 					(typ == `ysyx_23060229_S_SH) ? 3'b001 : 3'b010;
-	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});
+	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});//对数据做预先移位
 	//assign wdata = 	(dest_csreg_mem[1:0] == 2'b00) ? result_csreg_mem :
     //                (dest_csreg_mem[1:0] == 2'b01) ? (result_csreg_mem << 8) :
     //                (dest_csreg_mem[1:0] == 2'b10) ? (result_csreg_mem << 16) : (result_csreg_mem << 24);
-	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);
+	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);//同理wstrb也需要做预先移位
     assign awaddr = (state == Wait_EXU_Valid && flag == `ysyx_23060229_WriteMem && validFromEXU) ? dest_csreg_mem : awaddr_tmp;
 
 
@@ -1591,7 +1593,7 @@ module ysyx_23060229_LSU(
 				//`ifdef simulation 	one_inst_done <= 0; `endif
 
 				if(validFromEXU) begin	
-					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;
+					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;//暂存araddr,此后状态转移,前级传入的araddr可能变化
 					//`ifdef simulation
 					//	pc_out <= pc;
 					//`else
