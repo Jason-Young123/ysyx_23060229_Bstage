@@ -1654,12 +1654,12 @@ module ysyx_23060229_LSU(
 						end
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
-						if(awready & wready) begin
+						if(awready & wready) begin//始终正确
 							state <= Wait_Bvalid; 
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						else if(awready) begin//出问题
+						else if(awready) begin//修改BUG后经验证正确
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
