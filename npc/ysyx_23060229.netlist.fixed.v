@@ -1,4 +1,4 @@
-//Generate the verilog at 2025-10-03T13:39:42
+//Generate the verilog at 2025-10-20T16:46:54
 module ysyx_23060229 (
 clock,
 reset,
@@ -27674,7 +27674,7 @@ NAND2_X1 \mylsu/_1422_ ( .A1(\mylsu/_0578_ ), .A2(\mylsu/_0579_ ), .ZN(\mylsu/_0
 INV_X1 \mylsu/_1423_ ( .A(\mylsu/_0915_ ), .ZN(\mylsu/_0580_ ) );
 NAND2_X1 \mylsu/_1424_ ( .A1(\mylsu/_0578_ ), .A2(\mylsu/_0580_ ), .ZN(\mylsu/_1052_ ) );
 NAND4_X1 \mylsu/_1425_ ( .A1(\mylsu/_0578_ ), .A2(\mylsu/_0563_ ), .A3(\mylsu/_0579_ ), .A4(\mylsu/_0580_ ), .ZN(\mylsu/_0306_ ) );
-NAND2_X1 \mylsu/_1426_ ( .A1(\mylsu/_0541_ ), .A2(\mylsu/_0579_ ), .ZN(\mylsu/_0838_ ) );
+NAND2_X1 \mylsu/_1426_ ( .A1(\mylsu/_0541_ ), .A2(\mylsu/_0580_ ), .ZN(\mylsu/_0838_ ) );
 MUX2_X1 \mylsu/_1427_ ( .A(\mylsu/_0046_ ), .B(fanout_net_27 ), .S(\mylsu/_0079_ ), .Z(\mylsu/_0014_ ) );
 MUX2_X1 \mylsu/_1428_ ( .A(\mylsu/_0057_ ), .B(\mylsu/_0321_ ), .S(\mylsu/_0079_ ), .Z(\mylsu/_0025_ ) );
 MUX2_X1 \mylsu/_1429_ ( .A(\mylsu/_0068_ ), .B(\mylsu/_0332_ ), .S(\mylsu/_0079_ ), .Z(\mylsu/_0036_ ) );
@@ -28468,7 +28468,7 @@ DFF_X1 \mylsu/_2216_ ( .D(\mylsu/_0004_ ), .CK(clock ), .Q(\mylsu/state [4] ), .
 LOGIC1_X1 \mylsu/_2217_ ( .Z(\mylsu/_1210_ ) );
 LOGIC0_X1 \mylsu/_2218_ ( .Z(\mylsu/_1211_ ) );
 BUF_X1 \mylsu/_2219_ ( .A(arready_LSU ), .Z(LSU_arready_set ) );
-BUF_X1 \mylsu/_2220_ ( .A(awready_LSU ), .Z(LSU_awready_set ) );
+BUF_X1 \mylsu/_2220_ ( .A(wready_LSU ), .Z(LSU_awready_set ) );
 BUF_X1 \mylsu/_2221_ ( .A(\mylsu/_1211_ ), .Z(\arburst_LSU [0] ) );
 BUF_X1 \mylsu/_2222_ ( .A(\mylsu/_1211_ ), .Z(\arburst_LSU [1] ) );
 BUF_X1 \mylsu/_2223_ ( .A(\mylsu/_1211_ ), .Z(\arid_LSU [0] ) );
