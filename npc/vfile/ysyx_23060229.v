@@ -57,8 +57,8 @@
 	`endif
 
 	`ifdef ysyx_23060229_nonSoC
-		`define 	ysyx_23060229_RESET_PC	  32'h8000_0000
-	`elsif YOSYS
+		`define 	ysyx_23060229_RESET_PC	  32'h3000_0000
+	`elsif ysyx_23060229_YOSYS
     	`define     ysyx_23060229_RESET_PC    32'h8000_0000
 	`elsif ysyx_23060229_CONFIG_FLASH
     	`define     ysyx_23060229_RESET_PC    32'h3000_0000
