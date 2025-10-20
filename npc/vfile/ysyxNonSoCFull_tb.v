@@ -18,7 +18,7 @@ module ysyxNonSoCFull_tb;
 		clock = 0;
 		reset = 1;
 		#6 reset = 0;//发生在下降沿,避免和posedge clk重叠
-		#3300000 $stop;
+		#600000 $stop;
 	end
 
 	always #1 clock = ~clock;
