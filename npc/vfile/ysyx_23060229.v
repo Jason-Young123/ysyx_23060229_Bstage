@@ -1574,7 +1574,7 @@ module ysyx_23060229_LSU(
 					|| (state == Wait_Bvalid);
 
 
-	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_wready);//BUG2
+	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_Wready);//BUG2
 
 
 	always @(posedge clock) begin
