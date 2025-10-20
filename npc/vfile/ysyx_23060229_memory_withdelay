@@ -404,10 +404,13 @@ module ysyx_23060229_memory(
 				Interim_AW = 1'b1;
 	
 	reg state_AW;
+
+	reg [3:0] cnt_delay_AW;
 	
 	always @(posedge clock) begin
 		if(reset) begin
 			state_AW <= Wait_Awvalid;
+			cnt_delay_AW <= 0;
 		end
 
 		else begin
@@ -425,6 +428,8 @@ module ysyx_23060229_memory(
 					end
 				end
 				Interim_AW: begin
+					//cnt_delay_AW <= (cnt_delay_AW == 15) ? 0 : cnt_delay_AW + 1;
+					//state_AW <= (cnt_delay_AW == 15) ? Wait_Awvalid : state_AW;
 					state_AW <= Wait_Awvalid;
 				end
 				default: begin
@@ -439,10 +444,13 @@ module ysyx_23060229_memory(
 
 
 	/*******************状态机4:W事务*********************/
-	parameter 	Await_W = 1'b0,
-				Wait_Wvalid = 1'b1;
+	parameter 	Await_W = 2'b00,
+				Delay_W = 2'b01,
+				Wait_Wvalid = 2'b10;
 	
-	reg state_W;
+	reg [1:0] state_W;
+
+	reg [3:0] cnt_delay_W;
 
 	reg [7:0] cnt_W;//用于计数当前这个突发传输已经传了几个
 
@@ -450,14 +458,19 @@ module ysyx_23060229_memory(
 		if(reset) begin
 			state_W <= Await_W;
 			cnt_W <= 0;
+			cnt_delay_W <= 0;
 		end
 	
 		else begin
 			case(state_W)
 				Await_W: begin
 					if(awready && awvalid) begin
-						state_W <= Wait_Wvalid;
+						state_W <= Delay_W;
 					end
+				end
+				Delay_W: begin
+					cnt_delay_W <= (cnt_delay_W == 15) ? 0 : cnt_delay_W + 1;
+					state_W <= (cnt_delay_W == 15) ? Wait_Wvalid : state_W;
 				end
 				Wait_Wvalid: begin
 					if(wvalid && cnt_W == queue_AW[head_queue_AW][12:5] && wlast//本次传输完毕，队列将被清空
