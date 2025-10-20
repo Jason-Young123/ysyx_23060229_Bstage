@@ -166,6 +166,17 @@ module ysyx_23060229_memory(
                 araddr_local = (araddr - 32'ha0000048) & 32'hfffffffc;
                 pmem_read_verilog = araddr_local[2] ? mtime[63:32] : mtime[31:0];
             end
+			
+			//重要修改,确保不论reset_pc是0x30000000还是0x80000000，都跳转至
+			//0x80000000处执行
+			else if(araddr == 32'h30000000) begin
+				pmem_read_verilog = 32'h80000537;//mv a0, 0x80000000
+			end
+			else if(araddr == 32'h30000004) begin
+				pmem_read_verilog = 32'h00050067;//jalr a0, 0
+			end
+			
+			
 			else begin
 				pmem_read_verilog = 32'h0;
 			end

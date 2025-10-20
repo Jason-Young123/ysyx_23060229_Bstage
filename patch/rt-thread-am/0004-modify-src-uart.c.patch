@@ -1,7 +1,7 @@
 From df25cabe6f59fedb1dfa132ca0235c12a7dc6356 Mon Sep 17 00:00:00 2001
 From: NJU_Yang Jiaxin <2098543558@qq.com>
 Date: Mon, 20 Oct 2025 16:07:04 +0800
-Subject: [PATCH 4/4] modify src/uart.c
+Subject: [PATCH 4/5] modify src/uart.c
 
 ---
  bsp/abstract-machine/src/uart.c | 3 ++-

@@ -56,11 +56,12 @@
 		`define ysyx_23060229_M 3
 	`endif
 
-	`ifdef ysyx_23060229_nonSoC
-		`define 	ysyx_23060229_RESET_PC	  32'h8000_0000
-	`elsif YOSYS
-    	`define     ysyx_23060229_RESET_PC    32'h8000_0000
-	`elsif ysyx_23060229_CONFIG_FLASH
+	//`ifdef ysyx_23060229_nonSoC
+	//	`define 	ysyx_23060229_RESET_PC	  32'h8000_0000
+	//`elsif ysyx_23060229_YOSYS
+    //	`define     ysyx_23060229_RESET_PC    32'h8000_0000
+	
+	`ifdef ysyx_23060229_CONFIG_FLASH
     	`define     ysyx_23060229_RESET_PC    32'h3000_0000
 	`elsif ysyx_23060229_CONFIG_MROM
     	`define     ysyx_23060229_RESET_PC    32'h2000_0000
@@ -514,6 +515,8 @@ module ysyx_23060229_IFU(
 							end
 						end
 					end
+					//若发生icache冲刷(stall_quest_fencei==1)则停留在Idle状态
+					//直至IDU自行将stall_quest_fencei置0,其间icache也完成了复位
 				end
 
 
@@ -529,11 +532,11 @@ module ysyx_23060229_IFU(
 					if(rvalid && rresp == 0 && rlast && rid == arid) begin
                         state <= Wait_IDU_Ready; wen <= 0;
 						tmp_offset <= 0;//最后一次向icache进行写入
-						if(tmp_offset == pc[`ysyx_23060229_M-1:0])
-                            inst <= rdata;
 						`ifdef verilator
                             IFU_counter_increase();
                         `endif
+						if(tmp_offset == pc[`ysyx_23060229_M-1:0])
+                            inst <= rdata;
                     end
 
 				end
@@ -1129,7 +1132,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_101_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRWI; imm <= {27'b0, inst[19:15]};
                 			    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//modify by Jason @ 2025.10.14: bug,此处应直接跳过load-use处理(本指令不读GPR)
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1151,7 +1154,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_110_?????_1110011: begin
     	    		            typ <= `ysyx_23060229_I_CSRRSI; imm <= {27'b0, inst[19:15]};
         	        		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1173,7 +1176,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_111_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRCI; imm <= {27'b0, inst[19:15]};
             	    		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1220,6 +1223,7 @@ module ysyx_23060229_IDU(
 				end
 
 				//如果发生了load-use会进入Halt状态,等待直至StallingCtl检测到上一条指令完成了load
+				//注意,stall之后暂停forward
 				Halt: begin
 					fc_disenable <= 1;
 					if(loaduse_clear) begin
@@ -1410,7 +1414,7 @@ module ysyx_23060229_EXU(
 					end
 				end
 
-				Wait_LSU_Ready: begin
+				Wait_LSU_Ready: begin//保持直到下级将结果取走,防止提前转换状态导致本级暂存的数据发生变化而下级AXI4还没做好读取数据的准备
 					if(flag == `ysyx_23060229_ReadMem)
 						state <= (readyFromLSU & LSU_arready_set) ? Wait_IDU_Valid : state;
 					else if(flag == `ysyx_23060229_WriteMem)
@@ -1520,7 +1524,7 @@ module ysyx_23060229_LSU(
 
 	//说明LSU已经取走了内存读写地址
 	assign LSU_arready_set = arready;
-	assign LSU_awready_set = awready;
+	assign LSU_awready_set = wready;//BUG1
 	
 	//暂存的araddr,awaddr,typ
 	reg [31:0] araddr_tmp;
@@ -1538,7 +1542,7 @@ module ysyx_23060229_LSU(
 
 	//AR和R通道时刻做好准备
 	assign arlen = 0;
-	assign arburst = 0;
+	assign arburst = 0;//不开启突发
 	assign arid = 2;
 	assign arsize = typ[3:1];
 	//assign arsize = (typ == `ysyx_23060229_I_LB || typ == `ysyx_23060229_I_LBU) ? 3'b000 : 
@@ -1551,16 +1555,16 @@ module ysyx_23060229_LSU(
 
 	//AW,W和B通道时刻做好准备
 	assign awlen = 0;
-	assign awburst = 0;
+	assign awburst = 0;//不开启突发
 	assign wlast = 1;
 	assign awid = 3;
 	assign awsize = (typ == `ysyx_23060229_S_SB) ? 3'b000 : 
 					(typ == `ysyx_23060229_S_SH) ? 3'b001 : 3'b010;
-	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});
+	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});//对数据做预先移位
 	//assign wdata = 	(dest_csreg_mem[1:0] == 2'b00) ? result_csreg_mem :
     //                (dest_csreg_mem[1:0] == 2'b01) ? (result_csreg_mem << 8) :
     //                (dest_csreg_mem[1:0] == 2'b10) ? (result_csreg_mem << 16) : (result_csreg_mem << 24);
-	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);
+	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);//同理wstrb也需要做预先移位
     assign awaddr = (state == Wait_EXU_Valid && flag == `ysyx_23060229_WriteMem && validFromEXU) ? dest_csreg_mem : awaddr_tmp;
 
 
@@ -1570,7 +1574,7 @@ module ysyx_23060229_LSU(
 					|| (state == Wait_Bvalid);
 
 
-	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_Awready);
+	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_Wready);//BUG2
 
 
 	always @(posedge clock) begin
@@ -1590,7 +1594,7 @@ module ysyx_23060229_LSU(
 				//`ifdef simulation 	one_inst_done <= 0; `endif
 
 				if(validFromEXU) begin	
-					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;
+					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;//暂存araddr,此后状态转移,前级传入的araddr可能变化
 					//`ifdef simulation
 					//	pc_out <= pc;
 					//`else
@@ -1650,12 +1654,12 @@ module ysyx_23060229_LSU(
 						end
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
-						if(awready & wready) begin
+						if(awready & wready) begin//始终正确
 							state <= Wait_Bvalid; 
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						else if(awready) begin
+						else if(awready) begin//修改BUG后经验证正确
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录

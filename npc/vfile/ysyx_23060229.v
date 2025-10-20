@@ -56,11 +56,12 @@
 		`define ysyx_23060229_M 3
 	`endif
 
-	`ifdef ysyx_23060229_nonSoC
-		`define 	ysyx_23060229_RESET_PC	  32'h8000_0000
-	`elsif YOSYS
-    	`define     ysyx_23060229_RESET_PC    32'h8000_0000
-	`elsif ysyx_23060229_CONFIG_FLASH
+	//`ifdef ysyx_23060229_nonSoC
+	//	`define 	ysyx_23060229_RESET_PC	  32'h8000_0000
+	//`elsif ysyx_23060229_YOSYS
+    //	`define     ysyx_23060229_RESET_PC    32'h8000_0000
+	
+	`ifdef ysyx_23060229_CONFIG_FLASH
     	`define     ysyx_23060229_RESET_PC    32'h3000_0000
 	`elsif ysyx_23060229_CONFIG_MROM
     	`define     ysyx_23060229_RESET_PC    32'h2000_0000
@@ -1573,7 +1574,7 @@ module ysyx_23060229_LSU(
 					|| (state == Wait_Bvalid);
 
 
-	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_Awready);
+	assign readyToEXU = (state == Wait_EXU_Valid || state == Wait_Wready);//BUG2
 
 
 	always @(posedge clock) begin
@@ -1653,12 +1654,12 @@ module ysyx_23060229_LSU(
 						end
 					end
 					if(flag == `ysyx_23060229_WriteMem) begin//写mem
-						if(awready & wready) begin
+						if(awready & wready) begin//始终正确
 							state <= Wait_Bvalid; 
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						else if(awready) begin//出问题
+						else if(awready) begin//修改BUG后经验证正确
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
 							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
