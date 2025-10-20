@@ -404,10 +404,13 @@ module ysyx_23060229_memory(
 				Interim_AW = 1'b1;
 	
 	reg state_AW;
+
+	reg [3:0] cnt_delay_AW;
 	
 	always @(posedge clock) begin
 		if(reset) begin
 			state_AW <= Wait_Awvalid;
+			cnt_delay_AW <= 0;
 		end
 
 		else begin
@@ -425,7 +428,8 @@ module ysyx_23060229_memory(
 					end
 				end
 				Interim_AW: begin
-					state_AW <= Wait_Awvalid;
+					cnt_delay_AW <= (cnt_delay_AW == 15) ? cnt_delay_AW + 1 : 0;
+					state_AW <= (cnt_delay_AW == 15) ? Wait_Awvalid : state_AW;
 				end
 				default: begin
 					state_AW <= Wait_Awvalid;
