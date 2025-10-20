@@ -74,7 +74,6 @@ static long load_img() {
 
 
 static int parse_args(int argc, char *argv[]) {
-  //printf("in parse_args\n");
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
@@ -85,7 +84,7 @@ static int parse_args(int argc, char *argv[]) {
   };
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
-    switch (o) {
+	switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
@@ -122,13 +121,13 @@ void init_monitor(int argc, char *argv[]) {
   init_log(log_file);
 
   /* Initialize memory. */
-  init_mem();
+  init_mem();//pmem in memory/paddr.c
 
   /* Initialize devices. */
-  IFDEF(CONFIG_DEVICE, init_device());
+  IFDEF(CONFIG_DEVICE, init_device());// device/device.c,初始化map,为所有设备注册实际物理空间并设计回调函数
 
   /* Perform ISA dependent initialization. */
-  init_isa();
+  init_isa();// isa/riscv32/init.c, 用built-in image初始化pmem(后续被load-img替代), reset pc,令reg[0] = 0
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();

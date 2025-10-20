@@ -60,11 +60,14 @@ __am_asm_trap:
   csrw mstatus, t1
 
   #将伪栈底指针存入a0,即传入函数
+  #这里将context_i的基地址传给a0(am_irq_handle的参数)
   mv a0, sp
   #__am_irq_handle定义于./cte.c
+  #这里跳转至context_j的基地址
   jal __am_irq_handle
 
   #这边需要切换伪栈顶指针
+  #这里a0代表context_j的基地址,sp指向context_j的基地址,随后进行context_j的上下文恢复
   mv sp, a0
   #addi sp, sp, -CONTEXT_SIZE
 
@@ -79,5 +82,6 @@ __am_asm_trap:
 
   MAP(REGS, POP)
 
+  #context_j上下文恢复完毕后sp指向进程块j的栈底(最高地址,此时context_j不复存在)
   addi sp, sp, CONTEXT_SIZE
   mret

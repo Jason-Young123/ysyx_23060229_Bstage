@@ -13,6 +13,8 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+//sdb需要调用的与cpu相关函数只有:(1)cpu_exec (2)isa_reg_str2val
+
 #include <isa.h>
 #include <memory/paddr.h>//newly included
 #include <cpu/cpu.h>

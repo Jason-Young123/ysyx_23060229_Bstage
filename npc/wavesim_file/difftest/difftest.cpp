@@ -1,5 +1,5 @@
+//re-design difftest by Jason @ 2025.10.11
 #include "difftest.h"
-
 
 void (*difftest_memcpy)(uint32_t addr, void *buf, size_t n, bool direction) = NULL;
 void (*difftest_regcpy)(void *dut, bool direction) = NULL;
@@ -10,9 +10,13 @@ void (*difftest_raise_intr)(uint64_t NO) = NULL;
 extern bool is_simulating;
 extern bool difftest_to_skip;
 extern bool difftest_skipping;
-extern Vysyx_23060229_top* top;
+//extern Vysyx_23060229_top* top;
 extern uint8_t memory2[];
 extern char* regname[];
+
+
+extern int32_t registers[32];//defined in register/register.cpp
+extern int32_t top_pc;//defined in engine/engine.cpp
 
 
 //static struct npc_context_t npc_cpu;
@@ -46,10 +50,10 @@ void init_difftest(const char* ref_so_file, long img_size, int port){
 	
 	//初始化npc_cpu
 	struct npc_context_t npc_cpu;//只使用一次
-	for(int i = 0; i < 32; i++)
-		npc_cpu.gpr[i] = top -> regs[i];
+	for(int i = 0; i < NR_GPR; i++)
+		npc_cpu.gpr[i] = registers[i];
 	//npc_cpu.pc = top -> pc;
-	npc_cpu.pc = 0x80000000;
+	npc_cpu.pc = RESET_VECTOR;
 
 	difftest_regcpy(&npc_cpu, NPC_TO_NEMU);
 

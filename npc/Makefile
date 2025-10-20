@@ -1,7 +1,6 @@
 include $(YSYX_HOME)/Makefile
 include $(NPC_HOME)/config/config.mk
 
-#WDIR_23060229 = $(shell pwd)/..
 WDIR_23060229 = $(YSYX_HOME)
 SOC_HOME_23060229 = $(WDIR_23060229)/ysyxSoC
 NPC_HOME_23060229 = $(WDIR_23060229)/npc
@@ -26,8 +25,6 @@ VFILE_NONSOC = $(TOP_MODULE_FILE_NONSOC) \
 			   $(NPC_HOME_23060229)/build/ysyx_23060229_memory.v
 TB_NONSOC = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC)_tb.v
 VVP_NONSOC = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC)
-#SEARCH_PATH_NONSOC = $(NPC_HOME_23060229)/build
-#INCLUDES_NONSOC = $(foreach dir, $(SEARCH_PATH_NONSOC), -I$(dir))
 
 
 TOP_MODULE_NONSOC_NL = ysyxNonSoCFull_netlist
@@ -36,9 +33,6 @@ VFILE_NONSOC_NL = $(TOP_MODULE_FILE_NONSOC_NL) \
 				  $(NPC_HOME_23060229)/build/ysyx_23060229_memory.v
 TB_NONSOC_NL = $(NPC_HOME_23060229)/build/$(TOP_MODULE_NONSOC_NL)_tb.v
 VVP_NONSOC_NL = $(NPC_HOME_23060229)/$(TOP_MODULE_NONSOC_NL)
-#SEARCH_PATH_NONSOC_NL = ./vfile
-#INCLUDES_NONSOC_NL = $(foreach dir, $(SEARCH_PATH_NONSOC_NL), -I$(dir))
-
 
 
 CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
@@ -59,20 +53,13 @@ LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
        /lib/x86_64-linux-gnu/libSDL2_image.so\
        /lib/x86_64-linux-gnu/libSDL2_ttf.so\
 	   $(NPC_HOME_23060229)/constr/nvboard.a
-#$(NVBD_HOME_23060229)/build/nvboard.a
 
 BIN ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.bin
-
-
-
-ascertain:
-	@echo $(SPLIT)
-	@echo $(shell pwd)
+ELF ?= $(WDIR_23060229)/npc/bin/dummy-riscv32e-ysyxsoc.elf
 
 
 verilog:
 	@$(call git_commit, "sim RTL")
-	#@$(call git_commit, "task:verilog in npc")
 	@echo "======================== Execute target:verilog in $(shell pwd) ========================"
 	@cp $(NPC_HOME_23060229)/vfile/ysyx*.v $(NPC_HOME_23060229)/build/
 
@@ -87,10 +74,9 @@ convert_SoC:
     	-cc $(TOP_MODULE_FILE_SOC) \
     	$(VFILE_SOC) \
     	$(INCLUDES_SOC) \
-    	$(TIMING) \
+    	$(TIMING)
 
 # 生成带SoC的仿真文件,C++的SDB实现
-#$(call git_commit, "wavesim in npc")
 sim_SoC:
 	@echo "======================== Execute target:sim_SoC in $(shell pwd) ========================"
 	@verilator --autoflush --trace \
@@ -104,7 +90,7 @@ sim_SoC:
 
 exec_SoC:
 	@echo "======================== Execute target:exec_SoC in $(shell pwd) ========================"
-	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN)
+	@$(NPC_HOME_23060229)/V$(TOP_MODULE_SOC) $(BIN) $(ELF)
 
 
 
@@ -129,7 +115,6 @@ exec_nonSoC:
 sim-iverilog:
 	@echo "======================== Execute target:sim-iverilog in $(shell pwd) ========================"
 	@$(call git_commit, "sim RTL")
-	#@$(call git_commit, "task:sim-iverilog in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC IMG=$(basename $(IMG))
 	@$(MAKE) exec_nonSoC
@@ -152,35 +137,9 @@ exec_nonSoC_netlist:
 sim-iverilog-netlist:
 	@echo "======================== Execute target:sim-iverilog-netlist in $(shell pwd) ========================"
 	@$(call git_commit, "sim RTL")
-	#@$(call git_commit, "task:sim-iverilog-netlist in npc")
 	@$(MAKE) convert_format IMG=$(basename $(IMG))
 	@$(MAKE) convert_nonSoC_netlist IMG=$(basename $(IMG)) NETLIST=$(NETLIST) CELLS=$(CELLS)
 	@$(MAKE) exec_nonSoC_netlist
-
-
-
-
-
-convert_foo:
-	@iverilog -o foo ./vfile/foo_tb.v ./vfile/foo.v ./vfile/cells.v
-exec_foo:
-	@vvp -n foo -lxt2
-
-
-#convert_nonSoC_netlist:
-#	@iverilog -o ysyxNonSoCFull_netlist ./vfile/ysyxNonSoCFull_netlist_tb.v ./vfile/ysyxNonSoCFull_netlist.v \
-#		./vfile/ysyx_23060229_netlist.v ./vfile/ysyx_23060229_memory.v ./vfile/cells.v \
-#		-PysyxNonSoCFull_netlist_tb.HEX_FILE='"$(IMG).hex"'
-
-#exec_nonSoC_netlist:
-#	@vvp -n ysyxNonSoCFull_netlist -lxt2
-
-
-
-
-#BIN_FILE := $(if $(wildcard ../$(IMG).bin),../$(IMG).bin,$(if $(wildcard ./$(IMG).bin),./$(IMG).bin,))
-
-
 
 
 
@@ -188,8 +147,6 @@ clean:
 	@rm -f $(NPC_HOME_23060229)/obj_dir/*
 	@rm -f $(NPC_HOME_23060229)/VysyxSoCFull
 	@rm -f $(NPC_HOME_23060229)/ysyxNonSoCFull
-
-
 
 
 .PHONY: .git_commit .clean_index _default

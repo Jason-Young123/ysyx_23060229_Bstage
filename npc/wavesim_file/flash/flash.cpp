@@ -61,8 +61,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data){
 
 
 
-void flash_read_(int32_t addr, int32_t *data){
-	addr = addr - FLASH_BASE;
+void flash_read_sdb(int32_t addr, int32_t *data){
 	addr = addr & 0xfffffffc;
 	*data = (flash[addr] | (int32_t)flash[addr+1] << 8
             | (int32_t)flash[addr+2] << 16

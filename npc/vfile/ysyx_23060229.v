@@ -93,29 +93,37 @@
 	import "DPI-C" function void csr_inst_counter_increase();
 
 	import "DPI-C" function void flush_counter_increase();
+
+	import "DPI-C" function void get_current_pc_inst(input int pc, input int inst);//在仿真环境中pc/inst入队
+	import "DPI-C" function void get_current_reg(input int id, input int regvalue);
+	import "DPI-C" function void one_inst_done_pc(input int pc);
+	import "DPI-C" function void one_inst_done();//在仿真环境中pc/inst出队;注意不同inst判定one_inst_done的时机不同;
+	//对于写reg/csreg的指令,判定时机为写入reg/csreg后;对于写mem的指令,判定时机为返回bvalid信号
+	import "DPI-C" function void itrace_record(input int pc, input int inst);
+	import "DPI-C" function void mtrace_record(input int pc, input int addr);
+	import "DPI-C" function void etrace_record_pc(input int pc);
+	import "DPI-C" function void etrace_record();
+	import "DPI-C" function void ftrace_record(input int pc);
 `endif
 
 
 	`define ysyx_23060229_CLINT_BASE	32'h02000000//8x8=64位mtime寄存器
 	`define ysyx_23060229_CLINT_END		32'h0200ffff
 
-	
+	//将0x0200????地址空间路由至CLINT,其余地址全部由Xbar接管
 	`define ysyx_23060229_SELECT_SLAVE(addr, xbar, clint)		(addr[31:16] == 16'h0200) ? clint : xbar
-
-
 	`define ysyx_23060229_CHECK_CLINT(addr, signal)		(addr[31:16] == 16'h0200) ? signal : 0
 	`define ysyx_23060229_CHECK_XBAR(addr, signal)		(addr[31:16] == 16'h0200) ? 0 : signal
 
-
+	//启用的6个CSReg
 	`define ysyx_23060229_MSTATUS		12'h300
 	`define ysyx_23060229_MTVEC			12'h305
 	`define ysyx_23060229_MEPC 			12'h341
 	`define ysyx_23060229_MCAUSE		12'h342
-
 	`define ysyx_23060229_MVENDORID		12'hf11
 	`define ysyx_23060229_MARCHID		12'hf12
 
-
+	//指令类型编号
 	`define ysyx_23060229_Invalid  		3'b000
    	`define ysyx_23060229_WriteReg  	3'b001
     `define ysyx_23060229_WriteMem 		3'b010
@@ -123,10 +131,11 @@
     `define ysyx_23060229_Jump_B 		3'b100//非写入reg型跳转
     `define ysyx_23060229_Jump_J 		3'b101//写入reg型跳转
 	`define ysyx_23060229_WriteCSReg	3'b110//写入reg和csreg
-	`define ysyx_23060229_Jump_CS		3'b111
+	`define ysyx_23060229_Jump_CS		3'b111//特指ecall
 
-
+	//以下指令编号的高3位代表指令类型
 	//WriteReg, 3'b001
+	//寄存器-寄存器运算
 	`define ysyx_23060229_R_ADD     8'b00100000
     `define ysyx_23060229_R_AND     8'b00100001
     `define ysyx_23060229_R_OR      8'b00100010
@@ -137,7 +146,7 @@
     `define ysyx_23060229_R_SRA     8'b00100111
     `define ysyx_23060229_R_SUB     8'b00101000
     `define ysyx_23060229_R_SLT     8'b00101001
-
+	//寄存器-立即数运算
 	`define ysyx_23060229_I_ADDI    8'b00110000
     `define ysyx_23060229_I_ANDI    8'b00110001
     `define ysyx_23060229_I_ORI     8'b00110010
@@ -147,27 +156,26 @@
     `define ysyx_23060229_I_SRLI    8'b00110110
     `define ysyx_23060229_I_SRAI    8'b00110111
     `define ysyx_23060229_I_SLTI    8'b00111000
-	
+	//立即数加载
 	`define ysyx_23060229_U_AUIPC 	8'b00111100//[3:1]特殊
 	`define ysyx_23060229_U_LUI		8'b00111110
 
-
 	//WriteMem, 3'b010
+	//写内存
 	`define ysyx_23060229_S_SB		8'b01000001
 	`define ysyx_23060229_S_SH		8'b01000011
 	`define ysyx_23060229_S_SW		8'b01001111
 	
-
-	
 	//ReadMem, 3'b011
+	//读内存
 	`define ysyx_23060229_I_LB      8'b01100000
 	`define ysyx_23060229_I_LBU     8'b01100001
 	`define ysyx_23060229_I_LH      8'b01100010
 	`define ysyx_23060229_I_LHU  	8'b01100011
 	`define ysyx_23060229_I_LW   	8'b01100100
 
-
 	//Jump_B, 3'b100
+	//条件分支跳转,不写寄存器
 	`define ysyx_23060229_B_BEQ		8'b10000000
     `define ysyx_23060229_B_BNE     8'b10000001
     `define ysyx_23060229_B_BLT     8'b10000010
@@ -178,14 +186,13 @@
 	`define ysyx_23060229_FENCEI	8'b10010000
 	//将fencei视为特殊jumpB
 
-
 	//Jump_J, 3'b101
-	`define ysyx_23060229_J_JAL	    8'b10100000
-	`define ysyx_23060229_I_JALR    8'b10100001
+	//无条件跳转,写寄存器(写回pc+4)
+	`define ysyx_23060229_J_JAL	    8'b10100000//imm直接寻址
+	`define ysyx_23060229_I_JALR    8'b10100001//寄存器间接寻址
 
-	
-	
 	//WriteCSReg, 3'b110
+	//CSReg读写
 	`define ysyx_23060229_I_CSRRW	8'b11000000
 	`define ysyx_23060229_I_CSRRWI	8'b11000001
 	`define ysyx_23060229_I_CSRRS	8'b11000010
@@ -193,7 +200,6 @@
 	`define ysyx_23060229_I_CSRRC	8'b11000100
 	`define ysyx_23060229_I_CSRRCI	8'b11000101
 	
-
 	//Jump_CS, 3'b111
 	`define ysyx_23060229_ECALL		8'b11100000
 	
@@ -216,14 +222,9 @@ module ysyx_23060229_Register(
 	input [3:0] waddr,
 	input [3:0] raddr1, raddr2,
 	output [31:0] rdata1, rdata2
-	//`ifdef simulation//不再引出
-	//,output reg[31:0] Reg[0:15]
-	//`endif
 );
 
-	//`ifndef simulation
 	reg[31:0] Reg[0:15];
-	//`endif
 	//直接读，不必等时钟
 	assign rdata1 = Reg[raddr1];
 	assign rdata2 = Reg[raddr2];
@@ -232,12 +233,15 @@ module ysyx_23060229_Register(
 	always @(posedge clk) begin
 		if(rst) begin
 			Reg[0] <= 0;
-			//$display("Register resetting ...");
-			//$readmemh("resource/reg.hex", Reg);
 		end
 
 		else if(wen && |waddr) begin//考虑到JARL和JAR指令可能写0号reg
 			Reg[waddr] <= wdata;
+		//modify by Jason @ 2025.10.09
+		`ifdef verilator//指导仿真环境中的registers数组更新
+			get_current_reg({28'h0000000, waddr}, wdata);
+            one_inst_done();
+		`endif
 		end
 	end
 
@@ -252,21 +256,14 @@ module ysyx_23060229_CSRegister(
 	input rst,
 	input [7:0] wen,//注意此处的wen比较特殊，因为可能涉及到ecall等
 					//一条指令写多个CS寄存器的情况
-	
 	input [31:0] wdata,
 	input [11:0] waddr, raddr,
 	output [31:0] rdata
-	//output reg excp_written,
-	//output [31:0] mtvec,//供IFU跳转
-	//output [31:0] mepc//供ExceptionCtl使用
 );
 
 	//目前只支持8个(mstatus,mtvec,mepc,mcause,mvendorid,marchid,剩下两个备用)
 	//0-3号分别存放mstatus,mtvec,mepc,mcause; 4-5号存放mvendorid,marchid
 	reg [31:0] CSReg [0:7];
-
-	//assign mtvec = CSReg[1];
-	//assign mepc = CSReg[2];
 
 	assign rdata = 	(raddr == 12'h300) ? CSReg[0] ://mstatus
 					(raddr == 12'h305) ? CSReg[1] ://mtvec
@@ -277,12 +274,9 @@ module ysyx_23060229_CSRegister(
 					0;
 
 	always @(posedge clk) begin
-		//excp_written <= 0;
 		if(rst) begin
 			CSReg[4] <= 32'h79737978;
 			CSReg[5] <= 32'h015fdf05;
-			//$display("CSRegister resetting ...");
-			//$readmemh("resource/csreg.hex",CSReg);
 		end
 		else if(wen[7]) begin//wen = 8'b1xxx_xxxx, 说明要写入
 			case(waddr)
@@ -292,10 +286,22 @@ module ysyx_23060229_CSRegister(
                 12'h342: CSReg[3] <= wdata;//mcause
                 default: ;
             endcase
+			//modify by Jason @ 2025.10.10
+        	`ifdef verilator
+				get_current_reg({20'h00000, waddr}, wdata);
+        	`endif
+			
 			if(wen[6]) begin//wen = 8'b11xx_xxxx, 说明要额外写入异常, 其中低6位为异常原因
 				CSReg[3] <= {26'b0, wen[5:0]};
-				//excp_written <= 1;
+				//modify by Jason @ 2025.10.10
+        		`ifdef verilator
+					get_current_reg(32'h00000342, {26'b0, wen[5:0]});
+					etrace_record();//在LSU调用etrace_record_pc后正式写入ringbuf
+				`endif
 			end
+			`ifdef verilator
+				one_inst_done();
+			`endif
 		end
 	end
 endmodule
@@ -317,18 +323,14 @@ module ysyx_23060229_icache(
 	output valid_data_out,
 	output [31-`ysyx_23060229_M-`ysyx_23060229_N:0] tag_data_out,
 	output [31:0] data_data_out
-	//全部改为双端口
-	//inout valid_data,
-    //inout [31-`ysyx_23060229_M-`ysyx_23060229_N:0] tag_data,
-    //inout [31:0] data_data
 );
 
     //parameter M = 3;//块大小为2^M = 8, 2 insts
     //parameter N = 2;//块数量为2^N = 4
 
-    localparam block_size = (1 << `ysyx_23060229_M);
-	localparam inst_num	= (block_size >> 2);
-    localparam block_num  = (1 << `ysyx_23060229_N);
+    localparam block_size = (1 << `ysyx_23060229_M);//8
+	localparam inst_num	= (block_size >> 2);//2
+    localparam block_num  = (1 << `ysyx_23060229_N);//4
 
     reg                         valid   [0:block_num-1];//用于存放每一个cache块的valid
     reg[31-`ysyx_23060229_M-`ysyx_23060229_N:0]             tag     [0:block_num-1];//用于存放每一个cache块的tag
@@ -381,14 +383,14 @@ module ysyx_23060229_alu(
 
     always @(*) begin
         case(cmd)
-            3'b000: out = src1 + src2;
-            3'b001: out = src1 & src2;
-            3'b010: out = src1 | src2;
-            3'b011: out = src1 ^ src2;
-            3'b100: out = {31'b0, (src1 < src2)};
-            3'b101: out = src1 << src2[4:0];
-            3'b110: out = rshifted;
-            3'b111: out = ({32{src1[31]}} << (32 - src2)) | rshifted;
+            3'b000: out = src1 + src2;//加
+            3'b001: out = src1 & src2;//按位与
+            3'b010: out = src1 | src2;//按位或
+            3'b011: out = src1 ^ src2;//按位异或
+			3'b100: out = {31'b0, (src1 < src2)};//小于
+			3'b101: out = src1 << src2[4:0];//左移
+            3'b110: out = rshifted;//逻辑右移
+            3'b111: out = ({32{src1[31]}} << (32 - src2)) | rshifted;//算数右移
         endcase
     end
 
@@ -405,7 +407,7 @@ module ysyx_23060229_IFU(
 	input check_quest,
 	input stall_quest_fencei,
 	input [31:0] pc_jump,
-	output reg check_assert,
+	output reg check_assert,//避免check_quest信号持续拉高
 	
 	input readyFromIDU,
 	output validToIDU,
@@ -431,8 +433,6 @@ module ysyx_23060229_IFU(
     input [3:0] rid,
 
     output rmem_quest
-
-	//output wrong_pred
 );
 	localparam block_size = (1 << `ysyx_23060229_M);
     localparam block_num  = (1 << `ysyx_23060229_N);
@@ -441,15 +441,16 @@ module ysyx_23060229_IFU(
 
 
     reg wen;
-
+	
+	//写icache独立信号(valid, tag, data)
     wire valid_in = wen;
 	wire [31-`ysyx_23060229_M-`ysyx_23060229_N:0] tag_in = araddr[31:`ysyx_23060229_M+`ysyx_23060229_N];
 	wire [31:0] data_in = rdata;
-
+	//读icache独立信号(valid, tag, data)
     wire valid_out;
 	wire [31-`ysyx_23060229_M-`ysyx_23060229_N:0] tag_out;
 	wire [31:0] data_out;
-    
+	//读写icache共用信号(index/offset),其中index = 0~3, offset = 000/100
 	wire [`ysyx_23060229_N-1:0] index = wen ? araddr[`ysyx_23060229_M+`ysyx_23060229_N-1:`ysyx_23060229_M] : 
 										pc[`ysyx_23060229_M+`ysyx_23060229_N-1:`ysyx_23060229_M];
     wire [`ysyx_23060229_M-1:0] offset = wen ? tmp_offset : pc[`ysyx_23060229_M-1:0];
@@ -469,11 +470,11 @@ module ysyx_23060229_IFU(
 	wire wrong_pred = (check_quest & (pc != pc_jump));
 
 	//在第一个状态(Idle)上做好AXI4通信准备
-	assign araddr = ((pc >> `ysyx_23060229_M) << `ysyx_23060229_M);
+	assign araddr = ((pc >> `ysyx_23060229_M) << `ysyx_23060229_M);//8字节对齐,和block大小相对应
 	assign arid = 1;
-	assign arlen = (1 << (`ysyx_23060229_M - 2)) - 1;
-	assign arsize = 3'b010;
-	assign arburst = 2'b01;
+	assign arlen = (1 << (`ysyx_23060229_M - 2)) - 1;//突发长度为1,即一次突发传输2个4byte
+	assign arsize = 3'b010;//每次突发包含4byte(1条指令)
+	assign arburst = 2'b01;//突发类型为INCR,递增突发
 	assign rready = (state == Idle & ~hit & ~stall_quest_fencei & ~reset) || (state == Wait_Rvalid);
 	assign arvalid = (state == Idle) & (~stall_quest_fencei) & ~reset;
 
@@ -487,8 +488,6 @@ module ysyx_23060229_IFU(
 					(is_jal) ? imm_jal : 4;
 
 	always @(posedge clock) begin
-		//延迟reset策略,防止在axi4总线访问过程中直接进行reset
-		//if(reset && state != Wait_Rvalid) begin
 		if(reset) begin
 			state <= Idle;
 			pc <= `ysyx_23060229_RESET_PC; //inst <= 0;
@@ -515,6 +514,8 @@ module ysyx_23060229_IFU(
 							end
 						end
 					end
+					//若发生icache冲刷(stall_quest_fencei==1)则停留在Idle状态
+					//直至IDU自行将stall_quest_fencei置0,其间icache也完成了复位
 				end
 
 
@@ -523,21 +524,18 @@ module ysyx_23060229_IFU(
                         unhit_timer_increase();
                     `endif
 					if(rvalid && rresp == 0 && rlast == 0 && rid == arid) begin
-                        tmp_offset <= tmp_offset + 4;//持续向icache进行写入
+                        tmp_offset <= tmp_offset + 4;//持续向icache进行写入,共分000和100两次
                         if(tmp_offset == pc[`ysyx_23060229_M-1:0])//同时获取可能传给ifu的inst
                             inst <= rdata;
                     end
 					if(rvalid && rresp == 0 && rlast && rid == arid) begin
                         state <= Wait_IDU_Ready; wen <= 0;
-                        tmp_offset <= 0;//最后一次向icache进行写入
-                        if(tmp_offset == pc[`ysyx_23060229_M-1:0])
-                            inst <= rdata;
+						tmp_offset <= 0;//最后一次向icache进行写入
 						`ifdef verilator
                             IFU_counter_increase();
                         `endif
-						//if(to_reset) begin
-                        //    state <= Idle; pc <= mtvec; to_reset <= 0; wen <= 0; inst <= 0;
-                        //end
+						if(tmp_offset == pc[`ysyx_23060229_M-1:0])
+                            inst <= rdata;
                     end
 
 				end
@@ -547,7 +545,7 @@ module ysyx_23060229_IFU(
 					if(readyFromIDU) begin
 					   	if(wrong_pred) begin//实际上下游IDU未取指
 							check_assert <= 1;
-							pc <= pc_jump;
+							pc <= pc_jump;//由下游传来的纠正pc
 							`ifdef verilator
 								flush_counter_increase();
 							`endif
@@ -604,9 +602,8 @@ module ysyx_23060229_IDU(
 	
 );	
 	
-	
+	//检测load-use冲突
 	wire previous_load = (typ[7:5] == 3'b011);//LB,LH,LW,LBU,LHU
-	
 	//第一类load-use,use指令只涉及单一源寄存器(rs)
 	wire loaduse_case1 = 	(previous_load == 1) && (rd == inst[19:15]);
 	//第二类load-use,use指令涉及两个源寄存器
@@ -638,6 +635,12 @@ module ysyx_23060229_IDU(
 			case(state)
 				Wait_IFU_Valid: begin
 					if(validFromIFU) begin//确保IFU预测正确时才进行状态转换
+					//modify by Jason @ 2025.10.9
+					`ifdef verilator
+						get_current_pc_inst(pc, inst);
+						itrace_record(pc, inst);
+						ftrace_record(pc);
+					`endif
 						stall_quest_fencei <= 0;//通常都为0,除非遇到fence.i
 											
 						pc_out <= pc;
@@ -1128,7 +1131,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_101_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRWI; imm <= {27'b0, inst[19:15]};
                 			    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//modify by Jason @ 2025.10.14: bug,此处应直接跳过load-use处理(本指令不读GPR)
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1150,7 +1153,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_110_?????_1110011: begin
     	    		            typ <= `ysyx_23060229_I_CSRRSI; imm <= {27'b0, inst[19:15]};
         	        		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1172,7 +1175,7 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_111_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRCI; imm <= {27'b0, inst[19:15]};
             	    		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;
+                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
 								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
@@ -1189,9 +1192,6 @@ module ysyx_23060229_IDU(
 
 							//ECALL写入MEPC和MCAUSE，跳转至MTVEC
 							32'b0000000_00000_00000_000_00000_1110011: begin//ecall
-								`ifdef verilator
-                                    $display("Exception: Ecall in IDU! Error pc: %x", pc);
-                                `endif
         			        	typ <= `ysyx_23060229_ECALL; 
 								imm <= 0;
             	    		    rs1 <= 0; rs2 <= 0; rd <= 0; csr <= `ysyx_23060229_MTVEC;
@@ -1221,6 +1221,8 @@ module ysyx_23060229_IDU(
 					end
 				end
 
+				//如果发生了load-use会进入Halt状态,等待直至StallingCtl检测到上一条指令完成了load
+				//注意,stall之后暂停forward
 				Halt: begin
 					fc_disenable <= 1;
 					if(loaduse_clear) begin
@@ -1270,11 +1272,7 @@ module ysyx_23060229_EXU(
 	input [31:0] srccs,
 
 	output reg[7:0] typ_out,
-	//`ifdef simulation
 	output reg[31:0] pc_out,//为确保ExceptionCtl正常工作必须为32 bit
-	//`else
-	//output reg pc_out,
-	//`endif
 	output [2:0] flag,
 	output reg[4:0] dest_reg,//寄存器地址
 	output reg[31:0] result_reg,
@@ -1291,13 +1289,7 @@ module ysyx_23060229_EXU(
 
 	assign flag = typ_out[7:5];
 
-
-	//scomp生成SLT/SLTI的结果
-    //wire scomp_out;
-    //wire [31:0] scomp_op = typ[4] ? imm : src2;
-	//ysyx_23060229_scomp myscomp(src1, scomp_op, scomp_out);
-
-
+	//生成signed comparison结果
 	wire scomp_out;
     wire overflow;
     wire [31:0] scomp_op = typ[4] ? imm : src2;
@@ -1306,12 +1298,10 @@ module ysyx_23060229_EXU(
     assign overflow = (src1[31] != scomp_op[31]) && (sub[31] != src1[31]);
     assign scomp_out = sub[31] ^ overflow;
 
-
 	//alu生成大多数cal类指令结果
 	wire [31:0] alu_out;
 	wire [31:0] alu_op = typ[4] ? imm : src2;
 	ysyx_23060229_alu myalu(src1, alu_op, typ[2:0], alu_out);
-
 
 	//用于判断Jump_B指令的条件是否成立
 	wire isequal = (src1 == src2);
@@ -1346,7 +1336,6 @@ module ysyx_23060229_EXU(
 			check_quest <= 0;
 			typ_out <= 0; pc_out <= 0; pc_jump <= `ysyx_23060229_RESET_PC;
 			dest_reg <= 0; //dest_csreg_mem <= 0;
-			//`ifdef verilator $display("EXU resetting ..."); `endif
 		end
 
 		else begin
@@ -1356,13 +1345,7 @@ module ysyx_23060229_EXU(
 				Wait_IDU_Valid: begin
 					state <= validFromIDU ? Wait_LSU_Ready : Wait_IDU_Valid;
 					if(validFromIDU) begin
-						//`ifdef simulation
 							pc_out <= pc;
-							//EXU_counter_increase();
-						//`else
-						//	pc_out <= pc[2];
-						//`endif
-						
 						`ifdef verilator
 							EXU_counter_increase();
 						`endif
@@ -1379,8 +1362,6 @@ module ysyx_23060229_EXU(
 						//当typ[7:5] = 3'b110(WriteCSReg)/3'b111(Jump_CS)时,dest_csreg_mem视为dest_csreg,否则视为dest_mem
 						dest_csreg_mem <= (typ[7:5] == 3'b110) ? {20'b0,csr} : (typ[7:5] == 3'b111) ? {20'b0,`ysyx_23060229_MEPC} : src1_plus_imm;
 						
-
-						//case(typ[7:5])
 						if(typ[7:5] == `ysyx_23060229_WriteReg) begin
 								case(typ[4:0])
 									5'b01000: result_reg <= src1 - src2;//SUB
@@ -1391,32 +1372,24 @@ module ysyx_23060229_EXU(
 									default: ;
 								endcase
 						end
-							
-
 						if(typ[7:5] == `ysyx_23060229_Jump_B) begin
 								check_quest <= 1;//Jump_B的预测结果可能错误,因而需发出check_quest
 								pc_jump <= JumpB_cond ? pc_plus_imm : pc_plus_4;
-								if(typ[3]) begin//是MRET
+								if(typ[3]) begin//是MRET,特殊的JumpB
 									pc_jump <= srccs;
 								end
-								if(typ[4]) begin//是fencei
+								if(typ[4]) begin//是fencei,特殊JumpB
 									check_quest <= 0;
 								end
 						end
-							
-
 						if(typ[7:5] == `ysyx_23060229_Jump_J) begin
 								check_quest <= typ[0];//JAL的预测结果必然正确,无需发出check_quest;JALR的预测结果大概率错误,需发出check_quest
 								pc_jump <= typ[0] ? ((src1_plus_imm)&(32'hffff_fffe)) : pc_plus_imm;
 								result_reg <= pc_plus_4; 
 						end
-
-
 						if(typ[7:5] == `ysyx_23060229_WriteCSReg) begin
 								result_reg <= srccs; 
 						end
-
-
             			if(typ[7:5] == `ysyx_23060229_Jump_CS) begin//ECALL的预测结果大概率错误,因而需发出check_quest
 								check_quest <= 1;
 								pc_jump <= srccs;
@@ -1426,7 +1399,7 @@ module ysyx_23060229_EXU(
 						`ifdef verilator
 						if(typ[7:5] == `ysyx_23060229_Invalid) begin
 								if(typ[0]) begin hit_good_trap(); end//ebreak,特殊的invalid
-								else ; //hit_bad_trap(); //else 处理Illegal Inst异常
+								else hit_bad_trap(); //else 处理Illegal Inst异常
 						end
 						`endif
 						
@@ -1440,7 +1413,7 @@ module ysyx_23060229_EXU(
 					end
 				end
 
-				Wait_LSU_Ready: begin
+				Wait_LSU_Ready: begin//保持直到下级将结果取走,防止提前转换状态导致本级暂存的数据发生变化而下级AXI4还没做好读取数据的准备
 					if(flag == `ysyx_23060229_ReadMem)
 						state <= (readyFromLSU & LSU_arready_set) ? Wait_IDU_Valid : state;
 					else if(flag == `ysyx_23060229_WriteMem)
@@ -1474,11 +1447,7 @@ module ysyx_23060229_LSU(
 	input validFromEXU,
 	output readyToEXU,
 	
-	//`ifdef simulation
 	input [31:0] pc,
-	//`else
-	//input pc,
-	//`endif
 	input [7:0] typ,
 	input [4:0] dest_reg,//reg的写地址
 	input [31:0] result_reg,//reg的写内容
@@ -1492,17 +1461,9 @@ module ysyx_23060229_LSU(
 	output reg[31:0] wdata_csreg,
 	output reg wen_reg,
 	output reg[7:0] wen_csreg,
-	//`ifdef simulation//不再引出pc因此只需1bit
-	//output reg[31:0] pc_out,
-	//`else
 	output reg pc_out,//用于StallingCtl
-	//`endif
 	
-	//`ifdef simulation//不再引出
-	//output reg one_inst_done,
-	//`endif
 	output reg previous_load_done,//用于StallingCtl
-
 
 	//axi总线组1
     output [31:0] araddr,
@@ -1562,7 +1523,7 @@ module ysyx_23060229_LSU(
 
 	//说明LSU已经取走了内存读写地址
 	assign LSU_arready_set = arready;
-	assign LSU_awready_set = awready;
+	assign LSU_awready_set = wready;//BUG1
 	
 	//暂存的araddr,awaddr,typ
 	reg [31:0] araddr_tmp;
@@ -1580,7 +1541,7 @@ module ysyx_23060229_LSU(
 
 	//AR和R通道时刻做好准备
 	assign arlen = 0;
-	assign arburst = 0;
+	assign arburst = 0;//不开启突发
 	assign arid = 2;
 	assign arsize = typ[3:1];
 	//assign arsize = (typ == `ysyx_23060229_I_LB || typ == `ysyx_23060229_I_LBU) ? 3'b000 : 
@@ -1593,16 +1554,16 @@ module ysyx_23060229_LSU(
 
 	//AW,W和B通道时刻做好准备
 	assign awlen = 0;
-	assign awburst = 0;
+	assign awburst = 0;//不开启突发
 	assign wlast = 1;
 	assign awid = 3;
 	assign awsize = (typ == `ysyx_23060229_S_SB) ? 3'b000 : 
 					(typ == `ysyx_23060229_S_SH) ? 3'b001 : 3'b010;
-	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});
+	assign wdata = (result_csreg_mem << {dest_csreg_mem[1:0], 3'b0});//对数据做预先移位
 	//assign wdata = 	(dest_csreg_mem[1:0] == 2'b00) ? result_csreg_mem :
     //                (dest_csreg_mem[1:0] == 2'b01) ? (result_csreg_mem << 8) :
     //                (dest_csreg_mem[1:0] == 2'b10) ? (result_csreg_mem << 16) : (result_csreg_mem << 24);
-	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);
+	assign wstrb = (typ[3:0] << dest_csreg_mem[1:0]);//同理wstrb也需要做预先移位
     assign awaddr = (state == Wait_EXU_Valid && flag == `ysyx_23060229_WriteMem && validFromEXU) ? dest_csreg_mem : awaddr_tmp;
 
 
@@ -1632,7 +1593,7 @@ module ysyx_23060229_LSU(
 				//`ifdef simulation 	one_inst_done <= 0; `endif
 
 				if(validFromEXU) begin	
-					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;
+					typ_tmp <= typ; araddr_tmp <= dest_csreg_mem;//暂存araddr,此后状态转移,前级传入的araddr可能变化
 					//`ifdef simulation
 					//	pc_out <= pc;
 					//`else
@@ -1647,13 +1608,13 @@ module ysyx_23060229_LSU(
 					if(flag == `ysyx_23060229_WriteReg) begin//仅写reg
                         wen_reg <= 1; wen_csreg <= 0;
                         state <= Wait_EXU_Valid;
-                       	//`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done_pc(pc); `endif//先记录pc,然后在register中调用one_inst_done,避免重复执行
                     end
 					if(flag == `ysyx_23060229_WriteCSReg) begin//写reg和csreg
                         waddr_csreg <= dest_csreg_mem[11:0]; wdata_csreg <= result_csreg_mem;
                         wen_reg <= 1; wen_csreg <= 8'b10000000;
                         state <= Wait_EXU_Valid;
-                        //`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
                     end
 					
 					
@@ -1663,18 +1624,22 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
                     end
 					if(flag == `ysyx_23060229_Jump_CS) begin//仅写csreg,就是ecall
 						wen_reg <= 0;
 						state <= Wait_EXU_Valid;
 						waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 8'b11001011;
+						`ifdef verilator one_inst_done_pc(pc); `endif
+                       	`ifdef verilator etrace_record_pc(pc); `endif//为避免重复写入,需在CSReg中额外调用etrace_record
 					end
 					if(flag == `ysyx_23060229_Jump_B) begin//啥都不做，比如Jump_B
 						wen_reg <= 0;
                         state <= Wait_EXU_Valid;
                         waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						wen_csreg <= 0;
+                       	`ifdef verilator one_inst_done_pc(pc); one_inst_done(); `endif
 					end
 
 
@@ -1683,6 +1648,7 @@ module ysyx_23060229_LSU(
 						state <= Wait_EXU_Valid;
                         waddr_csreg <= `ysyx_23060229_MEPC; wdata_csreg <= pc;
 						if(arready) begin
+							`ifdef verilator mtrace_record(pc, araddr); `endif//在状态转移的一瞬记录,防止重复记录
 							wen_csreg <= 0; state <= Wait_Rvalid; //araddr_tmp <= dest_csreg_mem;
 						end
 					end
@@ -1690,14 +1656,17 @@ module ysyx_23060229_LSU(
 						if(awready & wready) begin
 							state <= Wait_Bvalid; 
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
-						else if(awready) begin
+						else if(awready) begin//出问题
 							state <= Wait_Wready;
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
 						else if(wready) begin
 							state <= Wait_Awready;
 							awaddr_tmp <= dest_csreg_mem;
+							`ifdef verilator mtrace_record(pc, awaddr); `endif//在状态转移的一瞬记录,防止重复记录
 						end
 					end
 					
@@ -1721,13 +1690,13 @@ module ysyx_23060229_LSU(
 						`ifdef verilator
 							LSU_counter_increase();
 						`endif
-						//`ifdef simulation one_inst_done <= 1;`endif
 						state <= Wait_EXU_Valid;
 						wen_reg <= 1; wen_csreg <= 0;
 						wdata_reg <= 	(typ_tmp[2:0] == 3'b000) ? {{24{slice1[7]}}, slice1} : 
 										(typ_tmp[2:0] == 3'b001) ? {24'b0, slice1} : 
 										(typ_tmp[2:0] == 3'b010) ? {{16{slice2[15]}}, slice2} : 
 										(typ_tmp[2:0] == 3'b011) ? {16'b0, slice2} : rdata;
+                       	`ifdef verilator one_inst_done_pc(pc); `endif
 					end
 					
 					`ifdef verilator
@@ -1756,7 +1725,7 @@ module ysyx_23060229_LSU(
 						`ifdef verilator
 							LSU_counter_increase();
 						`endif
-						//`ifdef simulation one_inst_done <= 1; `endif
+                       	`ifdef verilator one_inst_done_pc(pc); one_inst_done(); `endif
 					end
 					`ifdef verilator
 					if(bvalid && bresp == 2'b11) begin
@@ -1786,7 +1755,7 @@ endmodule
 
 //PART IV:Auxiliary
 //-----------------------------------------IV1:CLINT-----------------------------------------//
-//0xa0000048 - 0xa000004f 定时器地址范围
+//0x0200-0000~0x0200-ffff 定时器地址范围
 //目标:实现一个基于AXI-lite总线协议的CLINT模块,只读
 module ysyx_23060229_CLINT(
 	input clk,
@@ -2105,7 +2074,6 @@ module ysyx_23060229_miniXbar(
 	always@(posedge clk) begin
 		if(rst) begin
 			state <= Initial;
-			//`ifdef verilator $display("Xbar(Interconnect) resetting..."); `endif
 		end
 		else begin
 			case(state)

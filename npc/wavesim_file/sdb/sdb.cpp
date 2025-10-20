@@ -36,8 +36,8 @@ static char* rl_gets() {
 
 static int cmd_c(uint64_t* sim_time) {
 	if(is_simulating)
- 		//exec_engine(top, m_trace, sim_time, -1); 	
- 		exec_engine_wodug(top, m_trace, sim_time, -1); 	
+ 		exec_engine(top, m_trace, sim_time, -1); 	
+ 		//exec_engine_wodug(top, m_trace, sim_time, -1); 	
 	else
 		printf("Simulation has ended; Press 'q' to exit and check the wave.\n");
   	return 0;
@@ -156,7 +156,7 @@ long xstr2int(char *str){
 static int cmd_si(uint64_t *sim_time){
     /*extract the first argument*/
 	
-	printf("Warning: Function cmd_si is deprecated; Any use may lead to unexpected behavior.\n");
+	//printf("Warning: Function cmd_si is deprecated; Any use may lead to unexpected behavior.\n");
 	if(is_simulating){
     	char *arg = strtok(NULL, "\0");
 
@@ -231,10 +231,10 @@ static int cmd_info(uint64_t *sim_time){
     }
 
     bool success;
-    uint32_t ret;
+    int32_t ret;
     ret = str2val_reg(arg, &success);
     if (success){// visit one specific reg
-    	printf("%3s : 0x%8.8x\n", arg, ret);
+    	printf("%10s : 0x%8.8x\n", arg, ret);
     }
     else if (strcmp(arg, "r") == 0){// visit all the regs
         display_reg();
@@ -293,7 +293,7 @@ static int cmd_x(uint64_t *sim_time){
 
 				else if(CHECK_FLASH(tmp2)){
 #ifdef CONFIG_FLASH
-                    flash_read(tmp2 - 0x30000000, &data);
+                    flash_read_sdb(tmp2 - 0x30000000, &data);
                     printf("in flash: 0x%8.8x : 0x%8.8x\n", tmp2, data);
 #else
                     printf("addr 0x%8.8x is out of boundary\n", tmp2);
@@ -437,9 +437,9 @@ static int cmd_d(uint64_t *sim_time){
 
 
 
-
+//modify by Jason @ 2025.10.9
 void sdb_set_batch_mode() {
-  is_batch_mode = true;
+  is_batch_mode = false;
 }
 
 

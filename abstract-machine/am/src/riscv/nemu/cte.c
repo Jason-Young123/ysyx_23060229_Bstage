@@ -6,12 +6,8 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 
 
 Context* __am_irq_handle(Context *c) {
-  printf("---------in irq_handle : %x ----------\n", c -> gpr[10]);
   if (user_handler) {
     Event ev = {0};
-	//printf("mepc: %x\n", c->mepc);
-	//printf("mcause: %x\n", c->mcause);
-	//printf("mstatus: %x\n", c-> mstatus);
     switch (c->mcause) {
 		case 0xb: ev.event = EVENT_YIELD; break;
       	default: ev.event = EVENT_ERROR; break;
@@ -20,9 +16,7 @@ Context* __am_irq_handle(Context *c) {
 	c->mepc += 4;
     c = user_handler(ev, c);
     assert(c != NULL);
-	//c->mepc += 4;//软件实现mepc自增4
   }
-
   return c;
 }
 
@@ -32,10 +26,8 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   // initialize exception entry
   // 把__am_asm_trap作为异常处理入口
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));
-
   // register event handler
   user_handler = handler;
-
   return true;
 }
 

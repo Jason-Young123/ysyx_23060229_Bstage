@@ -47,7 +47,8 @@ inline int64_t SEXT_64(uint32_t input){
 #define immJ() do { *imm = SEXT(( (BITS(i, 31, 31) << 20) | (BITS(i, 19, 12) << 12) | (BITS\
 				(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) ), 21); } while(0)
 #define immR() do { *imm = 0; } while(0)
-
+//modify by Jason @ 2025.10.11, no sign extension
+#define immCSR() do {*imm = BITS(i, 31, 20); } while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;//instruction
@@ -56,7 +57,8 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   *rd     = BITS(i, 11, 7);
   switch (type) {
     case TYPE_I: src1R(); *src2 = rs2; immI(); break;//*src2 = rs2 is only for slli,srli and srai
-	case TYPE_I_CSR: src1R(); *src2 = rs1; immI(); break;
+	//modify by Jason @ 2025.10.11
+	case TYPE_I_CSR: src1R(); *src2 = rs1; immCSR(); break;
 	case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
 	case TYPE_B: src1R(); src2R(); immB(); break;
@@ -64,11 +66,14 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
 	case TYPE_M: src1R(); src2R(); immR(); break;
 	case TYPE_J:	               immJ(); break;
   }
+  //printf("the inst is %#x, type is %d\n", i, type);
 }
 
+
+//负责解码的最底层函数
 static int decode_exec(Decode *s) {
   int rd = 0;
-  word_t src1 = 0, src2 = 0, imm = 0;
+  word_t src1 = 0, src2 = 0, imm = 0;//src1/2默认为无符号
   s->dnpc = s->snpc;
 
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
@@ -146,12 +151,13 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai   , I, R(rd) = (int32_t)src1 >> src2);
 
   //CSR
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = SR(imm); SR(imm) = src1);
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrwi , I, R(rd) = SR(imm); SR(imm) = src2);
-  INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrs  , I, R(rd) = SR(imm); SR(imm) = src1 | SR(imm));
-  INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrsi , I, R(rd) = SR(imm); SR(imm) = src2 | SR(imm));
-  INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrc  , I, R(rd) = SR(imm); SR(imm) = src1 & SR(imm));
-  INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrci , I, R(rd) = SR(imm); SR(imm) = src2 & SR(imm));
+  //modify by Jason @ 2025.10.11
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I_CSR, R(rd) = SR(imm); SR(imm) = src1);
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrwi , I_CSR, R(rd) = SR(imm); SR(imm) = src2);
+  INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrs  , I_CSR, R(rd) = SR(imm); SR(imm) = src1 | SR(imm));
+  INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrsi , I_CSR, R(rd) = SR(imm); SR(imm) = src2 | SR(imm));
+  INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrc  , I_CSR, R(rd) = SR(imm); SR(imm) = src1 & SR(imm));
+  INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrci , I_CSR, R(rd) = SR(imm); SR(imm) = src2 & SR(imm));
 
 
   //jalr
@@ -179,6 +185,6 @@ static int decode_exec(Decode *s) {
 }
 
 int isa_exec_once(Decode *s) {
-  s->isa.inst.val = inst_fetch(&s->snpc, 4);
+  s->isa.inst.val = inst_fetch(&s->snpc, 4);//这里s->snpc会+4
   return decode_exec(s);
 }
