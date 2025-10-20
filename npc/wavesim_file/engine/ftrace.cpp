@@ -3,8 +3,8 @@
 #include <elf.h>
 
 
-#define MAX_TABLE_SIZE 0xffff
-#define MAX_FUNC_ENTRY 0xff
+#define MAX_TABLE_SIZE 0xfffff
+#define MAX_FUNC_ENTRY 0xfff
 
 char symtab[MAX_TABLE_SIZE];
 char strtab[MAX_TABLE_SIZE];
@@ -67,7 +67,7 @@ void init_ftrace(const char* file_path){
     Elf32_Shdr shstrtab_hdr;
     ret = fread(&shstrtab_hdr, sizeof(shstrtab_hdr), 1, file);
 
-    char shstrtab[0x1000];
+    char shstrtab[0xffff];
     ret = fseek(file, shstrtab_hdr.sh_offset, SEEK_SET);
     ret = fread(shstrtab, shstrtab_hdr.sh_size, 1, file);
 
