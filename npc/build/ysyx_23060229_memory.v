@@ -428,7 +428,7 @@ module ysyx_23060229_memory(
 					end
 				end
 				Interim_AW: begin
-					cnt_delay_AW <= (cnt_delay_AW == 15) ? cnt_delay_AW + 1 : 0;
+					cnt_delay_AW <= (cnt_delay_AW == 15) ? 0 : cnt_delay_AW + 1;
 					state_AW <= (cnt_delay_AW == 15) ? Wait_Awvalid : state_AW;
 				end
 				default: begin
