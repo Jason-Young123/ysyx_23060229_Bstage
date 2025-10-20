@@ -1523,7 +1523,7 @@ module ysyx_23060229_LSU(
 
 	//说明LSU已经取走了内存读写地址
 	assign LSU_arready_set = arready;
-	assign LSU_awready_set = wready;//BUG1
+	assign LSU_awready_set = awready;//BUG1
 	
 	//暂存的araddr,awaddr,typ
 	reg [31:0] araddr_tmp;
