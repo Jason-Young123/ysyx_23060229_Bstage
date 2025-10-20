@@ -18,7 +18,7 @@ module ysyxNonSoCFull_tb;
 		clock = 0;
 		reset = 1;
 		#6 reset = 0;//发生在下降沿,避免和posedge clk重叠
-		#5000000 $stop;
+		#6000000 $stop;
 	end
 
 	always #1 clock = ~clock;
@@ -26,8 +26,8 @@ module ysyxNonSoCFull_tb;
 
 	initial begin
 		$display("sim begin...");
-		$dumpfile("ysyxNonSoCFull_tb.vcd");
-		$dumpvars(0, ysyxNonSoCFull_tb);
+		//$dumpfile("ysyxNonSoCFull_tb.vcd");
+		//$dumpvars(0, ysyxNonSoCFull_tb);
 	end
 
 endmodule
