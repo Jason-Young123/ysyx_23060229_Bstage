@@ -26,8 +26,8 @@ module ysyxNonSoCFull_tb;
 
 	initial begin
 		$display("sim begin...");
-		//$dumpfile("ysyxNonSoCFull_tb.vcd");
-		//$dumpvars(0, ysyxNonSoCFull_tb);
+		$dumpfile("ysyxNonSoCFull_tb.vcd");
+		$dumpvars(0, ysyxNonSoCFull_tb);
 	end
 
 endmodule
