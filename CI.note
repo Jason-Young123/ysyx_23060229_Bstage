@@ -1,0 +1,2 @@
+1.rtt需要先make init
+2.nemu需要先make menuconfig获得.config
