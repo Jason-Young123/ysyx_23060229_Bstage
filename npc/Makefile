@@ -70,8 +70,8 @@ convert_SoC:
 	@$(call git_commit, "task:convert in npc")
 	@echo "======================== Execute target:convert_SoC in $(shell pwd) ========================"
 	@verilator --autoflush \
-    	--top-modules $(TOP_MODULE_SOC)  \
-    	-cc $(TOP_MODULE_FILE_SOC) \
+    	--top-module $(TOP_MODULE_SOC)  \
+    	-c $(TOP_MODULE_FILE_SOC) \
     	$(VFILE_SOC) \
     	$(INCLUDES_SOC) \
     	$(TIMING)
