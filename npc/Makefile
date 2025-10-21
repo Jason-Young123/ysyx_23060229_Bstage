@@ -47,7 +47,7 @@ CSRCS_SIM += $(shell find $(SIM_HOME_23060229)/register -type f -name "*.cpp")\
 		$(NPC_HOME_23060229)/constr/auto_bind.cpp
 
 CFLAGS_SIM += -I$(SIM_HOME_23060229)
-CFLAGS_BD_SIM += -I$(NVBD_HOME_23060229)/usr/include
+CFLAGS_BD_SIM += $(NVBD_HOME_23060229)/usr/include
 LIBS_SIM += /lib/x86_64-linux-gnu/libreadline.so\
        /lib/x86_64-linux-gnu/libSDL2.so\
        /lib/x86_64-linux-gnu/libSDL2_image.so\
