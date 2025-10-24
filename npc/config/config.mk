@@ -6,12 +6,13 @@
 #$(warning $(COLOR_RED)To build the project, first run 'make menuconfig'.$(COLOR_END))
 #endif
 
+#modify by Jason @ 2025.10.24, unused
 VERSION = V5
 
 Q            := @
 KCONFIG_PATH := $(NEMU_HOME)/tools/kconfig
 FIXDEP_PATH  := $(NEMU_HOME)/tools/fixdep
-Kconfig      := $(NPC_$(VERSION)_HOME)/config/Kconfig
+Kconfig      := $(NPC_HOME)/config/Kconfig
 #rm-distclean += include/generated include/config .config .config.old
 silent := -s
 
@@ -31,8 +32,8 @@ $(FIXDEP):
 menuconfig: $(MCONF) $(CONF) $(FIXDEP)
 	$(Q)$(MCONF) $(Kconfig)
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
-	@cp $(NPC_$(VERSION)_HOME)/.config $(NPC_$(VERSION)_HOME)/config/.config
-	@$(NPC_$(VERSION)_HOME)/config/generate.sh
+	@cp $(NPC_HOME)/.config $(NPC_HOME)/config/.config
+	@$(NPC_HOME)/config/generate.sh
 
 
 savedefconfig: $(CONF)

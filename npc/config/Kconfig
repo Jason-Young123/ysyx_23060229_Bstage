@@ -187,7 +187,3 @@ config WP
 	bool "Enable Watchpoint"
 	default y
 
-config DIFFTEST
-	bool "Enable Difftest"
-	default y
-

@@ -22,7 +22,7 @@ bool difftest_to_skip = false;
 bool difftest_skipping = false;
 
 
-const char* ref_so_file = "/home/jason/Desktop/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so";
+const char* ref_so_file = "../../nemu/build/riscv32-nemu-interpreter-so";
 
 VysyxSoCFull* top = new VysyxSoCFull;
 VerilatedVcdC* m_trace = new VerilatedVcdC;
