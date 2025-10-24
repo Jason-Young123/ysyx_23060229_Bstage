@@ -1,2 +1,4 @@
 1.rtt需要先make init
 2.nemu需要先make menuconfig获得.config
+3.测试时先source activate.sh更换YSYX_HOME等环境变量
+4.由于ysyxsoc的make menuconfig路径问题,直接修改wavesim_file/include/auto.h以应用更改
