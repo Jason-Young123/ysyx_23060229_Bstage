@@ -4,7 +4,7 @@
 # 输入和输出文件的路径  
 
 VERSION=V5
-ROOT="NPC_${VERSION}_HOME"
+ROOT="NPC_HOME"
 
 eval CONFIG_FILE="\$$ROOT/config/.config"  
 
