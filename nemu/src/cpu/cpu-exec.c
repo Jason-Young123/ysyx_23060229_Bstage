@@ -18,7 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #include <trace/trace.h>
-
+#include <memory/vaddr.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -48,6 +48,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   //puts即printf
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+//自定义环形itrace
+#ifdef CONFIG_ITRACE
+  itrace_record(_this->pc, vaddr_ifetch(_this->pc, 4));
+#endif
 
 
 #ifdef CONFIG_WP_ON

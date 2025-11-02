@@ -25,6 +25,9 @@ void display_ftrace();
 void mtrace_record(int32_t pc, int32_t addr, int32_t inst);
 void display_mtrace();
 
+//in itrace.c
+void itrace_record(int32_t pc, int32_t inst);
+void display_itrace();
 
 //in dtrace.c
 typedef struct {
