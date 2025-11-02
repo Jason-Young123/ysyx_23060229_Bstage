@@ -2,6 +2,7 @@
 #include <string.h>
 #include <elf.h>
 #include <stdio.h>
+#include <generated/autoconf.h>
 
 #define MAX_TABLE_SIZE 0xfffff
 #define MAX_FUNC_ENTRY 0xfff
