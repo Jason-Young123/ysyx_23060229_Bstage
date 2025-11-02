@@ -104,6 +104,7 @@ void init_ftrace(const char* file_path){
      * 等三个int32_t数组中;统计完成后返回总有效entry的数量(即FUNC条目数量/values[]等数组有效长度)
      * */
     NO_FENTRY = parse_symtab_entries(symtab_hdr.sh_size, symtab, strtab_hdr.sh_size, strtab, funcs);
+	printf("%d\n", NO_FENTRY);
 
     fclose(file);
 	#pragma GCC diagnostic pop
