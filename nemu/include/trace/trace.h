@@ -19,6 +19,10 @@ void ftrace_record(int32_t pc);
 void display_ftrace();
 
 
+//in mtrace.c
+void mtrace_record(int32_t pc, int32_t addr, int32_t inst);
+void display_mtrace();
+
 
 
 
