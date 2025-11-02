@@ -38,4 +38,9 @@ void dtrace_record(int32_t pc, int32_t inst, int32_t addr, const char* name);
 void display_dtrace();
 
 
+//in etrace.cpp
+void etrace_record(int32_t pc);
+void display_etrace();
+
+
 #endif
