@@ -21,6 +21,7 @@
 #define CONFIG_MODE_SYSTEM 1
 #define CONFIG_ETRACE 1
 #define CONFIG_MEM_RANDOM 1
+#define CONFIG_ITRACE 1
 #define CONFIG_HAS_SERIAL 1
 #define CONFIG_ISA_riscv 1
 #define CONFIG_HAS_DISK 1
@@ -39,6 +40,7 @@
 #define CONFIG_RT_CHECK 1
 #define CONFIG_DTRACE 1
 #define CONFIG_I8042_DATA_MMIO 0xa0000060
+#define CONFIG_ITRACE_COND "true"
 #define CONFIG_SB_SIZE 0x10000
 #define CONFIG_CC "gcc"
 #define CONFIG_DIFFTEST_REF_PATH "none"
