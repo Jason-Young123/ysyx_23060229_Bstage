@@ -42,6 +42,9 @@ int main(int argc, char *argv[]) {
 #ifdef CONFIG_FTRACE
 	display_ftrace();
 #endif
+#ifdef CONFIG_ETRACE
+	display_etrace();
+#endif
 
   return is_exit_status_bad();
 }
