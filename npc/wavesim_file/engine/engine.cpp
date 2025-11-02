@@ -293,6 +293,9 @@ extern "C" void hit_good_trap(){
 #ifdef CONFIG_ITRACE
 	display_mtrace();
 #endif
+#ifdef CONFIG_DTRACE
+	display_dtrace();
+#endif
 #ifdef CONFIG_FTRACE
     display_ftrace();
 #endif
@@ -343,6 +346,9 @@ extern "C" void hit_bad_trap(){
 #endif
 #ifdef CONFIG_ITRACE
 	display_mtrace();
+#endif
+#ifdef CONFIG_DTRACE
+	display_dtrace();
 #endif
 #ifdef CONFIG_FTRACE
     display_ftrace();

@@ -15,6 +15,8 @@ extern "C" void mtrace_record(int32_t pc, int32_t addr){
     if(ringbuf_mtrace_head == ringbuf_mtrace_tail)
         ringbuf_mtrace_head = (ringbuf_mtrace_head + 1) % 50;
 #endif
+	//在涉及访存时调用dtrace
+	dtrace_record(pc, addr);
     return;
 }
 

@@ -40,6 +40,10 @@ void display_mtrace();
 extern "C" void etrace_record_pc(int32_t pc);
 extern "C" void etrace_record(void);
 void display_etrace();
+//in dtrace.cpp
+void dtrace_record(int32_t pc, int32_t addr);
+void display_dtrace();
+
 
 //in ftrace.cpp
 typedef struct {
@@ -54,4 +58,6 @@ void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name);
 
 extern "C" void ftrace_record(int32_t pc);
 void display_ftrace();
+
+
 #endif

@@ -99,6 +99,12 @@ int main(int argc, char *argv[]){
 	printf("\033[36mMtrace is \033[31mOFF\033[0m\n");
 #endif
 
+#ifdef CONFIG_DTRACE
+    printf("\033[36mDtrace is \033[32mON\033[0m\n");
+#else
+    printf("\033[36mDtrace is \033[31mOFF\033[0m\n");
+#endif
+
 #ifdef CONFIG_FTRACE
 	printf("\033[36mFtrace is \033[32mON\033[36m, elf file found in %s\033[0m\n", argv[2]);
 #else
