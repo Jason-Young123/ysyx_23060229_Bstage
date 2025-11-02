@@ -119,9 +119,6 @@ void init_ftrace(const char* file_path){
 void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name){
     uint32_t pcu = (uint32_t)pc;
 	printf("%x\n", pcu);
-	if(pcu >= 0x80000500 && pcu <= 0x80000540){
-		printf("%x\n", pcu);
-	}
 	for(int i = 0; i < NO_FENTRY; ++i){
         if(pc >= funcs[i].value && pc < funcs[i].value + funcs[i].size){
             *success = true; *func_name = funcs[i].name; *value = funcs[i].value;
@@ -146,7 +143,8 @@ char *previous_func_name = NULL;
 
 void ftrace_record(int32_t pc) {
 #ifdef CONFIG_FTRACE
-    bool success;
+    printf("%x\n", pc);
+	bool success;
     char *func_name; uint32_t value;
 
     check_pc(pc, &success, &value, &func_name);//耗时巨大
