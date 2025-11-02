@@ -120,6 +120,7 @@ void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name){
     for(int i = 0; i < NO_FENTRY; ++i){
         if(pc >= funcs[i].value && pc < funcs[i].value + funcs[i].size){
             *success = true; *func_name = funcs[i].name; *value = funcs[i].value;
+			printf("okok\n");
             return;
         }
     }

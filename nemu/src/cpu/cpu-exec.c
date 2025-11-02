@@ -89,7 +89,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
 #ifdef CONFIG_FTRACE
   ftrace_record(pc);
-  printf("%x\n", pc);
 #endif
 
 
