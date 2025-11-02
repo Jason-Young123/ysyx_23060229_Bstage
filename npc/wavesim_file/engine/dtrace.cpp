@@ -29,11 +29,14 @@ const char* fetch_device_by_addr(uint32_t addr){
 
 void dtrace_record(int32_t pc, int32_t addr){
 #ifdef CONFIG_DTRACE
-    ringbuf_dtrace_pc[ringbuf_dtrace_tail] = pc;
-    ringbuf_dtrace_device[ringbuf_dtrace_tail] = fetch_device_by_addr(addr);
-    ringbuf_dtrace_tail = (ringbuf_dtrace_tail + 1) % 50;
-    if(ringbuf_dtrace_head == ringbuf_dtrace_tail)
-        ringbuf_dtrace_head = (ringbuf_dtrace_head + 1) % 50;
+	const char *ret = fetch_device_by_addr(addr);
+	if(ret){//忽略NULL
+    	ringbuf_dtrace_pc[ringbuf_dtrace_tail] = pc;
+    	ringbuf_dtrace_device[ringbuf_dtrace_tail] = ret;
+    	ringbuf_dtrace_tail = (ringbuf_dtrace_tail + 1) % 50;
+    	if(ringbuf_dtrace_head == ringbuf_dtrace_tail)
+        	ringbuf_dtrace_head = (ringbuf_dtrace_head + 1) % 50;
+	}
 #endif
     return;
 }
