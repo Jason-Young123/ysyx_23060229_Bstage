@@ -49,6 +49,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
+//自定义环形itrace
+#ifdef CONFIG_ITRACE
+  itrace_record(*this->pc, vaddr_ifetch(*_this->pc, 4));
+#endif
+
 
 #ifdef CONFIG_WP_ON
   int wp_used[32];
