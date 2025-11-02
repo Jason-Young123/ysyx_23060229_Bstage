@@ -97,6 +97,11 @@ word_t paddr_read(paddr_t addr, int len) {
   #endif
 
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
+#ifdef CONFIG_DTRACE
+  if(get_map_name(addr) != NULL){
+  	dtrace_record(cpu.pc, pmem_read(cpu.pc, 4), addr, get_map_name(addr));
+  }
+#endif
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
@@ -117,6 +122,12 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   #endif
 	
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
+#ifdef CONFIG_DTRACE
+  if(get_map_name(addr) != NULL){
+    dtrace_record(cpu.pc, pmem_read(cpu.pc, 4), addr, get_map_name(addr));
+  }
+#endif
+
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }

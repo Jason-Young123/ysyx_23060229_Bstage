@@ -36,6 +36,9 @@ int main(int argc, char *argv[]) {
 #ifdef CONFIG_MTRACE
     display_mtrace();
 #endif
+#ifdef CONFIG_DTRACE
+    display_dtrace();
+#endif
 #ifdef CONFIG_FTRACE
 	display_ftrace();
 #endif

@@ -1,6 +1,8 @@
 #ifndef TRACE_H
 #define TRACE_H
 
+#include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <generated/autoconf.h>
@@ -24,7 +26,16 @@ void mtrace_record(int32_t pc, int32_t addr, int32_t inst);
 void display_mtrace();
 
 
+//in dtrace.c
+typedef struct {
+    uint32_t dtrace_pc;
+	uint32_t dtrace_inst;
+	uint32_t dtrace_addr;
+    char dtrace_device[64];  // 存储完整的函数名
+} dtrace;
 
+void dtrace_record(int32_t pc, int32_t inst, int32_t addr, const char* name);
+void display_dtrace();
 
 
 #endif
