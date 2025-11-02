@@ -144,7 +144,6 @@ char *previous_func_name = NULL;
 
 void ftrace_record(int32_t pc) {
 #ifdef CONFIG_FTRACE
-    printf("%x\n", pc);
 	bool success;
     char *func_name; uint32_t value;
 
