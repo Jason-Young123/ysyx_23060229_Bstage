@@ -51,7 +51,7 @@ void init_ftrace(const char* file_path){
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 	
-	printf("%s\n", file_path);
+	//printf("%s\n", file_path);
 		
 	FILE* file = fopen(file_path, "rb");
     if (!file) {
@@ -102,8 +102,8 @@ void init_ftrace(const char* file_path){
      * 等三个int32_t数组中;统计完成后返回总有效entry的数量(即FUNC条目数量/values[]等数组有效长度)
      * */
     NO_FENTRY = parse_symtab_entries(symtab_hdr.sh_size, symtab, strtab_hdr.sh_size, strtab, funcs);
-	printf("%d\n", NO_FENTRY);
-	printf("%x - %u - %s\n", funcs[0].value, funcs[0].size, funcs[0].name);
+	//printf("%d\n", NO_FENTRY);
+	//printf("%x - %u - %s\n", funcs[0].value, funcs[0].size, funcs[0].name);
 
     fclose(file);
 	#pragma GCC diagnostic pop
