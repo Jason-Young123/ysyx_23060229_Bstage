@@ -2,7 +2,6 @@
 #include <string.h>
 #include <elf.h>
 #include <stdio.h>
-#include <generated/autoconf.h>
 
 #define MAX_TABLE_SIZE 0xfffff
 #define MAX_FUNC_ENTRY 0xfff
@@ -141,7 +140,6 @@ int32_t ringbuf_ftrace_tail = 0;
 char *previous_func_name = NULL;
 
 void ftrace_record(int32_t pc) {
-#ifdef CONFIG_FTRACE
 	bool success;
     char *func_name; uint32_t value;
 
@@ -160,7 +158,6 @@ void ftrace_record(int32_t pc) {
         }
 
     }
-#endif
     return;
 }
 

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <generated/autoconf.h>
 
 //in ftrace.c
 typedef struct {
