@@ -824,8 +824,8 @@ module ysyx_23060229_IDU(
 							32'b0000000_?????_?????_001_?????_0010011: begin
             	    		    typ <= `ysyx_23060229_I_SLLI; imm <= {27'b0, inst[24:20]};
 		        	            rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7];
-                    			stall_quest_loaduse <= loaduse_case2;
-								state <= loaduse_case2 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= loaduse_case1;//BUG3
+								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									cal_inst_counter_increase();
     	            			`endif
@@ -835,8 +835,8 @@ module ysyx_23060229_IDU(
 							32'b0000000_?????_?????_101_?????_0010011: begin
         			            typ <= `ysyx_23060229_I_SRLI; imm <= {27'b0, inst[24:20]};
                 			    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7];
-                    			stall_quest_loaduse <= loaduse_case2;
-								state <= loaduse_case2 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= loaduse_case1;//BUG3
+								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									cal_inst_counter_increase();
                 				`endif
@@ -846,8 +846,8 @@ module ysyx_23060229_IDU(
 							32'b0100000_?????_?????_101_?????_0010011: begin
     	    		            typ <= `ysyx_23060229_I_SRAI; imm <= {27'b0, inst[24:20]};
         	        		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7];
-                    			stall_quest_loaduse <= loaduse_case2;
-								state <= loaduse_case2 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= loaduse_case1;//BUG3
+								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
 								`ifdef verilator
 									cal_inst_counter_increase();
                 				`endif
@@ -1132,8 +1132,8 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_101_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRWI; imm <= {27'b0, inst[19:15]};
                 			    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;//modify by Jason @ 2025.10.14: bug,此处应直接跳过load-use处理(本指令不读GPR)
-								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= 0;//BUG3, modify by Jason @ 2025.10.14: bug,此处应直接跳过load-use处理(本指令不读GPR)
+								state <= Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
 	                			`endif
@@ -1154,8 +1154,8 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_110_?????_1110011: begin
     	    		            typ <= `ysyx_23060229_I_CSRRSI; imm <= {27'b0, inst[19:15]};
         	        		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
-								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= 0;//BUG3,同CSRRWI
+								state <= Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
                 				`endif
@@ -1176,8 +1176,8 @@ module ysyx_23060229_IDU(
 							32'b???????_?????_?????_111_?????_1110011: begin
         			            typ <= `ysyx_23060229_I_CSRRCI; imm <= {27'b0, inst[19:15]};
             	    		    rs1 <= inst[19:15]; rs2 <= 0; rd <= inst[11:7]; csr <= inst[31:20];
-                    			stall_quest_loaduse <= loaduse_case1;//bug,同CSRRWI
-								state <= loaduse_case1 ? Halt : Wait_EXU_Ready;
+                    			stall_quest_loaduse <= 0;//BUG3,同CSRRWI
+								state <= Wait_EXU_Ready;
 								`ifdef verilator
 									csr_inst_counter_increase();
                 				`endif
