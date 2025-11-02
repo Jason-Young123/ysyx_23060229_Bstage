@@ -52,6 +52,9 @@ void init_ftrace(const char* file_path){
     #pragma GCC diagnostic ignored "-Wunused-variable"
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+	
+	printf("%s\n", file_path);
+		
 	FILE* file = fopen(file_path, "rb");
     if (!file) {
         fprintf(stderr, "failed to open file %s\n", file_path);

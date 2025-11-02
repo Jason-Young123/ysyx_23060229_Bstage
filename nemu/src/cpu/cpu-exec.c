@@ -88,7 +88,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
 
 #ifdef CONFIG_FTRACE
-  printf("okokok\n");
   ftrace_record(pc);
 #endif
 
