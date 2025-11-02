@@ -1,0 +1,25 @@
+#ifndef TRACE_H
+#define TRACE_H
+
+#include <stdint.h>
+#include <stdbool.h>
+
+//in ftrace.c
+typedef struct {
+    uint32_t value;
+    uint32_t size;
+    char name[64];  // 存储完整的函数名
+} FUNC;
+
+int parse_symtab_entries(int symtab_size, char *symtab, int strtab_size, char *strtab, FUNC *funcs);
+void init_ftrace(const char* file_path);
+void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name);
+void ftrace_record(int32_t pc);
+void display_ftrace();
+
+
+
+
+
+
+#endif
