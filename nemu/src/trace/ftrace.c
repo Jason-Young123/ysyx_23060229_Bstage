@@ -117,10 +117,13 @@ void init_ftrace(const char* file_path){
 
 //检测pc所在区域是否为func
 void check_pc(int32_t pc, bool *success, uint32_t *value, char **func_name){
-    for(int i = 0; i < NO_FENTRY; ++i){
-        if((uint32_t)pc >= funcs[i].value && (uint32_t)pc < funcs[i].value + funcs[i].size){
+    uint32_t pcu = (uint32_t)pc;
+	if(pcu >= 0x80000500 && pcu <= 0x80000540){
+		printf("%x\n", pcu);
+	}
+	for(int i = 0; i < NO_FENTRY; ++i){
+        if(pc >= funcs[i].value && pc < funcs[i].value + funcs[i].size){
             *success = true; *func_name = funcs[i].name; *value = funcs[i].value;
-			printf("okok\n");
             return;
         }
     }
