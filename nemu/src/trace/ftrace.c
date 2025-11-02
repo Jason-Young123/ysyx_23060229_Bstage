@@ -105,6 +105,7 @@ void init_ftrace(const char* file_path){
      * */
     NO_FENTRY = parse_symtab_entries(symtab_hdr.sh_size, symtab, strtab_hdr.sh_size, strtab, funcs);
 	printf("%d\n", NO_FENTRY);
+	printf("%d\n - %d\n - %s\n", funcs[0].value, funcs[0].size, funcs[0].name);
 
     fclose(file);
 	#pragma GCC diagnostic pop
