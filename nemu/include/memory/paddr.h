@@ -29,6 +29,7 @@ typedef struct memory_trace{
 	word_t mtrace_addr;
 }mtrace;
 
+word_t pmem_read(paddr_t addr, int len);
 
 /* convert the guest physical address in the guest program to host virtual address in NEMU */
 uint8_t* guest_to_host(paddr_t paddr);

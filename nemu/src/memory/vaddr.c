@@ -15,15 +15,23 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <trace/trace.h>
 
 word_t vaddr_ifetch(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }
 
 word_t vaddr_read(vaddr_t addr, int len) {
+  #ifdef CONFIG_MTRACE
+    mtrace_record(cpu.pc, addr, pmem_read(cpu.pc, 4));
+  #endif
   return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, int len, word_t data) {
+  #ifdef CONFIG_MTRACE
+    mtrace_record(cpu.pc, addr, pmem_read(cpu.pc, 4));
+  #endif
+
   paddr_write(addr, len, data);
 }

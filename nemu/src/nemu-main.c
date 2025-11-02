@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <common.h>
+#include <trace/trace.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -30,6 +31,20 @@ int main(int argc, char *argv[]) {
 
   /* Start engine. */
   engine_start();
+
+
+#ifdef CONFIG_MTRACE
+    display_mtrace();
+#endif
+#ifdef CONFIG_DTRACE
+    display_dtrace();
+#endif
+#ifdef CONFIG_FTRACE
+	display_ftrace();
+#endif
+#ifdef CONFIG_ETRACE
+	display_etrace();
+#endif
 
   return is_exit_status_bad();
 }

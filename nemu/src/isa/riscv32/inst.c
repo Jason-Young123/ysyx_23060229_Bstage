@@ -17,6 +17,8 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <trace/trace.h>
+
 
 #define R(i) gpr(i)
 #define SR(i) sr(i)//newly added
@@ -170,7 +172,11 @@ static int decode_exec(Decode *s) {
   
   //ecall
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, SR(MEPC) = isa_raise_intr(0xb,s->pc);s->dnpc = SR(MTVEC)); 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, s->dnpc = isa_raise_intr(0xb, s->pc)); 
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, s->dnpc = isa_raise_intr(0xb, s->pc);
+#ifdef CONFIG_ETRACE
+	etrace_record(s->pc)
+#endif
+				  ); 
   // mtvec定义于local-include/reg.h
 
   //mret

@@ -17,6 +17,8 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+#include <trace/trace.h>
+
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -83,6 +85,14 @@ static void exec_once(Decode *s, vaddr_t pc) {
   isa_exec_once(s);//s->dnpc and s->snpc updated
   //printf("test 1:%s\n",s->logbuf);
   cpu.pc = s->dnpc;//cpu.pc updated
+
+
+#ifdef CONFIG_FTRACE
+  ftrace_record(pc);
+#endif
+
+
+
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//s->pc not updated

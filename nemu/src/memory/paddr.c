@@ -17,6 +17,7 @@
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
+#include <trace/trace.h>
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
@@ -25,17 +26,17 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
 
 
-#ifdef CONFIG_MTRACE
-mtrace m_tracer[50];
-uint8_t m_tracer_head = 0;
-uint8_t m_tracer_tail = 0;
-#endif
+//#ifdef CONFIG_MTRACE
+//mtrace m_tracer[50];
+//uint8_t m_tracer_head = 0;
+//uint8_t m_tracer_tail = 0;
+//#endif
 
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
-static word_t pmem_read(paddr_t addr, int len) {
+word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
@@ -45,7 +46,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 }
 
 static void out_of_bound(paddr_t addr) {
-  #ifdef CONFIG_MTRACE
+  /*#ifdef CONFIG_MTRACE
   	printf("--------------------------------------------------\n");
 	printf("mtrace is on : \n");
 	if(m_tracer_head < m_tracer_tail)
@@ -66,7 +67,7 @@ static void out_of_bound(paddr_t addr) {
 	printf("--------------------------------------------------\n");
     printf("mtrace is off... Quit. \n");
     printf("--------------------------------------------------\n");
-  #endif
+  #endif*/
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
@@ -84,16 +85,24 @@ void init_mem() {
 
 word_t paddr_read(paddr_t addr, int len) {
   //printf("aaa\n");
-  #ifdef CONFIG_MTRACE
-	m_tracer[m_tracer_tail].mtrace_pc = cpu.pc;
+  //mtrace记录移至vaddr.c中,区分vaddr_read和vaddr_ifetch
+  //#ifdef CONFIG_MTRACE
+	//mtrace_record(cpu.pc, addr, pmem_read(cpu.pc, 4));
+	/*m_tracer[m_tracer_tail].mtrace_pc = cpu.pc;
 	m_tracer[m_tracer_tail].mtrace_inst = pmem_read(cpu.pc, 4);
 	m_tracer[m_tracer_tail].mtrace_addr = addr;
 	m_tracer_tail = (m_tracer_tail + 1) % 50;
 	if(m_tracer_tail == m_tracer_head)
 		m_tracer_head = (m_tracer_head + 1) % 50;
-  #endif
+	*/
+  //#endif
 
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
+#ifdef CONFIG_DTRACE
+  if(get_map_name(addr) != NULL){
+  	dtrace_record(cpu.pc, pmem_read(cpu.pc, 4), addr, get_map_name(addr));
+  }
+#endif
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
@@ -102,16 +111,24 @@ word_t paddr_read(paddr_t addr, int len) {
 
 
 void paddr_write(paddr_t addr, int len, word_t data) {
-  #ifdef CONFIG_MTRACE
-	m_tracer[m_tracer_tail].mtrace_pc = cpu.pc;
+  //#ifdef CONFIG_MTRACE
+	//mtrace_record(cpu.pc, addr, pmem_read(cpu.pc, 4));
+	/*m_tracer[m_tracer_tail].mtrace_pc = cpu.pc;
 	m_tracer[m_tracer_tail].mtrace_inst = pmem_read(cpu.pc, 4);
 	m_tracer[m_tracer_tail].mtrace_addr = addr;
     m_tracer_tail = (m_tracer_tail + 1) % 50;
     if(m_tracer_tail == m_tracer_head)
         m_tracer_head = (m_tracer_head + 1) % 50;
-  #endif
+	*/
+  //#endif
 	
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
+#ifdef CONFIG_DTRACE
+  if(get_map_name(addr) != NULL){
+    dtrace_record(cpu.pc, pmem_read(cpu.pc, 4), addr, get_map_name(addr));
+  }
+#endif
+
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
