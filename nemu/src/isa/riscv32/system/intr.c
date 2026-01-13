@@ -23,7 +23,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 	//存入异常码
 	sr(MCAUSE) = NO;
 	sr(MEPC) = epc;
-	
+	sr(MSTATUS) = 0x1800;
 
 	//返回引发异常的pc
   	return sr(MTVEC);

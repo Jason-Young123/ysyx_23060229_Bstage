@@ -407,7 +407,7 @@ through test(hello-str.c), heap.start = 0x8000_9000 and heap.end = 0x8800_0000
 
 ----------------------------------------------------------------------------
 short notes:
-(1) obxxx is enabled in GNU c
+(1) 0bxxx is enabled in GNU c
 
 (2) ":" in struct is used for bit separation
 

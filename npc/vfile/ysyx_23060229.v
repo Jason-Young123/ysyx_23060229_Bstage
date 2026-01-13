@@ -1,5 +1,6 @@
 //final version by yangjiaxin, 2025.09.29, dual port for icache
 //revision: no exception handling(except for ecall), to save area
+//revision2: add patch to the forwardingCtl (in case of CSReg Read-After-Write)
 //PART I: Configuration & Macros
 //	I1: auto
 //	I2: macro
@@ -2200,7 +2201,7 @@ module ysyx_23060229_ForwardingCtl(
 	input [4:0] EX_LS_rd,
 	input [11:0] EX_LS_csr,
 	input EX_LS_RegWrite,
-	input EX_LS_CSRegWrite,
+	input [1:0] EX_LS_CSRegWrite,
 
 	input [31:0] origin_src1,//原始的src1和src2,由上级输出
 	input [31:0] origin_src2,
@@ -2224,7 +2225,10 @@ module ysyx_23060229_ForwardingCtl(
 	//因为上一个指令为load指令，EX/LS中暂存的并非正确的src1和src2（因为涉及到读内存，在经过EXU时src1和src2尚未被获取）
 	//(非load指令的result_reg最早在EXU阶段就已经正确生成,而load指令的result_reg只能在LSU阶段生成)
 
-	assign srccs = (EX_LS_csr == ID_EX_csr && EX_LS_CSRegWrite == 1) ? cached_EX_LS_srccs : origin_srccs;
+	//注意EX_LS_CSRegWrite[1]代表是否为Jump_CS(ecall), EX_LS_CSRegWrite[0]代表是否为普通CSRegWrite
+	assign srccs = 	(EX_LS_CSRegWrite[1] && ID_EX_csr == `ysyx_23060229_MCAUSE) ? 32'h0000000b : 
+					(|EX_LS_CSRegWrite && EX_LS_csr == ID_EX_csr) ? cached_EX_LS_srccs : origin_srccs;
+	//assign srccs = (EX_LS_csr == ID_EX_csr && EX_LS_CSRegWrite == 1) ? cached_EX_LS_srccs : origin_srccs;
 
 endmodule
 //-----------------------------------------end-of-ForwardingCtl-----------------------------------------//
@@ -2574,7 +2578,12 @@ module ysyx_23060229(
 	//与ForwardingCtl相关的接口
 	wire EX_LS_RegWrite = (EX_LS_flag == `ysyx_23060229_WriteReg || EX_LS_flag == `ysyx_23060229_ReadMem || EX_LS_flag == `ysyx_23060229_Jump_J
 							|| EX_LS_flag == `ysyx_23060229_WriteCSReg);
-    wire EX_LS_CSRegWrite = (EX_LS_flag == `ysyx_23060229_WriteCSReg);
+    wire [1:0] EX_LS_CSRegWrite;
+	assign EX_LS_CSRegWrite[0] = (EX_LS_flag == `ysyx_23060229_WriteCSReg);
+	assign EX_LS_CSRegWrite[1] = (EX_LS_flag == `ysyx_23060229_Jump_CS);
+	//wire EX_LS_CSRegWrite = (EX_LS_flag == `ysyx_23060229_WriteCSReg);//BUG4,只能在ecall和下一条CSR指令之间插入其他指令;
+	//此外,ecall是双目的寄存器,本身不符合该设计中的单源/目的寄存器的FrdCtl的理
+	//念,因此必然存在问题(ecall紧接着读mcause寄存器),因此当前硬件存在固有bug
 	wire [31:0] src1, src2, srccs;
 
 	/*------------------------------------------------------------------------------*/

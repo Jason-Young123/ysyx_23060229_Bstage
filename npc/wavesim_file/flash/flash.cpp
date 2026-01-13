@@ -25,7 +25,7 @@ long init_flash(const char* file){
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
     printf("\033[32mImage file found in:\n%s\nSize of image file = %ld\033[0m\n",file, size);
-	
+
 	fseek(fp, 0, SEEK_SET);
     int ret = fread(flash, size, 1, fp);
 	
